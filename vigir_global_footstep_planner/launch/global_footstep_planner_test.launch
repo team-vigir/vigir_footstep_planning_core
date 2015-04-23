@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="namespace" default="/vigir/footstep_planning" />
+  <group ns="$(arg namespace)">
+    <!-- run map server -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find vigir_footstep_planner)/maps/RCGO2011_Hector_Mission4_2.yaml">
+      <param name="frame_id" value="/world" />
+      <remap from="map" to="/ground_level_grid_map" />
+    </node>
+
+    <!-- start up footstep planning system -->
+    <include file="$(find vigir_footstep_planning)/launch/footstep_planning_basics.launch">
+      <arg name="namespace" value="$(arg namespace)" />
+    </include>
+
+    <!-- run local footstep planner -->
+    <!-- launch-prefix="valgrind -\-tool=callgrind -\-log-file=/home/alex/vigir/cachegrind/cachegrind.out" -->
+    <node name="global_footstep_planner" pkg="vigir_global_footstep_planner" type="global_footstep_planner_node" respawn="true" output="screen">
+      <remap from="body_level_grid_map" to="ground_level_grid_map" />
+    </node>
+
+    <!-- specify where to load robot specific parameters -->
+    <rosparam file="$(find vigir_footstep_planner)/config/robot_params.yaml" command="load" />
+    <param name="planner_configs_path" value="$(find vigir_footstep_planner)/config/planner/" />
+  </group>
+</launch>

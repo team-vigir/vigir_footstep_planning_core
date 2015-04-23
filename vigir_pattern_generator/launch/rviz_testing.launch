@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node name="rviz_pattern_generator" pkg="rviz" type="rviz" args="-d $(find vigir_pattern_generator)/rviz/pattern_generator_testing.rviz"/> 
+</launch>

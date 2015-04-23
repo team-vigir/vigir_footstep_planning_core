@@ -1,0 +1,118 @@
+name: default
+
+### planner environment settings ###############################################
+
+# the size of the used hash map (the bigger the better); should be something
+# with 2^X (initially 2^16=65536)
+max_hash_size: 1048576
+
+# default cost to perform one footstep (in addition to ALL other costs, corresponds to 'meters')
+const_step_cost_estimator:
+  step_cost: 0.2
+
+# parameters for BoundaryStepCostEstimator (multipliers)
+boundary_step_cost_estimator:
+  max_diff_z: 0.40                      # [m]
+  long_step_dist: 0.30                  # [m]
+  min_yaw_seperation_enlargement: 0.2   # [rad]
+  yaw_enlarged_min_seperation: 0.23     # [m]
+  cost_roll_abs: 0.5                    # [1/rad]
+  cost_pitch_abs: 0.3                   # [1/rad]
+  cost_yaw_rel: 1.0                     # [1/rad]
+  cost_height_diff_rel: 0.5             # [1/m]
+
+# parameters for DynamicsStepCostEstimator
+dynamic_step_cost_estimator:
+  lower_step_limit: 0.1
+  upper_step_limit: 0.5
+  max_near_distance: 1.0
+
+heuristic_scale: 1.0
+
+# cost to estimate the difference between the current orientation and the goal
+# orientation; used in the heuristic it can easily overestimate the true path
+# cost since this cost is not incorporated in each step
+diff_angle_cost: 0.0
+
+# maximum risk before state will be discarded
+max_risk: 1.0
+
+### planner settings ###########################################################
+
+# define the planner of choice provided by the SBPL package
+# - ARAPlanner
+# - ADPlanner
+# - RSTARPlanner
+planner_type: ARAPlanner
+
+# search until a specific time limit is reached or first solution is found
+search_until_first_solution: False
+
+# the maximum search time if search_until_first_solution is set to False
+allocated_time: 10.0
+
+initial_epsilon: 8.0
+decrease_epsilon: 0.2
+
+forward_search: True
+
+# the limit of changed states that decides whether to replan or to start a hole
+# new planning task
+changed_cells_limit: 20000
+
+# if set to true, planner will shift goal pose if initially chosen is invalid (= occupied)
+shift_goal_pose: True
+
+
+### Planning parameterization for a large humanoid, similar to ASIMO or HRP-2 ##
+# used for foot contact support collision check
+foot_contact_support:
+  min_sampling_steps_x: 6
+  min_sampling_steps_y: 4
+  max_sampling_steps_x: 32
+  max_sampling_steps_y: 24
+  max_intrusion_z: 0.0075
+  max_ground_clearance: 0.01
+  minimal_support: 0.85
+
+collision_check:
+  # collision check flag (binary decoded)
+  # - 1 feet
+  # - 2 upper body
+  # - 4 foot contact support
+  collision_check_flag: 4
+
+  # footstep collision check accuracy
+  # - 0 (just the circumcircle of the foot)
+  # - 1 (just the incircle of the foot)
+  # - 2 (circumcircle and incircle recursivly checked for the whole foot)
+  collision_check_accuracy: 2
+
+  # discretization of continuous space (cell size in meters)
+  cell_size: 0.02
+
+  num_angle_bins: 32
+
+use_terrain_model: True
+
+### step set params ########################################################
+foot:
+  max:
+    step: {theta: 0.40}
+    inverse:
+      step: {theta: -0.30}
+
+# define polygon for valid step position in view of supporting (=standing) foot
+step_range:
+  x: [ 0.00, -0.20, -0.17, -0.13,  0.13,  0.20,  0.38]
+  y: [ 0.20,  0.25,  0.30,  0.35,  0.35,  0.30,  0.20]
+
+step_duration: 0.63
+swing_height:  0.05     # Ignored if it is less than 0.1
+step_mode:     1        # 0 -> WALK / 1 -> STEP
+
+### misc ###################################################################
+feedback_rate: 10.0 # [Hz]
+threads: 2
+jobs_per_thread: 50
+

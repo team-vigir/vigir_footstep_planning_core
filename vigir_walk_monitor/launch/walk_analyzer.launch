@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="namespace" default="/vigir/footstep_planning" />
+  <group ns="$(arg namespace)">
+    <node name="walk_analyzer" pkg="vigir_walk_monitor" type="walk_analyzer_node" respawn="true" output="screen">
+      <remap from="execute_step_plan/goal" to="/robot_controllers/footstep_controller/execute_step_plan/goal"/>
+      <remap from="execute_step_plan/result" to="/robot_controllers/footstep_controller/execute_step_plan/result"/>
+      <remap from="step_feedback" to="/flor/controller/step_feedback"/>
+    </node>
+
+    <param name="logging_dir" value="$(find vigir_walk_monitor)/logs"/>
+  </group>
+</launch>

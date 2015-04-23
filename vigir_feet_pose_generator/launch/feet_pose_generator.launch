@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node name="feet_pose_generator" pkg="vigir_feet_pose_generator" type="feet_pose_generator_node" respawn="true" output="screen" />
+</launch>

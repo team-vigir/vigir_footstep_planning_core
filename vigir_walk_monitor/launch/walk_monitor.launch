@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="namespace" default="/vigir/footstep_planning" />
+  <group ns="$(arg namespace)">
+    <node name="walk_monitor" pkg="vigir_walk_monitor" type="walk_monitor_node" respawn="true" output="screen" />
+  </group>
+</launch>

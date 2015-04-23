@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="namespace" default="/vigir/footstep_planning" />
+  <group ns="$(arg namespace)">
+    <!-- start up footstep planning system -->
+    <include file="$(find vigir_footstep_planning)/launch/footstep_planning_basics.launch">
+      <arg name="namespace" value="$(arg namespace)" />
+    </include>
+
+    <!-- run local footstep planner -->
+    <node name="global_footstep_planner" pkg="vigir_global_footstep_planner" type="global_footstep_planner_node" respawn="true" output="screen">
+      <remap from="body_level_grid_map" to="ground_level_grid_map" />
+    </node>
+
+    <!-- Start pattern generator node -->    
+    <include file="$(find vigir_pattern_generator)/launch/pattern_generator.launch" />
+    <rosparam file="$(find vigir_pattern_generator)/config/pattern_generator_config.yaml" command="load" />
+
+    <!-- start the pattern generator rqt gui interface-->
+    <node name="pattern_generator_rqt_widget" pkg="vigir_footstep_planning_widgets" type="pattern_generator_rqt" respawn="true"/>
+
+    <!-- specify where to load robot specific parameters -->
+    <rosparam file="$(find vigir_footstep_planning)/config/robot_params.yaml" command="load" />
+    <param name="planner_configs_path" value="$(find vigir_footstep_planning)/config/planner/" />
+  </group>
+</launch>

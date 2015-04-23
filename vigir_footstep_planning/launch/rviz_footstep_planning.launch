@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find vigir_footstep_planning)/config/rviz_footstep_planning.rviz" />
+</launch>

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+  <!-- Start pattern generator node -->
+  <node name="pattern_generator" pkg="vigir_pattern_generator" type="pattern_generator_node" output="screen" />
+</launch>
