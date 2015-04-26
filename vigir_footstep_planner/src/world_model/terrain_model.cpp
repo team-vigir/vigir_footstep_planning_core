@@ -120,7 +120,7 @@ bool TerrainModel::getFootContactSupport(const tf::Pose& p, double& support, pcl
 
 bool TerrainModel::getFootContactSupport(const tf::Pose& p, double &support, unsigned int sampling_steps_x, unsigned int sampling_steps_y, pcl::PointCloud<pcl::PointXYZI>::Ptr checked_positions) const
 {
-  boost::shared_lock<boost::shared_mutex> lock(terrain_model_shared_mutex);
+  //boost::shared_lock<boost::shared_mutex> lock(terrain_model_shared_mutex);
 
   support = 0.0;
 
@@ -193,7 +193,7 @@ bool TerrainModel::update3DData(geometry_msgs::Pose& p) const
 
 bool TerrainModel::update3DData(State& s) const
 {
-  boost::shared_lock<boost::shared_mutex> lock(terrain_model_shared_mutex);
+  //boost::shared_lock<boost::shared_mutex> lock(terrain_model_shared_mutex);
 
   double z = s.getZ();
   s.setGroundContactSupport(0.0);
