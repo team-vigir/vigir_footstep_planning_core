@@ -230,8 +230,8 @@ protected:
   bool run();
 
   /// @brief Returns the foot pose of a leg for a given robot pose.
-  State getFootPose(const State& robot, Leg leg);
   State getFootPose(const State& robot, Leg leg, double dx, double dy, double dyaw);
+  State getFootPose(const State& robot, Leg leg);
 
   /// @brief get parallel foot
   State getParallelFootPose(const State& foot, double additional_seperation = 0.0);

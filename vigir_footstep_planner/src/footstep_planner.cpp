@@ -1092,6 +1092,14 @@ void FootstepPlanner::doPlanning(msgs::StepPlanRequestService::Request& req)
 
   msgs::StepPlanRequestService::Response resp;
 
+  // set world model mode
+  if (req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_3D)
+    WorldModel::useTerrainModel(true);
+  else if (req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_PATTERN)
+    WorldModel::useTerrainModel(req.plan_request.pattern_parameters.use_terrain_model);
+  else
+    WorldModel::useTerrainModel(false);
+
   // dispatch planning mode and plan
   switch (req.plan_request.planning_mode)
   {
@@ -1216,7 +1224,6 @@ bool FootstepPlanner::setStart(const State& left_foot, const State& right_foot, 
   if (std::isnan(right_foot.getPitch())) return false;
   if (std::isnan(right_foot.getYaw())) return false;
 
-  start_pose_set_up = true;
   bool left_collision = false;
   bool right_collision = false;
 
@@ -1225,6 +1232,8 @@ bool FootstepPlanner::setStart(const State& left_foot, const State& right_foot, 
     start_pose_set_up = false;
     return false;
   }
+  else
+    start_pose_set_up = true;
 
   ivStartFootLeft = left_foot;
   ivStartFootRight = right_foot;
@@ -1261,38 +1270,19 @@ bool FootstepPlanner::setGoal(const State& left_foot, const State& right_foot, b
   if (std::isnan(right_foot.getPitch())) return false;
   if (std::isnan(right_foot.getYaw())) return false;
 
-  goal_pose_set_up = false;
   bool left_collision = false;
   bool right_collision = false;
 
+  if (!ignore_collision && checkRobotCollision(left_foot, right_foot, left_collision, right_collision))
+  {
+    goal_pose_set_up = false;
+    return false;
+  }
+  else
+    goal_pose_set_up = true;
+
   ivGoalFootLeft = left_foot;
   ivGoalFootRight = right_foot;
-
-  if (!ignore_collision && checkRobotCollision(ivGoalFootLeft, ivGoalFootRight, left_collision, right_collision))
-  {
-    if (!env_params->ivShiftGoalPose)
-      return false;
-
-    if (left_collision)
-    {
-      if (!findNearestValidState(ivGoalFootLeft))
-        return false;
-      else if (right_collision)
-        ivGoalFootRight = getParallelFootPose(ivGoalFootLeft);
-    }
-    if (right_collision && !findNearestValidState(ivGoalFootRight))
-      return false;
-
-    // finally recheck upper body collision
-    if (left_collision || right_collision)
-    {
-      if (!WorldModel::isAccessible(ivGoalFootLeft, ivGoalFootRight))
-        return false;
-      ROS_WARN("Goal pose was shifted!");
-    }
-  }
-
-  goal_pose_set_up = true;
 
   ROS_INFO("Goal foot poses set to (left: %f %f %f %f) and (right: %f %f %f %f)",
            ivGoalFootLeft.getX(), ivGoalFootLeft.getY(), ivGoalFootLeft.getZ(), ivGoalFootLeft.getYaw(),
@@ -1323,30 +1313,6 @@ bool FootstepPlanner::setGoal(const msgs::StepPlanRequest& req, bool ignore_coll
   return setGoal(left_foot, right_foot, ignore_collision);
 }
 
-State FootstepPlanner::getFootPose(const State& robot, Leg leg)
-{
-  double sign = -1.0;
-  if (leg == LEFT)
-    sign = 1.0;
-
-  double shift_x = -sin(robot.getYaw()) * (0.5 * env_params->foot_seperation);
-  double shift_y =  cos(robot.getYaw()) * (0.5 * env_params->foot_seperation);
-
-  State foot(robot.getX() + sign * shift_x,
-             robot.getY() + sign * shift_y,
-             robot.getZ(),
-             robot.getRoll(),
-             robot.getPitch(),
-             robot.getYaw(),
-             robot.getSwingHeight(),
-             robot.getStepDuration(),
-             leg);
-
-  WorldModel::update3DData(foot);
-
-  return foot;
-}
-
 State FootstepPlanner::getFootPose(const State& robot, Leg leg, double dx, double dy, double dyaw)
 {
   double sign = -1.0;
@@ -1371,6 +1337,11 @@ State FootstepPlanner::getFootPose(const State& robot, Leg leg, double dx, doubl
   WorldModel::update3DData(foot);
 
   return foot;
+}
+
+State FootstepPlanner::getFootPose(const State& robot, Leg leg)
+{
+  return getFootPose(robot, leg, 0.0, 0.0, 0.0);
 }
 
 State FootstepPlanner::getParallelFootPose(const State& foot, double additional_seperation)

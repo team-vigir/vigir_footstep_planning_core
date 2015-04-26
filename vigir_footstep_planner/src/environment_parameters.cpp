@@ -34,7 +34,6 @@ EnvironmentParameters::EnvironmentParameters(const ParameterSet& params)
   params.getParam("initial_epsilon", initial_eps);
   params.getParam("decrease_epsilon", decrease_eps);
   params.getParam("changed_cells_limit", ivChangedCellsLimit);
-  params.getParam("shift_goal_pose", ivShiftGoalPose);
   //params.getParam("num_random_nodes", num_random_nodes);
   //params.getParam("random_node_dist", random_node_distance);
 

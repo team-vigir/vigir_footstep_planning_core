@@ -43,10 +43,6 @@ void TerrainModel::loadParams(const ParameterSet& params)
   params.getParam("foot_contact_support/max_intrusion_z", max_intrusion_z);
   params.getParam("foot_contact_support/max_ground_clearance", max_ground_clearance);
   params.getParam("foot_contact_support/minimal_support", minimal_support);
-  params.getParam("use_terrain_model", terrain_model_enabled);
-
-  if (!terrain_model_enabled)
-    reset();
 }
 
 bool TerrainModel::isAccessible(const State& s) const
@@ -61,14 +57,11 @@ bool TerrainModel::isAccessible(const State& next, const State& /*current*/) con
 
 bool TerrainModel::isTerrainModelAvailable() const
 {
-  return terrain_model_enabled && terrain_model && terrain_model->hasTerrainModel();
+  return terrain_model && terrain_model->hasTerrainModel();
 }
 
 void TerrainModel::setTerrainModel(const vigir_terrain_classifier::TerrainModelMsg::ConstPtr& terrain_model)
 {
-  if (!terrain_model_enabled)
-    return;
-
   boost::unique_lock<boost::shared_mutex> lock(terrain_model_shared_mutex);
 
   // update terrain model
@@ -226,8 +219,8 @@ bool TerrainModel::update3DData(State& s) const
     ROS_WARN_THROTTLE(1.0, "Couldn't determine ground contact support at %f/%f", s.getX(), s.getY());
     return false;
   }
-
   s.setGroundContactSupport(support);
+
   return true;
 }
 }

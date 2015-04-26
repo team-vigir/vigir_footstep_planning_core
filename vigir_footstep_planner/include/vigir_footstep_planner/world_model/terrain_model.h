@@ -105,8 +105,6 @@ protected:
 
   // robot params
   geometry_msgs::Vector3 foot_size;
-
-  bool terrain_model_enabled;
 };
 }
 

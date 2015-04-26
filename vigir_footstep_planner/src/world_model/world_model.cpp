@@ -69,6 +69,11 @@ bool WorldModel::isAccessible(const State& next, const State& current)
   return true;
 }
 
+void WorldModel::useTerrainModel(bool enabled)
+{
+  Instance()->use_terrain_model = enabled;
+}
+
 bool WorldModel::isTerrainModelAvailable()
 {
   return Instance()->terrain_model && Instance()->terrain_model->isTerrainModelAvailable();
@@ -81,7 +86,7 @@ TerrainModelPlugin::Ptr WorldModel::getTerrainModel()
 
 bool WorldModel::getHeight(double x, double y, double& height)
 {
-  if (!isTerrainModelAvailable())
+  if (!Instance()->use_terrain_model || !isTerrainModelAvailable())
     return true;
 
   return Instance()->terrain_model->getHeight(x, y, height);
@@ -89,7 +94,7 @@ bool WorldModel::getHeight(double x, double y, double& height)
 
 bool WorldModel::update3DData(State& s)
 {
-  if (!isTerrainModelAvailable())
+  if (!Instance()->use_terrain_model || !isTerrainModelAvailable())
     return true;
 
   return Instance()->terrain_model->update3DData(s);

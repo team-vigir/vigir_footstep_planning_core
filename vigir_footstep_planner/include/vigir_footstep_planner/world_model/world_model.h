@@ -55,6 +55,7 @@ public:
   static bool isAccessible(const State& s);
   static bool isAccessible(const State& next, const State& current);
 
+  static void useTerrainModel(bool enabled);
   static bool isTerrainModelAvailable();
   static TerrainModelPlugin::Ptr getTerrainModel();
 
@@ -76,6 +77,8 @@ protected:
   static WorldModel::Ptr& Instance();
 
   static WorldModel::Ptr singelton;
+
+  bool use_terrain_model;
 
   std::vector<CollisionCheckPlugin::Ptr> collision_check_models;
   TerrainModelPlugin::Ptr terrain_model;

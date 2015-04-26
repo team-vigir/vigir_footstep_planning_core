@@ -113,8 +113,6 @@ struct EnvironmentParameters
    */
   int ivChangedCellsLimit;
 
-  bool ivShiftGoalPose;
-
   std::string ivPlannerType;
 
   double feedback_rate;
