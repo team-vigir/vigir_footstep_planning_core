@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(vigir_feet_pose_generator)
 
-#set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 ## Find catkin macros and libraries

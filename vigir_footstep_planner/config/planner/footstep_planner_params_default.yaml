@@ -60,9 +60,6 @@ forward_search: True
 # new planning task
 changed_cells_limit: 20000
 
-# if set to true, planner will shift goal pose if initially chosen is invalid (= occupied)
-shift_goal_pose: True
-
 
 ### Planning parameterization for a large humanoid, similar to ASIMO or HRP-2 ##
 # used for foot contact support collision check
@@ -71,8 +68,8 @@ foot_contact_support:
   min_sampling_steps_y: 4
   max_sampling_steps_x: 32
   max_sampling_steps_y: 24
-  max_intrusion_z: 0.0075
-  max_ground_clearance: 0.01
+  max_intrusion_z: 0.01
+  max_ground_clearance: 0.02
   minimal_support: 0.85
 
 collision_check:
@@ -92,8 +89,6 @@ collision_check:
   cell_size: 0.02
 
   num_angle_bins: 32
-
-use_terrain_model: True
 
 ### step set params ########################################################
 foot:
