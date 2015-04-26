@@ -111,13 +111,6 @@ public:
 
   void preemptPlanning();
 
-  /**
-   * @brief Sets the goal pose as a robot pose centered between two feet.
-   *
-   * @return True if the two foot poses have been set successfully.
-   */
-  bool setGoal(const geometry_msgs::PoseStampedConstPtr goal_pose, bool ignore_collision = false);
-
   // typedefs
   typedef boost::shared_ptr<FootstepPlanner> Ptr;
   typedef boost::shared_ptr<const FootstepPlanner> ConstPtr;
@@ -159,20 +152,6 @@ protected:
   bool checkRobotCollision(const State& left_foot, const State& right_foot, bool& left, bool& right) const;
 
   /**
-   * @brief Sets the start pose as a robot pose centered between two feet.
-   *
-   * @return True if the two foot poses have been set successfully.
-   */
-  bool setStart(const geometry_msgs::PoseStampedConstPtr start_pose, bool ignore_collision = false);
-
-  /**
-   * @brief Sets the start pose as a robot pose centered between two feet.
-   *
-   * @return True if the two foot poses have been set successfully.
-   */
-  bool setStart(float x, float y, float yaw, bool ignore_collision = false);
-
-  /**
    * @brief Sets the start pose as position of left and right footsteps.
    *
    * @return True if the two foot poses have been set successfully.
@@ -185,13 +164,6 @@ protected:
    * @return True if the two foot poses have been set successfully.
    */
   bool setStart(const msgs::StepPlanRequest& req, bool ignore_collision = false);
-
-  /**
-   * @brief Sets the goal pose as a robot pose centered between two feet.
-   *
-   * @return True if the two foot poses have been set successfully.
-   */
-  bool setGoal(float x, float y, float yaw, bool ignore_collision = false);
 
   /**
    * @brief Sets the goal pose as position of left and right footsteps.

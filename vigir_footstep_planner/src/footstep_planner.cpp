@@ -1206,31 +1206,6 @@ bool FootstepPlanner::checkRobotCollision(const State& left_foot, const State& r
   return left || right;
 }
 
-bool FootstepPlanner::setStart(const geometry_msgs::PoseStampedConstPtr start_pose, bool ignore_collision)
-{
-  return setStart(start_pose->pose.position.x,
-                  start_pose->pose.position.y,
-                  tf::getYaw(start_pose->pose.orientation),
-                  ignore_collision);
-}
-
-bool FootstepPlanner::setStart(float x, float y, float yaw, bool ignore_collision)
-{
-  State start(x, y, 0.0, 0.0, 0.0, yaw,
-              env_params->swing_height,
-              env_params->step_duration,
-              NOLEG);
-
-  State foot_left = getFootPose(start, LEFT);
-  State foot_right = getFootPose(start, RIGHT);
-
-  bool success = setStart(foot_left, foot_right, ignore_collision);
-  if (!success)
-    ROS_ERROR("Start pose not accessible.");
-
-  return success;
-}
-
 bool FootstepPlanner::setStart(const State& left_foot, const State& right_foot, bool ignore_collision)
 {
   // check for errors
@@ -1274,31 +1249,6 @@ bool FootstepPlanner::setStart(const msgs::StepPlanRequest& req, bool ignore_col
   }
 
   return setStart(left_foot, right_foot, ignore_collision);
-}
-
-bool FootstepPlanner::setGoal(const geometry_msgs::PoseStampedConstPtr goal_pose, bool ignore_collision)
-{
-  return setGoal(goal_pose->pose.position.x,
-                 goal_pose->pose.position.y,
-                 tf::getYaw(goal_pose->pose.orientation),
-                 ignore_collision);
-}
-
-bool FootstepPlanner::setGoal(float x, float y, float yaw, bool ignore_collision)
-{
-  State goal(x, y, 0.0, 0.0, 0.0, yaw,
-             env_params->swing_height,
-             env_params->step_duration,
-             NOLEG);
-
-  State foot_left = getFootPose(goal, LEFT);
-  State foot_right = getFootPose(goal, RIGHT);
-
-  bool success = setGoal(foot_left, foot_right, ignore_collision);
-  if (!success)
-    ROS_ERROR("Goal pose not accessible.");
-
-  return success;
 }
 
 bool FootstepPlanner::setGoal(const State& left_foot, const State& right_foot, bool ignore_collision)
