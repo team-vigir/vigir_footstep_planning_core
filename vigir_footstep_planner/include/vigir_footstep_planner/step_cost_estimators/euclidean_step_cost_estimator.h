@@ -42,7 +42,7 @@ public:
   EuclideanStepCostEstimator(const ParameterSet& params);
   EuclideanStepCostEstimator();
 
-  bool getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& risk) const override;
+  bool getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const override;
 };
 }
 

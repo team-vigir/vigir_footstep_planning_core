@@ -17,22 +17,21 @@ void GroundContactStepCostEstimator::loadParams(const ParameterSet& params)
   params.getParam("foot_contact_support/minimal_support", min_contact_support);
 }
 
-bool GroundContactStepCostEstimator::getCost(const State& /*left_foot*/, const State& /*right_foot*/, const State& swing_foot, double& cost, double& risk) const
+bool GroundContactStepCostEstimator::getCost(const State& /*left_foot*/, const State& /*right_foot*/, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
 {
   cost = 0.0;
+  cost_multiplier = 1.0;
   risk = 0.0;
-  double scaling = 1.0;
+  risk_multiplier = 1.0;
 
   if (swing_foot.getGroundContactSupport() < 1.0)
   {
     if (swing_foot.getGroundContactSupport() > min_contact_support)
-      scaling = 1.0/swing_foot.getGroundContactSupport();
+      cost_multiplier = 1.0/swing_foot.getGroundContactSupport();
     else
       return false;
   }
 
-  /// TODO
-  //return StepCostEstimator::getCost(left_foot, right_foot, swing_foot, risk_cost) * scaling;
   return true;
 }
 }

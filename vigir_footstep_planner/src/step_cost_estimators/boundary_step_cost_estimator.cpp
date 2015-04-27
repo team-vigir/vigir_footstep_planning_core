@@ -24,10 +24,12 @@ void BoundaryStepCostEstimator::loadParams(const ParameterSet& params)
   params.getParam("boundary_step_cost_estimator/cost_height_diff_rel", cost_height_diff_rel);
 }
 
-bool BoundaryStepCostEstimator::getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& risk) const
+bool BoundaryStepCostEstimator::getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
 {
   cost = 0.0;
+  cost_multiplier = 1.0;
   risk = 0.0;
+  risk_multiplier = 1.0;
 
   if (swing_foot == left_foot || swing_foot == right_foot)
     return true;

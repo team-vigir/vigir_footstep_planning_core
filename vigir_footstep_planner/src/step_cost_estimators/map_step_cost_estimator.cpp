@@ -20,10 +20,12 @@ void MapStepCostEstimator::loadParams(const ParameterSet& params)
   loadFromFile(filename);
 }
 
-bool MapStepCostEstimator::getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& risk) const
+bool MapStepCostEstimator::getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
 {
   cost = 0.0;
+  cost_multiplier = 1.0;
   risk = 0.0;
+  risk_multiplier = 1.0;
 
   const State& stand_foot = swing_foot.getLeg() == LEFT ? right_foot : left_foot;
   double foot_dist = euclidean_distance(stand_foot.getX(), stand_foot.getY(), swing_foot.getX(), swing_foot.getY());

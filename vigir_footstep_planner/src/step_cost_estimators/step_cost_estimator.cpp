@@ -47,20 +47,27 @@ void StepCostEstimator::loadParams(const ParameterSet& params)
 bool StepCostEstimator::getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& risk)
 {
   cost = 0.0;
+  double cost_multiplier = 1.0;
   risk = 0.0;
+  double risk_multiplier = 1.0;
 
   for (std::vector<StepCostEstimatorPlugin::Ptr>::const_iterator itr = Instance()->step_cost_estimators.begin(); itr != Instance()->step_cost_estimators.end(); itr++)
   {
     const StepCostEstimatorPlugin::Ptr& step_cost_estimator = *itr;
-    double c, r;
-    if (step_cost_estimator && !step_cost_estimator->getCost(left_foot, right_foot, swing_foot, c, r))
+    double c, c_m, r, r_m;
+    if (step_cost_estimator && !step_cost_estimator->getCost(left_foot, right_foot, swing_foot, c, c_m, r, r_m))
       return false;
     else
     {
       cost += c;
+      cost_multiplier *= c_m;
       risk += r;
+      risk_multiplier *= r_m;
     }
   }
+  
+  cost *= cost_multiplier;
+  risk *= risk_multiplier;
 
   return true;
 }
