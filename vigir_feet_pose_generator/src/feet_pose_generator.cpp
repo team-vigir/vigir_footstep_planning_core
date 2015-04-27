@@ -7,7 +7,6 @@ FeetPoseGenerator::FeetPoseGenerator(ros::NodeHandle& nh)
 {
   nh.getParam("foot/separation", foot_separation);
 
-  nh.getParam("world_frame_id", world_frame_id);
   nh.getParam("foot/left/frame_id", left_foot_frame_id);
   nh.getParam("foot/right/frame_id", right_foot_frame_id);
 
@@ -15,7 +14,6 @@ FeetPoseGenerator::FeetPoseGenerator(ros::NodeHandle& nh)
   nh.getParam("foot/right/foot_frame/z", right_foot_shift_z);
 
   // strip '/'
-  strip(world_frame_id, '/');
   strip(left_foot_frame_id, '/');
   strip(right_foot_frame_id, '/');
 
@@ -64,12 +62,11 @@ msgs::ErrorStatus FeetPoseGenerator::generateFeetPose(const msgs::FeetPoseReques
 
   if (request.flags & msgs::FeetPoseRequest::FLAG_CURRENT)
   {
-    if (request_frame_id != world_frame_id)
-      status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FeetPoseGenerator", "generateFeetPose: Frame ID of world frame ('" + world_frame_id + "') and request ('" + request_frame_id + "') mismatch, automatic transformation is not implemented yet!");
-
     // try to get current feet pose
-    if (getCurrentFeetPose(feet))
+    if (getCurrentFeetPose(feet, request_frame_id))
+    {
       return status;
+    }
     // project robot (pelvis) pose to the ground
     else if (has_robot_pose)
     {
@@ -81,7 +78,9 @@ msgs::ErrorStatus FeetPoseGenerator::generateFeetPose(const msgs::FeetPoseReques
       //pelvisToGroundTransform(feet);
     }
     else
+    {
       return status + ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FeetPoseGenerator", "generateFeetPose: No robot pose available for handling FLAG_CURRENT!");
+    }
   }
   else
   {
@@ -114,7 +113,7 @@ msgs::ErrorStatus FeetPoseGenerator::generateFeetPose(const msgs::FeetPoseReques
   if (request.flags & msgs::FeetPoseRequest::FLAG_CURRENT_Z)
   {
     msgs::Feet current_feet;
-    if (getCurrentFeetPose(current_feet))
+    if (getCurrentFeetPose(current_feet, request_frame_id))
     {
       feet.left.pose.position.z = current_feet.left.pose.position.z+left_foot_shift_z; // adding shift which is eliminated by transformToRobotFrame
       feet.right.pose.position.z = current_feet.right.pose.position.z+right_foot_shift_z; // adding shift which is eliminated by transformToRobotFrame
@@ -144,23 +143,24 @@ msgs::ErrorStatus FeetPoseGenerator::updateFeetPose(msgs::Feet& feet) const
   return status;
 }
 
-bool FeetPoseGenerator::getCurrentFeetPose(msgs::Feet& feet)
+bool FeetPoseGenerator::getCurrentFeetPose(msgs::Feet& feet, const std::string& request_frame)
 {
-  if (tf_listener.canTransform(world_frame_id, left_foot_frame_id, ros::Time(0)) && tf_listener.canTransform(world_frame_id, right_foot_frame_id, ros::Time(0)))
+  if (tf_listener.canTransform(request_frame, left_foot_frame_id, ros::Time(0)) &&
+      tf_listener.canTransform(request_frame, right_foot_frame_id, ros::Time(0)))
   {
     tf::StampedTransform t;
-    tf_listener.lookupTransform(world_frame_id, left_foot_frame_id, ros::Time(0), t);
+    tf_listener.lookupTransform(request_frame, left_foot_frame_id, ros::Time(0), t);
     tf::poseTFToMsg(t, feet.left.pose);
     feet.left.header.stamp = t.stamp_;
     feet.left.foot_index = msgs::Foot::LEFT;
 
-    tf_listener.lookupTransform(world_frame_id, right_foot_frame_id, ros::Time(0), t);
+    tf_listener.lookupTransform(request_frame, right_foot_frame_id, ros::Time(0), t);
     tf::poseTFToMsg(t, feet.right.pose);
     feet.right.header.stamp = t.stamp_;
     feet.right.foot_index = msgs::Foot::RIGHT;
 
     feet.header.stamp = ros::Time::now();
-    feet.header.frame_id = feet.left.header.frame_id = feet.right.header.frame_id = world_frame_id;
+    feet.header.frame_id = feet.left.header.frame_id = feet.right.header.frame_id = request_frame;
 
     return true;
   }

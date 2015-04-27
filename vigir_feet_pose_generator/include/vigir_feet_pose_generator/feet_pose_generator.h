@@ -65,7 +65,7 @@ public:
 protected:
   msgs::ErrorStatus updateFeetPose(msgs::Feet& feet) const;
 
-  bool getCurrentFeetPose(msgs::Feet& feet);
+  bool getCurrentFeetPose(msgs::Feet& feet, const std::string& request_frame);
 
   /**
    * This method assumes that the given pose is in center between both feet.
@@ -79,7 +79,6 @@ protected:
 
   vigir_terrain_classifier::TerrainModel::Ptr terrain_model;
 
-  std::string world_frame_id;
   std::string left_foot_frame_id;
   std::string right_foot_frame_id;
 
