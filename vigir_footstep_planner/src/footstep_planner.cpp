@@ -10,7 +10,6 @@ FootstepPlanner::FootstepPlanner(ros::NodeHandle &nh)
   , start_foot_selection(msgs::StepPlanRequest::AUTO)
   , start_pose_set_up(false)
   , goal_pose_set_up(false)
-  , max_planning_time(10.0)
   , max_number_steps(0.0)
   , max_path_length_ratio(0.0)
   , ivPathCost(0)
@@ -88,7 +87,7 @@ bool FootstepPlanner::isPlanning() const
   return planning_thread.joinable();
 }
 
-bool FootstepPlanner::run()
+bool FootstepPlanner::plan(ReplanParams& params)
 {
   bool path_existed = (bool)ivPath.size();
   int ret = 0;
@@ -133,15 +132,7 @@ bool FootstepPlanner::run()
   ros::WallTime startTime = ros::WallTime::now();
   try
   {
-    ReplanParams params(env_params->ivMaxSearchTime);
-    params.initial_eps = env_params->initial_eps;
-    params.final_eps = 1.0;
-    params.dec_eps = env_params->decrease_eps;
-    params.return_first_solution = env_params->ivSearchUntilFirstSolution;
-    params.repair_time = -1;
-
-    ROS_INFO("Start planning (max time: %f, initial eps: %f, decrease eps: %f\n", env_params->ivMaxSearchTime, params.initial_eps, params.dec_eps);
-
+    ROS_INFO("Start planning (max time: %f, initial eps: %f, decrease eps: %f\n", params.max_time, params.initial_eps, params.dec_eps);
     ret = ivPlannerPtr->replan(&solution_state_ids, params, &path_cost);
   }
   catch (const SBPL_Exception* e)
@@ -436,56 +427,6 @@ void FootstepPlanner::resetTotally()
   setPlanner();
 }
 
-
-msgs::ErrorStatus FootstepPlanner::planSteps()
-{
-  msgs::ErrorStatus status;
-
-  if (!start_pose_set_up)
-    status += ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_START, "FootstepPlanner", "planSteps: The start pose has not been set yet.");
-
-  if (!goal_pose_set_up)
-    status += ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_GOAL, "FootstepPlanner", "planSteps: The goal pose has not been set yet.");
-
-  if (hasError(status))
-    return status;
-
-  reset();
-
-  // start the planning and return success
-  if (!run())
-    status += ErrorStatusError(msgs::ErrorStatus::ERR_NO_SOLUTION, "FootstepPlanner", "planSteps: No solution found!");
-
-  return status;
-}
-
-msgs::ErrorStatus FootstepPlanner::replan()
-{
-  msgs::ErrorStatus status;
-
-  if (!start_pose_set_up)
-    status += ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_START, "FootstepPlanner", "replan: he start pose has not been set yet.");
-
-  if (!goal_pose_set_up)
-    status += ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_GOAL, "FootstepPlanner", "replan: The goal pose has not been set yet.");
-
-  if (hasError(status))
-    return status;
-
-  // Workaround for R* and ARA: need to reinit. everything
-  if (env_params->ivPlannerType == "RSTARPlanner" || env_params->ivPlannerType == "ARAPlanner")
-  {
-    status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlanner", "replan: Reset planning information because planner cannot handle replanning.");
-    reset();
-  }
-
-  // start the planning and return success
-  if (!run())
-    status += ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlanner", "replan: No solution found!");
-
-  return status;
-}
-
 msgs::ErrorStatus FootstepPlanner::planSteps(msgs::StepPlanRequestService::Request& req)
 {
   // set start foot poses
@@ -495,8 +436,21 @@ msgs::ErrorStatus FootstepPlanner::planSteps(msgs::StepPlanRequestService::Reque
   // set goal foot poses
   if (!setGoal(req.plan_request))
     return ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_GOAL, "FootstepPlanner", "planSteps: Couldn't set goal pose! Please check if poses are set!");
+  
+  reset();
+  
+  ReplanParams params(req.plan_request.max_planning_time);
+  params.initial_eps = env_params->initial_eps;
+  params.final_eps = 1.0;
+  params.dec_eps = env_params->decrease_eps;
+  params.return_first_solution = env_params->ivSearchUntilFirstSolution;
+  params.repair_time = -1;
+  
+  // start the planning and return success
+  if (!plan(params))
+    return ErrorStatusError(msgs::ErrorStatus::ERR_NO_SOLUTION, "FootstepPlanner", "planSteps: No solution found!");
 
-  return planSteps();
+  return msgs::ErrorStatus();
 }
 
 msgs::ErrorStatus FootstepPlanner::planPattern(msgs::StepPlanRequestService::Request& req)
@@ -1049,7 +1003,6 @@ msgs::ErrorStatus FootstepPlanner::stepPlanRequest(msgs::StepPlanRequestService:
 
   // set request specific parameters
   start_foot_selection = req.plan_request.start_foot_selection;
-  max_planning_time = max_planning_time != 0 ? max_planning_time : env_params->ivMaxSearchTime;
   max_number_steps = req.plan_request.max_number_steps;
   max_path_length_ratio = req.plan_request.max_path_length_ratio;
   frame_id = req.plan_request.header.frame_id;

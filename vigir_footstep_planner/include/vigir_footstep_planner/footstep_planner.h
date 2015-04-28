@@ -109,6 +109,7 @@ public:
   /// @brief Service handle to plan footsteps.
   bool stepPlanRequestService(msgs::StepPlanRequestService::Request& req, msgs::StepPlanRequestService::Response& resp);
 
+  /// @brief stops thread running planning
   void preemptPlanning();
 
   // typedefs
@@ -123,9 +124,6 @@ protected:
    *
    * @return Success of planning.
    */
-  msgs::ErrorStatus planSteps();
-
-  /// @brief Sets start, goal poses and calls FootstepPlanner::plan().
   msgs::ErrorStatus planSteps(msgs::StepPlanRequestService::Request& req);
 
   /// @brief plans stepping
@@ -135,16 +133,9 @@ protected:
   /// @brief extracts step plan response from planning result
   bool finalizeStepPlan(msgs::StepPlanRequestService::Request& req, msgs::StepPlanRequestService::Response& resp, bool post_process);
 
-  /**
-   * @brief Starts a planning task based on previous planning information
-   * (note that this method can also be used when no previous planning was
-   * performed). Map and start, goal poses need to be set beforehand.
-   *
-   * @return Success of planning.
-   */
-  msgs::ErrorStatus replan();
-
+  /// @brief: starts planning in a new thread
   void startPlanning(msgs::StepPlanRequestService::Request& req);
+  /// @brief: method used in seperate thread
   void doPlanning(msgs::StepPlanRequestService::Request& req);
 
   bool findNearestValidState(State& s) const;
@@ -227,7 +218,7 @@ protected:
    * NOTE: Never call this directly. Always use either plan() or replan() to
    * invoke this method.
    */
-  bool run();
+  bool plan(ReplanParams& params);
 
   /// @brief Returns the foot pose of a leg for a given robot pose.
   State getFootPose(const State& robot, Leg leg, double dx, double dy, double dyaw);
@@ -270,7 +261,6 @@ protected:
   EnvironmentParameters::Ptr env_params;
   unsigned int start_foot_selection;
   bool   start_pose_set_up, goal_pose_set_up;
-  double max_planning_time;
   double max_number_steps;
 
   // robot parameters

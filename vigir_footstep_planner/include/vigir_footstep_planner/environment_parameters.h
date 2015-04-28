@@ -103,7 +103,6 @@ struct EnvironmentParameters
   double ivMaxStepDist;
 
   bool   ivSearchUntilFirstSolution;
-  double ivMaxSearchTime;
   double initial_eps;
   double decrease_eps;
 

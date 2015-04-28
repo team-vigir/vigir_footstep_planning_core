@@ -48,9 +48,6 @@ planner_type: ARAPlanner
 # search until a specific time limit is reached or first solution is found
 search_until_first_solution: False
 
-# the maximum search time if search_until_first_solution is set to False
-allocated_time: 10.0
-
 initial_epsilon: 8.0
 decrease_epsilon: 0.2
 

@@ -29,7 +29,6 @@ EnvironmentParameters::EnvironmentParameters(const ParameterSet& params)
 
   params.getParam("planner_type", ivPlannerType);
   params.getParam("search_until_first_solution", ivSearchUntilFirstSolution);
-  params.getParam("allocated_time", ivMaxSearchTime);
   params.getParam("forward_search", forward_search);
   params.getParam("initial_epsilon", initial_eps);
   params.getParam("decrease_epsilon", decrease_eps);
