@@ -106,9 +106,9 @@ bool ReachabilityPolygon::isReachable(const State& current, const State& next) c
   }
 
   // consider discretization error
-  dx = roundPrec(dx, cell_size);
-  dy = roundPrec(dy, cell_size);
-  dyaw = roundPrec(dyaw, angle_bin_size);
+  dx = pround(dx, cell_size);
+  dy = pround(dy, cell_size);
+  dyaw = pround(dyaw, angle_bin_size);
 
   // check if footstep_x is not within the executable range
   if (dx > max_step_range_x || dx < max_step_range_inv_x)
