@@ -76,8 +76,7 @@ EnvironmentParameters::EnvironmentParameters(const ParameterSet& params)
       if (cur_step_width > max_step_dist)
         max_step_dist = cur_step_width;
     }
-    // insert first point again at the end!
-    step_range.push_back(step_range[0]);
+
     max_step_range_x = max_x;
     max_step_range_y = max_y;
     params.getParam("foot/max/step/theta", max_step_range_theta);

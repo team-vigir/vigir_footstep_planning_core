@@ -38,6 +38,8 @@ void ReachabilityPolygon::loadParams(const ParameterSet& params)
     return;
   }
 
+  assert((step_range_x.size() == step_range_y.size()) && (step_range_x.size() > 0));
+
   // load step range
   step_range.clear();
   step_range.reserve(step_range_x.size());
