@@ -436,16 +436,16 @@ msgs::ErrorStatus FootstepPlanner::planSteps(msgs::StepPlanRequestService::Reque
   // set goal foot poses
   if (!setGoal(req.plan_request))
     return ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_GOAL, "FootstepPlanner", "planSteps: Couldn't set goal pose! Please check if poses are set!");
-  
+
   reset();
-  
+
   ReplanParams params(req.plan_request.max_planning_time);
   params.initial_eps = env_params->initial_eps;
   params.final_eps = 1.0;
   params.dec_eps = env_params->decrease_eps;
   params.return_first_solution = env_params->ivSearchUntilFirstSolution;
   params.repair_time = -1;
-  
+
   // start the planning and return success
   if (!plan(params))
     return ErrorStatusError(msgs::ErrorStatus::ERR_NO_SOLUTION, "FootstepPlanner", "planSteps: No solution found!");
@@ -807,7 +807,7 @@ msgs::ErrorStatus FootstepPlanner::finalizeAndAddStepToPlan(State& s, const msgs
 bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& req, msgs::StepPlanRequestService::Response& resp, bool post_process)
 {
   resp.step_plan.header.frame_id = frame_id;
-  resp.step_plan.header.stamp = ros::Time::now();
+  resp.step_plan.header.stamp = req.plan_request.header.stamp;
   resp.step_plan.header.seq = step_plan_uid++;
 
   // add footstep plan
