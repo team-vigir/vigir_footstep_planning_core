@@ -48,6 +48,7 @@ planner_type: ARAPlanner
 # search until a specific time limit is reached or first solution is found
 search_until_first_solution: False
 
+max_planning_time: 10.0 # default max planning time if not given by request
 initial_epsilon: 8.0
 decrease_epsilon: 0.2
 

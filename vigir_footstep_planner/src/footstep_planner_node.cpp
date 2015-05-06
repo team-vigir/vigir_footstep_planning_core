@@ -255,7 +255,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
   step_plan_request.plan_request.start_foot_selection = msgs::StepPlanRequest::AUTO;
   step_plan_request.plan_request.planning_mode = WorldModel::isTerrainModelAvailable() ? static_cast<uint8_t>(msgs::StepPlanRequest::PLANNING_MODE_3D)
                                                                                        : static_cast<uint8_t>(msgs::StepPlanRequest::PLANNING_MODE_2D);
-  step_plan_request.plan_request.max_planning_time = 10.0;
+  step_plan_request.plan_request.max_planning_time = 0.0;
   step_plan_request.plan_request.max_number_steps = 0.0;
   step_plan_request.plan_request.max_path_length_ratio = 0.0;
   step_plan_request.plan_request.parameter_set_name.data = std::string();

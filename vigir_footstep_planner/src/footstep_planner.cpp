@@ -438,7 +438,7 @@ msgs::ErrorStatus FootstepPlanner::planSteps(msgs::StepPlanRequestService::Reque
 
   reset();
 
-  ReplanParams params(req.plan_request.max_planning_time);
+  ReplanParams params(req.plan_request.max_planning_time > 0 ? req.plan_request.max_planning_time : env_params->max_planning_time);
   params.initial_eps = env_params->initial_eps;
   params.final_eps = 1.0;
   params.dec_eps = env_params->decrease_eps;

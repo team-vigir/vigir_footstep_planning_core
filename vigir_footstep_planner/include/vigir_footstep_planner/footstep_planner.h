@@ -260,7 +260,8 @@ protected:
   std::string frame_id;
   EnvironmentParameters::Ptr env_params;
   unsigned int start_foot_selection;
-  bool   start_pose_set_up, goal_pose_set_up;
+  bool start_pose_set_up, goal_pose_set_up;
+
   double max_number_steps;
 
   // robot parameters

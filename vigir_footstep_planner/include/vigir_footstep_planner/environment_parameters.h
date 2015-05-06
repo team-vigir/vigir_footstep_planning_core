@@ -103,6 +103,9 @@ struct EnvironmentParameters
   double ivMaxStepDist;
 
   bool   ivSearchUntilFirstSolution;
+
+  /// default max planning time if not given by request
+  double max_planning_time;
   double initial_eps;
   double decrease_eps;
 
