@@ -42,8 +42,7 @@ void FootstepPlanner::setPlanner()
   }
   else
   {
-    ROS_ERROR_STREAM("Planner "<< env_params->ivPlannerType <<" not available / "
-                     "untested.");
+    ROS_ERROR_STREAM("Planner "<< env_params->ivPlannerType <<" not available / untested.");
     exit(1);
   }
   if (env_params->forward_search)

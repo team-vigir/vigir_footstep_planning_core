@@ -102,7 +102,7 @@ bool TerrainModel::getFootContactSupport(const tf::Pose& p, double& support, pcl
     return false;
 
   // refinement of solution if needed
-  if (support != 1.0)
+  if (support < 0.95)
   {
     if (!getFootContactSupport(p, support, max_sampling_steps_x, max_sampling_steps_y, checked_positions))
       return false;
@@ -191,7 +191,6 @@ bool TerrainModel::update3DData(State& s) const
   //boost::shared_lock<boost::shared_mutex> lock(terrain_model_shared_mutex);
 
   double z = s.getZ();
-  s.setGroundContactSupport(0.0);
 
   // get z
   if (!getHeight(s.getX(), s.getY(), z))

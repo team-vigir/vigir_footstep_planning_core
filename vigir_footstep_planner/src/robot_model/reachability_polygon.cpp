@@ -79,10 +79,18 @@ void ReachabilityPolygon::loadParams(const ParameterSet& params)
   ivpStepRange = new bool[step_range_size];
 
   // compute reachability polygon
+  ROS_INFO("Reachability Polygon:");
+  std::string msg;
   for (int y = max_step_range_inv_y_disc; y <= max_step_range_y_disc; y++)
   {
+    msg += boost::lexical_cast<std::string>(y) + ": ";
     for (int x = max_step_range_inv_x_disc; x <= max_step_range_x_disc; x++)
+    {
       ivpStepRange[(y - max_step_range_inv_y_disc) * step_range_size_x + (x - max_step_range_inv_x_disc)] = pointWithinPolygon(x, y, step_range);
+      msg += pointWithinPolygon(x, y, step_range) ? "+ " : "- ";
+    }
+    ROS_INFO("%s", msg.c_str());
+    msg.clear();
   }
 }
 

@@ -27,7 +27,7 @@ bool GroundContactStepCostEstimator::getCost(const State& /*left_foot*/, const S
   if (swing_foot.getGroundContactSupport() < 1.0)
   {
     if (swing_foot.getGroundContactSupport() > min_contact_support)
-      cost_multiplier = 1.0/swing_foot.getGroundContactSupport();
+      cost_multiplier = risk_multiplier = 1.0/swing_foot.getGroundContactSupport();
     else
       return false;
   }
