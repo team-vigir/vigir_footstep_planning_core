@@ -43,6 +43,7 @@ void FeetPoseGeneratorNode::generateFeetPoseAction(SimpleActionServer<msgs::Gene
   }
 
   msgs::GenerateFeetPoseResult result;
+  result.header = goal->request.header;
   result.status = feet_pose_generator.generateFeetPose(goal->request, result.feet);
 
   as->finish(result);
