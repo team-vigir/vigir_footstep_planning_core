@@ -29,25 +29,39 @@ void GridMapModel::mapCallback(const nav_msgs::OccupancyGridConstPtr& occupancy_
 bool GridMapModel::collision_check(double x, double y, double cos_theta, double sin_theta, double height, double width) const
 {
   double d = distance_map.distanceMapAt(x, y);
-  if (d < 0.0) // if out of bounds => collision
-    return true;
-  d -= distance_map.getResolution();
 
-  double r_o = 0.5 * sqrt(width*width + height*height);
+  bool out_of_bounds = d < 0.0; // if out of bounds => assume no collision
 
-  if (d >= r_o)
+  if (out_of_bounds && collision_check_accuracy != 2)
     return false;
-  else if (collision_check_accuracy == 0)
-    return false;
+
+  d = std::max(d-distance_map.getResolution(), 0.0);
+
+  double r_o = width*width + height*height;
+
+  if (!out_of_bounds)
+  {
+    if (d*d >= 0.25 * r_o)
+      return false;
+    else if (collision_check_accuracy == 0)
+      return false;
+  }
 
   double h_half = 0.5 * height;
   double w_half = 0.5 * width;
   double r_i = std::min(w_half, h_half);
 
-  if (d <= r_i)
-    return true;
-  else if (collision_check_accuracy == 1)
-    return true;
+  if (!out_of_bounds)
+  {
+    if (d <= r_i)
+      return true;
+    else if (collision_check_accuracy == 1)
+      return true;
+  }
+  else if (r_i < distance_map.getResolution())
+  {
+    return false;
+  }
 
   double h_new;
   double w_new;
@@ -55,7 +69,7 @@ bool GridMapModel::collision_check(double x, double y, double cos_theta, double 
   double delta_y;
   if (width < height)
   {
-    double h_clear = sqrt(d*d - w_half*w_half);
+    double h_clear = out_of_bounds ? 0.0 : sqrt(d*d - w_half*w_half);
     h_new = h_half - h_clear;
     w_new = width;
     delta_x = h_clear + 0.5 * h_new;
@@ -63,7 +77,7 @@ bool GridMapModel::collision_check(double x, double y, double cos_theta, double 
   }
   else // footWidth >= footHeight
   {
-    double w_clear = sqrt(d*d - h_half*h_half);
+    double w_clear = out_of_bounds ? 0.0 : sqrt(d*d - h_half*h_half);
     h_new = height;
     w_new = w_half - w_clear;
     delta_x = 0.0;

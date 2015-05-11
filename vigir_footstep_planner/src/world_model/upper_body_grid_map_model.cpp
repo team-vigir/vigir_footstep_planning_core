@@ -47,10 +47,6 @@ bool UpperBodyGridMapModel::isAccessible(const State& next, const State& current
   float x = right.getX() + 0.5 * (left.getX() - right.getX());
   float y = right.getY() + 0.5 * (left.getY() - right.getY());
 
-  // collision check for the planning state
-  if (distance_map.isOccupiedAt(x, y))
-    return false;
-
   float theta = right.getYaw() + 0.5 * (left.getYaw() - right.getYaw());
 
   // determine shift of polygon based on foot orientation

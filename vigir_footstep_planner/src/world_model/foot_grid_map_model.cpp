@@ -29,10 +29,6 @@ bool FootGridMapModel::isAccessible(const State& s) const
   double x = s.getX();
   double y = s.getY();
 
-  // collision check for the planning state (holds for support area checks too)
-  if (distance_map.isOccupiedAt(x,y))
-    return false;
-
   double theta = s.getYaw();
 
   // collision check for the foot center
