@@ -102,7 +102,11 @@ bool TerrainModel::getFootContactSupport(const tf::Pose& p, double& support, pcl
     return false;
 
   // refinement of solution if needed
-  if (support < 0.95)
+  if (support == 0.0) // collision, no refinement
+  {
+    return true;
+  }
+  else if (support < 0.95)
   {
     if (!getFootContactSupport(p, support, max_sampling_steps_x, max_sampling_steps_y, checked_positions))
       return false;
@@ -119,6 +123,7 @@ bool TerrainModel::getFootContactSupport(const tf::Pose& p, double &support, uns
   support = 0.0;
 
   unsigned int contacts = 0;
+  unsigned int unknown = 0;
   unsigned int total = 0;
 
   tf::Vector3 orig_pos;
@@ -145,7 +150,8 @@ bool TerrainModel::getFootContactSupport(const tf::Pose& p, double &support, uns
       double height = 0.0;
       if (!getHeight(trans_pos.getX(), trans_pos.getY(), height))
       {
-        ROS_WARN_THROTTLE(1.0, "getFootSupportArea: No height data found at %f/%f", p.getOrigin().getX(), p.getOrigin().getY());
+        //ROS_WARN_THROTTLE(1.0, "getFootSupportArea: No height data found at %f/%f", p.getOrigin().getX(), p.getOrigin().getY());
+        unknown++;
         continue;
       }
 
@@ -168,16 +174,21 @@ bool TerrainModel::getFootContactSupport(const tf::Pose& p, double &support, uns
       // check diff in z
       if (diff < -max_intrusion_z) // collision -> no support!
         return true;
-//      else if (ivGroundLevelMapPtr->isOccupiedAt(trans_pos.getX(), trans_pos.getY()))
-//        continue;
       else if (diff < max_ground_clearance) // ground contact
         contacts++;
     }
   }
 
-  /// @ TODO: refinement (center of pressure)
-  support = (double)contacts/(double)total;
-  return true;
+  if (unknown == total)
+  {
+    return false;
+  }
+  else
+  {
+    /// @ TODO: refinement (center of pressure)
+    support = static_cast<double>(contacts)/static_cast<double>(total);
+    return true;
+  }
 }
 
 bool TerrainModel::update3DData(geometry_msgs::Pose& p) const
@@ -191,9 +202,8 @@ bool TerrainModel::update3DData(State& s) const
   //boost::shared_lock<boost::shared_mutex> lock(terrain_model_shared_mutex);
   bool result = true;
 
-  double z = s.getZ();
-
   // get z
+  double z = s.getZ();
   if (!getHeight(s.getX(), s.getY(), z))
   {
     //ROS_WARN_THROTTLE(1.0, "No height data found at %f/%f", s.getX(), s.getY());
@@ -224,7 +234,7 @@ bool TerrainModel::update3DData(State& s) const
   double support = 0.0;
   if (!getFootContactSupport(s.getPose(), support))
   {
-    ROS_WARN_THROTTLE(1.0, "Couldn't determine ground contact support at %f/%f", s.getX(), s.getY());
+    //ROS_WARN_THROTTLE(1.0, "Couldn't determine ground contact support at %f/%f", s.getX(), s.getY());
     result = false;
   }
   else
