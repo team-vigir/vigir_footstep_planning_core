@@ -390,9 +390,6 @@ msgs::ErrorStatus FootstepPlanner::updateStepPlan(msgs::StepPlan& step_plan, uin
   if (transform)
     foot_pose_transformer.transformToRobotFrame(step_plan);
 
-  // - preserve the time stamp of the calling request
-  //step_plan.header.stamp = ros::Time::now();
-
   return msgs::ErrorStatus();
 }
 
@@ -917,9 +914,6 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
   else
     updateStepPlan(resp.step_plan, msgs::UpdateMode::UPDATE_MODE_COST, std::string(), false);
 
-  // transform step plan
-  foot_pose_transformer.transformToRobotFrame(resp.step_plan);
-
   resp.final_eps = ivPlannerPtr->get_final_epsilon();
   resp.planning_time = ivPlannerPtr->get_final_eps_planning_time();
 
@@ -957,6 +951,9 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
     msg.header.stamp = ros::Time::now();
     ivCheckedFootContactSupportPub.publish(msg);
   }
+
+  // transform step plan
+  foot_pose_transformer.transformToRobotFrame(resp.step_plan);
 
   return true;
 }

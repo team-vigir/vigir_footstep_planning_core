@@ -10,7 +10,7 @@ upper_body:
 ### foot settings ##############################################################
 foot:
   size: {x: 0.26, y: 0.14, z: 0.0508} # [m]
-  separation: 0.20 # [m]
+  separation: 0.22 # [m]
   left: # position of planner foot frame (center of sole) given in robot's "foot" tf frame
     frame_id: /l_foot
     foot_frame:

@@ -8,7 +8,7 @@ max_hash_size: 1048576
 
 # default cost to perform one footstep (in addition to ALL other costs, corresponds to 'meters')
 const_step_cost_estimator:
-  step_cost: 0.2
+  step_cost: 0.05
 
 # parameters for BoundaryStepCostEstimator (multipliers)
 boundary_step_cost_estimator:
@@ -102,7 +102,6 @@ step_range:
 
 step_duration: 0.63
 swing_height:  0.05     # Ignored if it is less than 0.1
-step_mode:     1        # 0 -> WALK / 1 -> STEP
 
 ### misc ###################################################################
 feedback_rate: 10.0 # [Hz]
