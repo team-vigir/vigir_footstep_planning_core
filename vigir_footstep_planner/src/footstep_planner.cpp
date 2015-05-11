@@ -390,7 +390,8 @@ msgs::ErrorStatus FootstepPlanner::updateStepPlan(msgs::StepPlan& step_plan, uin
   if (transform)
     foot_pose_transformer.transformToRobotFrame(step_plan);
 
-  step_plan.header.stamp = ros::Time::now();
+  // - preserve the time stamp of the calling request
+  //step_plan.header.stamp = ros::Time::now();
 
   return msgs::ErrorStatus();
 }
