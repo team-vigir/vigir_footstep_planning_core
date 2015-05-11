@@ -189,16 +189,20 @@ bool TerrainModel::update3DData(State& s) const
 {
   /// TODO: find efficient solution to prevent inconsistency
   //boost::shared_lock<boost::shared_mutex> lock(terrain_model_shared_mutex);
+  bool result = true;
 
   double z = s.getZ();
 
   // get z
   if (!getHeight(s.getX(), s.getY(), z))
   {
-    ROS_WARN_THROTTLE(1.0, "No height data found at %f/%f", s.getX(), s.getY());
-    return false;
+    //ROS_WARN_THROTTLE(1.0, "No height data found at %f/%f", s.getX(), s.getY());
+    result = false;
   }
-  s.setZ(z);
+  else
+  {
+    s.setZ(z);
+  }
 
   // get roll and pitch
   pcl::PointNormal p_n;
@@ -209,19 +213,25 @@ bool TerrainModel::update3DData(State& s) const
   if (!getPointWithNormal(p_n, p_n))
   {
     //ROS_WARN_THROTTLE(1.0, "No normal data found at %f/%f", s.getX(), s.getY());
-    return false;
+    result = false;
   }
-  s.setNormal(p_n.normal_x, p_n.normal_y, p_n.normal_z);
+  else
+  {
+    s.setNormal(p_n.normal_x, p_n.normal_y, p_n.normal_z);
+  }
 
   // determine ground contact support
   double support = 0.0;
   if (!getFootContactSupport(s.getPose(), support))
   {
     ROS_WARN_THROTTLE(1.0, "Couldn't determine ground contact support at %f/%f", s.getX(), s.getY());
-    return false;
+    result = false;
   }
-  s.setGroundContactSupport(support);
+  else
+  {
+    s.setGroundContactSupport(support);
+  }
 
-  return true;
+  return result;
 }
 }
