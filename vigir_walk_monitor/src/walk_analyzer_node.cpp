@@ -6,9 +6,9 @@ WalkAnalyzerNode::WalkAnalyzerNode(ros::NodeHandle& nh, WalkAnalyzer::Ptr walk_a
   : walk_analyzer(walk_anaylzer)
 {
   // subscribe topics, note: set large queue size to enable replaying bag files instant
-  execute_step_plan_goal_sub = nh.subscribe("execute_step_plan/goal", 100, &WalkAnalyzer::executeStepPlanGoalCallback, walk_analyzer.get());
-  execute_step_plan_result_sub = nh.subscribe("execute_step_plan/result", 100, &WalkAnalyzer::executeStepPlanResultCallback, walk_analyzer.get());
-  step_feedback_sub = nh.subscribe("step_feedback", 1000000, &WalkAnalyzer::stepFeedbackCallback, walk_analyzer.get());
+  execute_step_plan_goal_sub = nh.subscribe("execute_step_plan/goal", 0, &WalkAnalyzer::executeStepPlanGoalCallback, walk_analyzer.get());
+  execute_step_plan_result_sub = nh.subscribe("execute_step_plan/result", 0, &WalkAnalyzer::executeStepPlanResultCallback, walk_analyzer.get());
+  step_feedback_sub = nh.subscribe("step_feedback", 0, &WalkAnalyzer::stepFeedbackCallback, walk_analyzer.get());
 }
 
 WalkAnalyzerNode::WalkAnalyzerNode(ros::NodeHandle& nh)
