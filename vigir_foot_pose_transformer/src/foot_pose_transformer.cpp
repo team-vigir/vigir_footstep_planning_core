@@ -35,7 +35,7 @@ msgs::ErrorStatus FootPoseTransformer::transform(geometry_msgs::Pose& pose, cons
 {
   tf::Pose pose_tf;
   tf::poseMsgToTF(pose, pose_tf);
-  pose_tf = transform * pose_tf;
+  pose_tf = pose_tf * transform;
   tf::poseTFToMsg(pose_tf, pose);
   return msgs::ErrorStatus();
 }
