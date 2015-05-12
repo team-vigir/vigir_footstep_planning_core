@@ -177,6 +177,8 @@ int FootstepPlannerEnvironment::GetGoalHeuristic(int stateID)
 
 void FootstepPlannerEnvironment::GetPreds(int TargetStateID, std::vector<int> *PredIDV, std::vector<int> *CostV)
 {
+  boost::this_thread::interruption_point();
+
   PredIDV->clear();
   CostV->clear();
 
@@ -288,6 +290,8 @@ int FootstepPlannerEnvironment::GetStartHeuristic(int stateID)
 
 void FootstepPlannerEnvironment::GetSuccs(int SourceStateID, std::vector<int> *SuccIDV, std::vector<int> *CostV)
 {
+  boost::this_thread::interruption_point();
+
   SuccIDV->clear();
   CostV->clear();
 
@@ -387,6 +391,7 @@ void FootstepPlannerEnvironment::GetSuccs(int SourceStateID, std::vector<int> *S
 //    CostV->push_back(cost);
 //    stateVisited(*successor_hash, cost, risk_cost);
   }
+
   expand_states_manager->addJobs(jobs);
   expand_states_manager->waitUntilJobsFinished();
 
@@ -406,6 +411,7 @@ void FootstepPlannerEnvironment::GetSuccs(int SourceStateID, std::vector<int> *S
 
 void FootstepPlannerEnvironment::GetRandomSuccsatDistance(int SourceStateID, std::vector<int>* SuccIDV, std::vector<int>* CLowV)
 {
+  boost::this_thread::interruption_point();
 
   assert(SourceStateID >= 0 && unsigned(SourceStateID) < state_space->ivStateId2State.size());
   //goal state should be absorbing
@@ -425,6 +431,8 @@ void FootstepPlannerEnvironment::GetRandomSuccsatDistance(int SourceStateID, std
 
 void FootstepPlannerEnvironment::GetRandomPredsatDistance(int TargetStateID, std::vector<int>* PredIDV, std::vector<int>* CLowV)
 {
+  boost::this_thread::interruption_point();
+
   assert(TargetStateID >= 0 && unsigned(TargetStateID) < state_space->ivStateId2State.size());
 
   // start state should be absorbing

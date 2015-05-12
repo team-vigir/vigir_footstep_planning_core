@@ -1080,6 +1080,7 @@ void FootstepPlanner::preemptPlanning()
   if (!isPlanning())
     return;
 
+  // interrupt main planning thread
   if (planning_thread.joinable())
   {
     planning_thread.interrupt();
