@@ -889,24 +889,20 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
   ivStartFootLeft.getFoot(resp.step_plan.start.left);
   resp.step_plan.start.left.foot_index = msgs::Foot::LEFT;
   resp.step_plan.start.left.header = resp.step_plan.header;
-  foot_pose_transformer.transformToRobotFrame(resp.step_plan.start.left);
 
   ivStartFootRight.getFoot(resp.step_plan.start.right);
   resp.step_plan.start.right.foot_index = msgs::Foot::RIGHT;
   resp.step_plan.start.right.header = resp.step_plan.header;
-  foot_pose_transformer.transformToRobotFrame(resp.step_plan.start.right);
 
   resp.step_plan.goal.header = resp.step_plan.header;
 
   ivGoalFootLeft.getFoot(resp.step_plan.goal.left);
   resp.step_plan.goal.left.foot_index = msgs::Foot::LEFT;
   resp.step_plan.goal.left.header = resp.step_plan.header;
-  foot_pose_transformer.transformToRobotFrame(resp.step_plan.goal.left);
 
   ivGoalFootRight.getFoot(resp.step_plan.goal.right);
   resp.step_plan.goal.right.foot_index = msgs::Foot::RIGHT;
   resp.step_plan.goal.right.header = resp.step_plan.header;
-  foot_pose_transformer.transformToRobotFrame(resp.step_plan.goal.right);
 
   // plan validation and computation of final cost
   if (req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_PATTERN)
