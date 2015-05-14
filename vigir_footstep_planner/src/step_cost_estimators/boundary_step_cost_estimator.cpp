@@ -48,7 +48,7 @@ bool BoundaryStepCostEstimator::getCost(const State& left_foot, const State& rig
 
   // all long steps should be more expensive
   if (step.getOrigin().x() > long_step_dist)
-    cost += step.getOrigin().x()-long_step_dist;
+    risk += step.getOrigin().x()-long_step_dist;
 
   // get yaw diffs
   double stance_yaw_diff = angles::shortest_angular_distance(swing_foot_before.getYaw(), stand_foot.getYaw()); /// TODO: expensive!
