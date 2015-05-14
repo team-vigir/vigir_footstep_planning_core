@@ -27,12 +27,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef VIGIR_FOOTSTEP_PLANNING_EUCLIDEAN_HEURISTIC_H__
-#define VIGIR_FOOTSTEP_PLANNING_EUCLIDEAN_HEURISTIC_H__
-
-#include <vigir_footstep_planning_lib/math.h>
-
-#include <vigir_footstep_planner/state_space/planning_state.h>
+#ifndef VIGIR_FOOTSTEP_PLANNING_STEP_COST_HEURISTIC_H__
+#define VIGIR_FOOTSTEP_PLANNING_STEP_COST_HEURISTIC_H__
 
 #include <vigir_footstep_planning_lib/plugins/heuristic_plugin.h>
 
@@ -40,16 +36,14 @@
 
 namespace vigir_footstep_planning
 {
-/**
- * @brief Determining the heuristic value by the euclidean distance between
- * two states.
- */
-class EuclideanHeuristic
+class TravelTimeHeuristic
   : public HeuristicPlugin
 {
 public:
-  EuclideanHeuristic(const ParameterSet& params);
-  EuclideanHeuristic();
+  TravelTimeHeuristic(const ParameterSet& params);
+  TravelTimeHeuristic();
+
+  void loadParams(const ParameterSet& params) override;
 
   double getHeuristicValue(const State& from, const State& to) const override;
 };

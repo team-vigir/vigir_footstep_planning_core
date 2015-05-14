@@ -116,6 +116,7 @@ set(HEADERS
   include/${PROJECT_NAME}/heuristics/heuristic.h
   include/${PROJECT_NAME}/heuristics/path_cost_heuristic.h
   include/${PROJECT_NAME}/heuristics/step_cost_heuristic.h
+  include/${PROJECT_NAME}/heuristics/travel_time_heuristic.h
   include/${PROJECT_NAME}/robot_model/reachability_polygon.h
   include/${PROJECT_NAME}/robot_model/robot_model.h
   include/${PROJECT_NAME}/state_space/footstep.h
@@ -129,6 +130,7 @@ set(HEADERS
   include/${PROJECT_NAME}/step_cost_estimators/map_step_cost_estimator.h
   include/${PROJECT_NAME}/step_cost_estimators/step_cost_estimator.h
   include/${PROJECT_NAME}/step_cost_estimators/step_cost_key.h
+  include/${PROJECT_NAME}/step_cost_estimators/travel_time_step_cost_estimator.h
   include/${PROJECT_NAME}/threading/expand_state_job.h
   include/${PROJECT_NAME}/world_model/foot_grid_map_model.h
   include/${PROJECT_NAME}/world_model/grid_map_model.h
@@ -147,6 +149,7 @@ set(SOURCES
   src/heuristics/heuristic.cpp
   src/heuristics/path_cost_heuristic.cpp
   src/heuristics/step_cost_heuristic.cpp
+  src/heuristics/travel_time_heuristic.cpp
   src/robot_model/reachability_polygon.cpp
   src/robot_model/robot_model.cpp
   src/state_space/footstep.cpp
@@ -160,6 +163,7 @@ set(SOURCES
   src/step_cost_estimators/map_step_cost_estimator.cpp
   src/step_cost_estimators/step_cost_estimator.cpp
   src/step_cost_estimators/step_cost_key.cpp
+  src/step_cost_estimators/travel_time_step_cost_estimator.cpp
   src/threading/expand_state_job.cpp
   src/world_model/foot_grid_map_model.cpp
   src/world_model/grid_map_2d.cpp

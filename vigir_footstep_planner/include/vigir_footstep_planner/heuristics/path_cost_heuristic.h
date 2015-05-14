@@ -81,11 +81,7 @@ public:
 
   void updateMap(vigir_gridmap_2d::GridMap2DPtr map);
 
-  // typedefs
-  typedef boost::shared_ptr<PathCostHeuristic> Ptr;
-  typedef boost::shared_ptr<const PathCostHeuristic> ConstPtr;
-
-private:
+protected:
   static const int cvObstacleThreshold = 200;
 
   unsigned char** ivpGrid;

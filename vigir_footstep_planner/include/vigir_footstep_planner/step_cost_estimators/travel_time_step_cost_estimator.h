@@ -1,6 +1,5 @@
 //=================================================================================================
 // Copyright (c) 2015, Alexander Stumpf, TU Darmstadt
-// Based on http://wiki.ros.org/footstep_planner by Johannes Garimort and Armin Hornung
 // All rights reserved.
 
 // Redistribution and use in source and binary forms, with or without
@@ -27,31 +26,31 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef VIGIR_FOOTSTEP_PLANNING_EUCLIDEAN_HEURISTIC_H__
-#define VIGIR_FOOTSTEP_PLANNING_EUCLIDEAN_HEURISTIC_H__
+#ifndef VIGIR_FOOTSTEP_PLANNING_TRAVEL_TIME_STEP_DURATION_ESTIMATOR_H
+#define VIGIR_FOOTSTEP_PLANNING_TRAVEL_TIME_STEP_DURATION_ESTIMATOR_H
 
-#include <vigir_footstep_planning_lib/math.h>
-
-#include <vigir_footstep_planner/state_space/planning_state.h>
-
-#include <vigir_footstep_planning_lib/plugins/heuristic_plugin.h>
+#include <vigir_footstep_planning_lib/plugins/step_cost_estimator_plugin.h>
 
 
 
 namespace vigir_footstep_planning
 {
-/**
- * @brief Determining the heuristic value by the euclidean distance between
- * two states.
- */
-class EuclideanHeuristic
-  : public HeuristicPlugin
+class TravelTimeStepCostEstimator
+  : public StepCostEstimatorPlugin
 {
 public:
-  EuclideanHeuristic(const ParameterSet& params);
-  EuclideanHeuristic();
+  TravelTimeStepCostEstimator(const ParameterSet& params);
+  TravelTimeStepCostEstimator();
 
-  double getHeuristicValue(const State& from, const State& to) const override;
+  void loadParams(const ParameterSet& params) override;
+
+  bool getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const override;
+
+protected:
+  double parabol(double x, double y, double a_inv, double b_inv) const;
+
+  double a_sway_inv, b_sway_inv, const_sway_time;
+  double a_swing_inv, b_swing_inv, const_swing_time;
 };
 }
 

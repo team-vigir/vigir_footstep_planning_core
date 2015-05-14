@@ -58,10 +58,6 @@ public:
 
   double getHeuristicValue(const State& from, const State& to) const override;
 
-  // typedefs
-  typedef boost::shared_ptr<StepCostHeuristic> Ptr;
-  typedef boost::shared_ptr<const StepCostHeuristic> ConstPtr;
-
 private:
   double step_cost;
   double diff_angle_cost;

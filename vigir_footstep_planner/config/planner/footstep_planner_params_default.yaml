@@ -58,7 +58,6 @@ forward_search: True
 # new planning task
 changed_cells_limit: 20000
 
-
 ### Planning parameterization for a large humanoid, similar to ASIMO or HRP-2 ##
 # used for foot contact support collision check
 foot_contact_support:

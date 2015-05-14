@@ -56,6 +56,7 @@
 #include <vigir_footstep_planner/step_cost_estimators/boundary_step_cost_estimator.h>
 #include <vigir_footstep_planner/step_cost_estimators/dynamics_step_cost_estimator.h>
 #include <vigir_footstep_planner/step_cost_estimators/ground_contact_step_cost_estimator.h>
+#include <vigir_footstep_planner/step_cost_estimators/travel_time_step_cost_estimator.h>
 
 #include <vigir_footstep_planner/heuristics/euclidean_heuristic.h>
 #include <vigir_footstep_planner/heuristics/step_cost_heuristic.h>

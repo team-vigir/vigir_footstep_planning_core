@@ -44,7 +44,7 @@ bool BoundaryStepCostEstimator::getCost(const State& left_foot, const State& rig
     return false;
 
   // determine additional costs
-  tf::Transform step = stand_foot.getPose().inverse() * swing_foot.getPose(); /// TODO: expensive!
+  tf::Transform step = stand_foot.getPose().inverse() * swing_foot.getPose();
 
   // all long steps should be more expensive
   if (step.getOrigin().x() > long_step_dist)
