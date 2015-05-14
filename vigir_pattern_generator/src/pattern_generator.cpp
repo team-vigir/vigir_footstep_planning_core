@@ -416,6 +416,8 @@ void PatternGenerator::generateSteps(unsigned int n, bool close_step)
     mapToVectorIndexed(step_map, complete_step_plan.steps, 0, step_plan_request_srv.response.step_plan.steps.back().step_index);
 
   newest_step_plan = step_plan_request_srv.response.step_plan;
+  newest_step_plan.header.stamp = ros::Time::now();
+  newest_step_plan.header.seq++;
   has_new_steps = true;
 
   if (!setNextStartStepIndex(newest_step_plan.steps.back().step_index))
