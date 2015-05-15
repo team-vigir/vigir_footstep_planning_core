@@ -44,7 +44,7 @@ void Heuristic::loadParams(const ParameterSet& params)
   }
 }
 
-double Heuristic::getHeuristicValue(const State& from, const State& to)
+double Heuristic::getHeuristicValue(const State& from, const State& to, const State& start, const State& goal)
 {
   double h = 0.0;
 
@@ -52,7 +52,7 @@ double Heuristic::getHeuristicValue(const State& from, const State& to)
   {
     const HeuristicPlugin::Ptr& heuristic = *itr;
     if (heuristic)
-      h += heuristic->getHeuristicValue(from, to);
+      h += heuristic->getHeuristicValue(from, to, start, goal);
   }
 
   return h;

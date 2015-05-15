@@ -47,7 +47,7 @@ public:
   static void loadPlugins();
   static void loadParams(const ParameterSet& params);
 
-  static double getHeuristicValue(const State& from, const State& to);
+  static double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal);
 
   // typedefs
   typedef boost::shared_ptr<Heuristic> Ptr;

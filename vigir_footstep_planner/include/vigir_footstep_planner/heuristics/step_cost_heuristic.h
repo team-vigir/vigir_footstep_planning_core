@@ -56,15 +56,15 @@ public:
 
   void loadParams(const ParameterSet& params) override;
 
-  double getHeuristicValue(const State& from, const State& to) const override;
+  double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;
 
 private:
   double step_cost;
   double diff_angle_cost;
 
   /// longest step width
-  double max_step_dist_x;
-  double max_step_dist_y;
+  double max_step_dist_x_inv;
+  double max_step_dist_y_inv;
 };
 }
 

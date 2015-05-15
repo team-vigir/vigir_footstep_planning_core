@@ -16,19 +16,21 @@ void StepCostHeuristic::loadParams(const ParameterSet& params)
 {
   params.getParam("const_step_cost_estimator/step_cost", step_cost, 0.1);
   params.getParam("diff_angle_cost", diff_angle_cost);
-  params.getParam("max_step_dist/x", max_step_dist_x);
-  params.getParam("max_step_dist/y", max_step_dist_y);
+  params.getParam("max_step_dist/x", max_step_dist_x_inv);
+  max_step_dist_x_inv = 1.0/max_step_dist_x_inv;
+  params.getParam("max_step_dist/y", max_step_dist_y_inv);
+  max_step_dist_y_inv = 1.0/max_step_dist_y_inv;
 }
 
-double StepCostHeuristic::getHeuristicValue(const State& from, const State& to) const
+double StepCostHeuristic::getHeuristicValue(const State& from, const State& to, const State& /*start*/, const State& /*goal*/) const
 {
   if (from == to)
     return 0.0;
 
   // expected steps
   tf::Transform step = from.getPose().inverse() * to.getPose();
-  double expected_steps_x = std::abs(step.getOrigin().x()) / max_step_dist_x;
-  double expected_steps_y = std::abs(step.getOrigin().y()) / max_step_dist_y;
+  double expected_steps_x = std::abs(step.getOrigin().x()) * max_step_dist_x_inv;
+  double expected_steps_y = std::abs(step.getOrigin().y()) * max_step_dist_y_inv;
   double expected_steps = std::ceil(std::max(expected_steps_x, expected_steps_y));
 
   double diff_angle = 0.0;

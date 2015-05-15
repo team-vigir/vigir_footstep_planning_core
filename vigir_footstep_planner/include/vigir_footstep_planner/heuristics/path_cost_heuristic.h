@@ -69,7 +69,7 @@ public:
    * @return The estimated costs needed to reach the state 'to' from within the
    * current state.
    */
-  double getHeuristicValue(const State& from, const State& to) const override;
+  double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;
 
   /**
    * @brief Calculates for each grid cell of the map a 2D path to the

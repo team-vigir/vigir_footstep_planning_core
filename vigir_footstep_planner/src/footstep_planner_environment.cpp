@@ -151,18 +151,13 @@ int FootstepPlannerEnvironment::GetFromToHeuristic(int FromStateID, int ToStateI
     return 0;
   }
 
-  const PlanningState* from = state_space->ivStateId2State[FromStateID];
-  const PlanningState* to = state_space->ivStateId2State[ToStateID];
-  //    	if (ivHeuristicConstPtr->getHeuristicType() == Heuristic::PATH_COST){
-  //    		boost::shared_ptr<PathCostHeuristic> pathCostHeuristic = boost::dynamic_pointer_cast<PathCostHeuristic>(ivHeuristicConstPtr);
-  //    		pathCostHeuristic->calculateDistances(*from, *to);
-  //    	}
-  return GetFromToHeuristic(*from, *to);
+  return GetFromToHeuristic(*(state_space->ivStateId2State[FromStateID]), *(state_space->ivStateId2State[ToStateID]),
+                            *(state_space->ivStateId2State[state_space->ivIdPlanningStart]), *(state_space->ivStateId2State[state_space->ivIdPlanningGoal]));
 }
 
-int FootstepPlannerEnvironment::GetFromToHeuristic(const PlanningState& from, const PlanningState& to)
+int FootstepPlannerEnvironment::GetFromToHeuristic(const PlanningState& from, const PlanningState& to, const PlanningState& start, const PlanningState& goal)
 {
-  return cvMmScale * params.heuristic_scale * Heuristic::getHeuristicValue(from.getState(), to.getState());
+  return cvMmScale * params.heuristic_scale * Heuristic::getHeuristicValue(from.getState(), to.getState(), start.getState(), goal.getState());
 }
 
 int FootstepPlannerEnvironment::GetGoalHeuristic(int stateID)

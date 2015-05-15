@@ -34,7 +34,7 @@ void PathCostHeuristic::loadParams(const ParameterSet& params)
   /// ivInflationRadius
 }
 
-double PathCostHeuristic::getHeuristicValue(const State& from, const State& to) const
+double PathCostHeuristic::getHeuristicValue(const State& from, const State& to, const State& /*start*/, const State& /*goal*/) const
 {
   if (from == to)
     return 0.0;
