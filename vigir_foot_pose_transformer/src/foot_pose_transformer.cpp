@@ -68,10 +68,12 @@ msgs::ErrorStatus FootPoseTransformer::transform(msgs::Step& step, const std::st
 
 msgs::ErrorStatus FootPoseTransformer::transform(msgs::StepPlan& step_plan, const std::string& target_frame) const
 {
-  return transform(step_plan.steps, target_frame);
-  return transform(step_plan.start.left, target_frame);
-  return transform(step_plan.start.right, target_frame);
-  return transform(step_plan.goal.left, target_frame);
-  return transform(step_plan.goal.right, target_frame);
+  msgs::ErrorStatus status;
+  status += transform(step_plan.steps, target_frame);
+  status += transform(step_plan.start.left, target_frame);
+  status += transform(step_plan.start.right, target_frame);
+  status += transform(step_plan.goal.left, target_frame);
+  status += transform(step_plan.goal.right, target_frame);
+  return status;
 }
 }
