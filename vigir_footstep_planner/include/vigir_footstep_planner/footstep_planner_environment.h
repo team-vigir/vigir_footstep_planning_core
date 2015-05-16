@@ -177,7 +177,7 @@ protected:
    * @return The costs (in mm, truncated as int) to reach the
    * planning state ToStateID from within planning state FromStateID.
    */
-  int GetFromToHeuristic(const PlanningState& from, const PlanningState& to);
+  int GetFromToHeuristic(const PlanningState& from, const PlanningState& to, const PlanningState& start, const PlanningState& goal);
 
   /// < operator for planning states.
   struct less

@@ -27,8 +27,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef VIGIR_FOOTSTEP_PLANNING_STEP_COST_HEURISTIC_H__
-#define VIGIR_FOOTSTEP_PLANNING_STEP_COST_HEURISTIC_H__
+#ifndef VIGIR_FOOTSTEP_PLANNING_TRAVEL_TIME_HEURISTIC_H__
+#define VIGIR_FOOTSTEP_PLANNING_TRAVEL_TIME_HEURISTIC_H__
 
 #include <vigir_footstep_planning_lib/plugins/heuristic_plugin.h>
 
@@ -45,7 +45,14 @@ public:
 
   void loadParams(const ParameterSet& params) override;
 
-  double getHeuristicValue(const State& from, const State& to) const override;
+  double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;
+
+protected:
+  double min_duration_per_step;
+
+  /// longest step width
+  double max_step_dist_x_inv;
+  double max_step_dist_y_inv;
 };
 }
 

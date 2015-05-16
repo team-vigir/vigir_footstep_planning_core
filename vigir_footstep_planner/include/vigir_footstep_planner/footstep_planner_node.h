@@ -60,6 +60,7 @@
 
 #include <vigir_footstep_planner/heuristics/euclidean_heuristic.h>
 #include <vigir_footstep_planner/heuristics/step_cost_heuristic.h>
+#include <vigir_footstep_planner/heuristics/travel_time_heuristic.h>
 
 #include <vigir_footstep_planner/footstep_planner.h>
 
