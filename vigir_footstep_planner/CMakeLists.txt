@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(vigir_footstep_planner)
 
-set(CMAKE_BUILD_TYPE Debug)
+if(CMAKE_VERSION VERSION_GREATER "2.8.12")
+  cmake_policy(SET CMP0022 OLD)
+endif()
+
+#set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
@@ -17,9 +21,9 @@ find_package(Boost REQUIRED COMPONENTS system)
 
 find_package(PCL REQUIRED)
 
+#find_package(sbpl REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SBPL REQUIRED sbpl)
-include_directories(${SBPL_INCLUDE_DIRS})
 link_directories(${SBPL_LIBRARY_DIRS})
 
 find_package(OpenCV REQUIRED)
@@ -184,7 +188,8 @@ add_executable(footstep_planner_node src/footstep_planner_node.cpp)
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${boost_LIBRARIES} ${PCL_LIBRARIES} ${SBPL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${catkin_LIBRARIES} ${boost_LIBRARIES} ${PCL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${SBPL_LIBRARIES})
 target_link_libraries(footstep_planner_node ${PROJECT_NAME})
 
 #############
