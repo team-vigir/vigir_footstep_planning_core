@@ -60,17 +60,17 @@ public:
    * orientation.
    * @param max_hash_size
    */
-  PlanningState(double x, double y, double z, double roll, double pitch, double yaw, double swing_height, double step_duration,
+  PlanningState(double x, double y, double z, double roll, double pitch, double yaw, double swing_height, double sway_duration, double step_duration,
                 Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = NULL, const PlanningState *succ_state = NULL);
 
   /**
    * @brief x, y and theta as discrete bin values (as used internally by
    * the planner).
    */
-  PlanningState(int x, int y, double z, double roll, double pitch, int yaw, double swing_height, double step_duration,
+  PlanningState(int x, int y, double z, double roll, double pitch, int yaw, double swing_height, double sway_duration, double step_duration,
                 Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = NULL, const PlanningState *succ_state = NULL);
 
-  PlanningState(const geometry_msgs::Pose& pose, double swing_height, double step_duration,
+  PlanningState(const geometry_msgs::Pose& pose, double swing_height, double sway_duration, double step_duration,
                 Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = NULL, const PlanningState *succ_state = NULL);
 
   /// Create a (discrete) PlanningState from a (continuous) State.
@@ -106,6 +106,7 @@ public:
 
   double getSwingHeight() const { return ivState.getSwingHeight(); }
 
+  double getSwayDuration() const { return ivState.getSwayDuration(); }
   double getStepDuration() const { return ivState.getStepDuration(); }
 
   Leg getLeg() const { return ivState.getLeg(); }

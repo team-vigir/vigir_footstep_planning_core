@@ -29,13 +29,14 @@
 
 namespace vigir_footstep_planning
 {
-Footstep::Footstep(double x, double y, double theta, double swing_height, double step_duration,
+Footstep::Footstep(double x, double y, double theta, double swing_height, double sway_duration, double step_duration,
                    double step_cost, double cell_size, int num_angle_bins, int max_hash_size)
   : ivCellSize(cell_size)
   , ivNumAngleBins(num_angle_bins)
   , ivAngleBinSize(2.0*M_PI / ivNumAngleBins)
   , ivTheta(angle_state_2_cell(theta, ivAngleBinSize))
   , ivSwingHeight(swing_height)
+  , ivSwayDuration(sway_duration)
   , ivStepDuration(step_duration)
   , ivStepCost(step_cost)
   , ivMaxHashSize(max_hash_size)
@@ -47,13 +48,10 @@ Footstep::Footstep(double x, double y, double theta, double swing_height, double
   init(x, y);
 }
 
-
 Footstep::~Footstep()
 {}
 
-
-void
-Footstep::init(double x, double y)
+void Footstep::init(double x, double y)
 {
   int backward_angle;
   int footstep_x;

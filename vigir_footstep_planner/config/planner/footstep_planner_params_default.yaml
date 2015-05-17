@@ -99,8 +99,9 @@ step_range:
   x: [ 0.00, -0.20, -0.17, -0.13,  0.13,  0.20,  0.38]
   y: [ 0.20,  0.25,  0.30,  0.35,  0.35,  0.30,  0.20]
 
+sway_duration: 0.10
 step_duration: 0.63
-swing_height:  0.05     # Ignored if it is less than 0.1
+swing_height:  0.10     # Ignored if it is less than 0.1
 
 ### misc ###################################################################
 feedback_rate: 10.0 # [Hz]

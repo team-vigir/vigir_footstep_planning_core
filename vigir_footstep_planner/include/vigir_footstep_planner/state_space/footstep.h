@@ -58,7 +58,7 @@ public:
    * PlanningState for further explanation).
    * @param max_hash_size The maximal hash size.
    */
-  Footstep(double x, double y, double theta, double swing_height, double step_duration,
+  Footstep(double x, double y, double theta, double swing_height, double sway_duration, double step_duration,
            double step_cost, double cell_size, int num_angle_bins, int max_hash_size);
   ~Footstep();
 
@@ -108,9 +108,7 @@ private:
    * performing the footstep. This is used to calculate the (discretized)
    * reversed footstep.
    */
-  int calculateForwardStep(Leg leg, int global_theta,
-                           double x, double y,
-                           int* footstep_x, int* footstep_y) const;
+  int calculateForwardStep(Leg leg, int global_theta, double x, double y, int* footstep_x, int* footstep_y) const;
 
   /// The parameter for the discretization of the translation.
   double ivCellSize;
@@ -123,6 +121,7 @@ private:
 
   /// default values
   double ivSwingHeight;
+  double ivSwayDuration;
   double ivStepDuration;
 
   double ivStepCost;

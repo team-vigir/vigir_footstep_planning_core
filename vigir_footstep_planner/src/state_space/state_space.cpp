@@ -32,6 +32,7 @@ StateSpace::StateSpace(const EnvironmentParameters& params, std::vector<int*>& s
       {
         Footstep f(cont_val(x, params.cell_size), cont_val(y, params.cell_size), angle_cell_2_state(theta, params.angle_bin_size),
                    params.swing_height,
+                   params.sway_duration,
                    params.step_duration,
                    0.0,
                    params.cell_size,

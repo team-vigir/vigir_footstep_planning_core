@@ -70,6 +70,7 @@ struct EnvironmentParameters
   double max_step_range_width;        // maximal step distance based on step polygon
   double max_step_dist;               // maximal distance in footstep primitives
   double swing_height;                // swing height and step duration used as default
+  double sway_duration;
   double step_duration;
 
   int    hash_table_size;             // Size of the hash table storing the planning states expanded during the search. (Also referred to by max_hash_size.)
