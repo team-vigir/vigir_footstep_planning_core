@@ -47,8 +47,6 @@ public:
   bool getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const override;
 
 protected:
-  double parabol(double x, double y, double a_inv, double b_inv) const;
-
   double a_sway_inv, b_sway_inv, const_sway_time;
   double a_swing_inv, b_swing_inv, const_swing_time;
 };

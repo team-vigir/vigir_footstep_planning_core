@@ -46,9 +46,4 @@ bool TravelTimeStepCostEstimator::getCost(const State& left_foot, const State& r
 
   return true;
 }
-
-double TravelTimeStepCostEstimator::parabol(double x, double y, double a_inv, double b_inv) const
-{
-  return x*x*a_inv + y*y*b_inv;
-}
 }

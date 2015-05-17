@@ -1,6 +1,5 @@
 //=================================================================================================
 // Copyright (c) 2015, Alexander Stumpf, TU Darmstadt
-// Based on http://wiki.ros.org/footstep_planner by Johannes Garimort and Armin Hornung
 // All rights reserved.
 
 // Redistribution and use in source and binary forms, with or without
@@ -30,6 +29,7 @@
 #ifndef VIGIR_FOOTSTEP_PLANNING_TRAVEL_TIME_HEURISTIC_H__
 #define VIGIR_FOOTSTEP_PLANNING_TRAVEL_TIME_HEURISTIC_H__
 
+#include <vigir_footstep_planning_lib/math.h>
 #include <vigir_footstep_planning_lib/plugins/heuristic_plugin.h>
 
 
@@ -48,11 +48,12 @@ public:
   double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;
 
 protected:
-  double min_duration_per_step;
-
   /// longest step width
   double max_step_dist_x_inv;
   double max_step_dist_y_inv;
+
+  double a_sway_inv, b_sway_inv, const_sway_time;
+  double a_swing_inv, b_swing_inv, const_swing_time;
 };
 }
 
