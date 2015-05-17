@@ -59,7 +59,9 @@
 #include <vigir_footstep_planner/step_cost_estimators/travel_time_step_cost_estimator.h>
 
 #include <vigir_footstep_planner/heuristics/euclidean_heuristic.h>
+#include <vigir_footstep_planner/heuristics/hot_map_heuristic.h>
 #include <vigir_footstep_planner/heuristics/step_cost_heuristic.h>
+#include <vigir_footstep_planner/heuristics/occupancy_grid_map_heuristic.h>
 #include <vigir_footstep_planner/heuristics/travel_time_heuristic.h>
 
 #include <vigir_footstep_planner/footstep_planner.h>
