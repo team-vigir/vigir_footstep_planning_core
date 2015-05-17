@@ -445,8 +445,8 @@ bool StateSpace::getStepCost(const State& stand_foot, const State& swing_foot_be
   if (!getStepCost(stand_foot, swing_foot_before, swing_foot_after, cost_d, risk_d))
     return false;
 
-  cost = static_cast<int>(cvMmScale * cost_d);
-  risk = static_cast<int>(cvMmScale * risk_d);
+  cost = static_cast<int>(cvMmScale * cost_d + 0.5);
+  risk = static_cast<int>(cvMmScale * risk_d + 0.5);
 
   return true;
 }
