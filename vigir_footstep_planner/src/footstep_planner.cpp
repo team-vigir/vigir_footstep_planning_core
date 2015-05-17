@@ -1,8 +1,5 @@
 #include <vigir_footstep_planner/footstep_planner.h>
 
-using vigir_gridmap_2d::GridMap2D;
-using vigir_gridmap_2d::GridMap2DPtr;
-
 namespace vigir_footstep_planning
 {
 FootstepPlanner::FootstepPlanner(ros::NodeHandle &nh)
@@ -131,7 +128,10 @@ bool FootstepPlanner::plan(ReplanParams& params)
   ros::WallTime startTime = ros::WallTime::now();
   try
   {
-    ROS_INFO("Start planning (max time: %f, initial eps: %f, decrease eps: %f\n", params.max_time, params.initial_eps, params.dec_eps);
+    ROS_INFO("Start planning (max time: %f, eps_0: %.2f, d_eps: %.2f, h(start, goal): %.3f (l) - %.3f (r))",
+             params.max_time, params.initial_eps, params.dec_eps,
+             (double)ivPlannerEnvironmentPtr->GetGoalHeuristic(ivPlannerEnvironmentPtr->getStateSpace()->ivIdStartFootLeft)/(double)cvMmScale,
+             (double)ivPlannerEnvironmentPtr->GetGoalHeuristic(ivPlannerEnvironmentPtr->getStateSpace()->ivIdStartFootRight)/(double)cvMmScale);
     ret = ivPlannerPtr->replan(&solution_state_ids, params, &path_cost);
   }
   catch (const SBPL_Exception* e)
@@ -157,7 +157,6 @@ bool FootstepPlanner::plan(ReplanParams& params)
       ROS_INFO("Path cost: %f (%i)\n", ivPathCost, path_cost);
 
       ivPlanningStatesIds = solution_state_ids;
-
       return true;
     }
     else
@@ -182,34 +181,9 @@ bool FootstepPlanner::extractPath(const std::vector<int>& state_ids)
 {
   ivPath.clear();
 
-  State s;
-  State start_left;
-  std::vector<int>::const_iterator state_ids_iter = state_ids.begin();
-
-  // first state is always the robot's left foot
-  if (!ivPlannerEnvironmentPtr->getStateSpace()->getState(*state_ids_iter, start_left))
+  for(std::vector<int>::const_iterator state_ids_iter = state_ids.begin(); state_ids_iter != state_ids.end(); ++state_ids_iter)
   {
-    ivPath.clear();
-    return false;
-  }
-  ++state_ids_iter;
-  if (!ivPlannerEnvironmentPtr->getStateSpace()->getState(*state_ids_iter, s))
-  {
-    ivPath.clear();
-    return false;
-  }
-  ++state_ids_iter;
-
-  // check if the robot's left foot can be ommited as first state in the path,
-  // i.e. the robot's right foot is appended first to the path
-  if (s.getLeg() == LEFT)
-    ivPath.push_back(ivStartFootRight);
-  else
-    ivPath.push_back(start_left);
-  ivPath.push_back(s);
-
-  for(; state_ids_iter < state_ids.end(); ++state_ids_iter)
-  {
+    State s;
     if (!ivPlannerEnvironmentPtr->getStateSpace()->getState(*state_ids_iter, s))
     {
       ivPath.clear();
@@ -397,6 +371,8 @@ void FootstepPlanner::reset()
 {
   boost::recursive_mutex::scoped_lock lock(planner_mutex);
 
+  Heuristic::resetPlugins();
+
   // reset the previously calculated paths
   ivPath.clear();
   ivPlanningStatesIds.clear();
@@ -414,6 +390,8 @@ void FootstepPlanner::reset()
 void FootstepPlanner::resetTotally()
 {
   boost::recursive_mutex::scoped_lock lock(planner_mutex);
+
+  Heuristic::resetPlugins();
 
   // reset the previously calculated paths
   ivPath.clear();
@@ -841,7 +819,7 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
       step.foot.foot_index = msgs::Foot::RIGHT;
     else
     {
-      ROS_ERROR("Footstep pose at (%f, %f, %f, %f) is set to NOLEG!",
+      ROS_ERROR("Footstep pose at (%.3f, %.3f, %.3f, %.3f) is set to NOLEG!",
                 swing_foot.getX(), swing_foot.getY(), swing_foot.getZ(), swing_foot.getYaw());
       continue;
     }
@@ -913,31 +891,37 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
   resp.final_eps = ivPlannerPtr->get_final_epsilon();
   resp.planning_time = ivPlannerPtr->get_final_eps_planning_time();
 
-  if (resp.status.error == msgs::ErrorStatus::NO_ERROR && resp.final_eps > 1.4)
+  if (resp.status.error == msgs::ErrorStatus::NO_ERROR && resp.final_eps > 1.8)
     resp.status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlanner", "stepPlanRequestService: Suboptimal plan (eps: " + boost::lexical_cast<std::string>(resp.final_eps) + ")!");
 
   // some debug outputs and visualization stuff
+  double total_cost = 0.0;
+  double last_cost = 0.0;
   for (std::vector<msgs::Step>::const_iterator itr = resp.step_plan.steps.begin(); itr != resp.step_plan.steps.end(); itr++)
   {
     step = *itr;
 
     geometry_msgs::Vector3 n;
     quaternionToNormal(step.foot.pose.orientation, n);
-    ROS_INFO("[%i] x/y/z: %f/%f/%f", step.step_index, step.foot.pose.position.x, step.foot.pose.position.y, step.foot.pose.position.z);
-    ROS_INFO("[%i] n: %f/%f/%f", step.step_index, n.x, n.y, n.z);
-    ROS_INFO("[%i] step duration: %f, swing height: %f", step.step_index, step.step_duration, step.swing_height);
+    ROS_INFO("[%i] x/y/z: %.3f/%.3f/%.3f - %.3f", step.step_index, step.foot.pose.position.x, step.foot.pose.position.y, step.foot.pose.position.z, tf::getYaw(step.foot.pose.orientation));
+    ROS_INFO("[%i] n: %.3f/%.3f/%.3f", step.step_index, n.x, n.y, n.z);
+    ROS_INFO("[%i] step duration: %.3f, swing height: %.3f", step.step_index, step.step_duration, step.swing_height);
     ROS_INFO("[%i] valid: %s, colliding: %s", step.step_index, step.valid ? "y" : "n", step.colliding ? "y" : "n");
-    ROS_INFO("[%i] cost: %f risk: %f", step.step_index, step.cost, step.risk);
+    ROS_INFO("[%i] cost: %.3f risk: %.3f", step.step_index, step.cost, step.risk);
+
+    total_cost += step.cost;
+    last_cost = step.cost;
 
     if (WorldModel::isTerrainModelAvailable())
     {
       double support = 0.0;
       WorldModel::getTerrainModel()->getFootContactSupport(step.foot.pose, support, ivCheckedFootContactSupport);
-      ROS_INFO("[%i] Ground contact support: %f", step.step_index, support);
+      ROS_INFO("[%i] Ground contact support: %.3f", step.step_index, support);
     }
 
     ROS_INFO("-------------------------------------");
   }
+  ROS_INFO("Total path cost: %f (%f)", total_cost, total_cost-last_cost);
 
   if (ivCheckedFootContactSupportPub.getNumSubscribers() > 0)
   {

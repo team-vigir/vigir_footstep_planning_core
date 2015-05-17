@@ -40,7 +40,20 @@ void Heuristic::loadParams(const ParameterSet& params)
   {
     HeuristicPlugin::Ptr& heuristic = *itr;
     if (heuristic)
+    {
       heuristic->loadParams(params);
+      heuristic->reset();
+    }
+  }
+}
+
+void Heuristic::resetPlugins()
+{
+  for (std::vector<HeuristicPlugin::Ptr>::iterator itr = Instance()->heuristics.begin(); itr != Instance()->heuristics.end(); itr++)
+  {
+    HeuristicPlugin::Ptr& heuristic = *itr;
+    if (heuristic)
+      heuristic->reset();
   }
 }
 

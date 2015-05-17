@@ -46,6 +46,7 @@ class Heuristic
 public:
   static void loadPlugins();
   static void loadParams(const ParameterSet& params);
+  static void resetPlugins();
 
   static double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal);
 
