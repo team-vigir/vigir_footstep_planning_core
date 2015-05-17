@@ -118,6 +118,8 @@ set(HEADERS
   include/${PROJECT_NAME}/footstep_planner.h
   include/${PROJECT_NAME}/heuristics/euclidean_heuristic.h
   include/${PROJECT_NAME}/heuristics/heuristic.h
+  include/${PROJECT_NAME}/heuristics/hot_map_heuristic.h
+  include/${PROJECT_NAME}/heuristics/occupancy_grid_map_heuristic.h
   include/${PROJECT_NAME}/heuristics/path_cost_heuristic.h
   include/${PROJECT_NAME}/heuristics/step_cost_heuristic.h
   include/${PROJECT_NAME}/heuristics/travel_time_heuristic.h
@@ -151,6 +153,8 @@ set(SOURCES
   src/footstep_planner.cpp
   src/heuristics/euclidean_heuristic.cpp
   src/heuristics/heuristic.cpp
+  src/heuristics/hot_map_heuristic.cpp
+  src/heuristics/occupancy_grid_map_heuristic.cpp
   src/heuristics/path_cost_heuristic.cpp
   src/heuristics/step_cost_heuristic.cpp
   src/heuristics/travel_time_heuristic.cpp
