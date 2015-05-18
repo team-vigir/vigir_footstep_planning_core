@@ -116,6 +116,7 @@ set(HEADERS
   include/${PROJECT_NAME}/footstep_planner_environment.h
   include/${PROJECT_NAME}/footstep_planner_node.h
   include/${PROJECT_NAME}/footstep_planner.h
+  include/${PROJECT_NAME}/heuristics/dynamics_heuristic.h
   include/${PROJECT_NAME}/heuristics/euclidean_heuristic.h
   include/${PROJECT_NAME}/heuristics/heuristic.h
   include/${PROJECT_NAME}/heuristics/hot_map_heuristic.h
@@ -123,6 +124,9 @@ set(HEADERS
   include/${PROJECT_NAME}/heuristics/path_cost_heuristic.h
   include/${PROJECT_NAME}/heuristics/step_cost_heuristic.h
   include/${PROJECT_NAME}/heuristics/travel_time_heuristic.h
+  include/${PROJECT_NAME}/post_processor/post_processor.h
+  include/${PROJECT_NAME}/post_processor/step_dynamics_post_process.h
+  include/${PROJECT_NAME}/robot_model/dynamics_reachability.h
   include/${PROJECT_NAME}/robot_model/reachability_polygon.h
   include/${PROJECT_NAME}/robot_model/robot_model.h
   include/${PROJECT_NAME}/state_space/footstep.h
@@ -151,6 +155,7 @@ set(SOURCES
   src/footstep_planner_environment.cpp
   src/footstep_planner_node.cpp
   src/footstep_planner.cpp
+  src/heuristics/dynamics_heuristic.cpp
   src/heuristics/euclidean_heuristic.cpp
   src/heuristics/heuristic.cpp
   src/heuristics/hot_map_heuristic.cpp
@@ -158,6 +163,9 @@ set(SOURCES
   src/heuristics/path_cost_heuristic.cpp
   src/heuristics/step_cost_heuristic.cpp
   src/heuristics/travel_time_heuristic.cpp
+  src/post_processor/post_processor.cpp
+  src/post_processor/step_dynamics_post_process.cpp
+  src/robot_model/dynamics_reachability.cpp
   src/robot_model/reachability_polygon.cpp
   src/robot_model/robot_model.cpp
   src/state_space/footstep.cpp

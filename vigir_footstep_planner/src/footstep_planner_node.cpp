@@ -11,7 +11,10 @@ void FootstepPlannerNode::initPlugins(ros::NodeHandle &nh)
   PluginManager::addPlugin(new RobotModelPlugin(nh));
   PluginManager::addPlugin<StepPlanMsgPlugin>();
 
+  PluginManager::addPlugin<DynamicsReachability>();
   PluginManager::addPlugin<ReachabilityPolygon>();
+
+  PluginManager::addPlugin<StepDynamicsPostProcessPlugin>();
 
   // note: ordered by name -> collision check order
   PluginManager::addPlugin(new TerrainModel("1_terrain_model", nh, "/terrain_model"));
@@ -25,6 +28,7 @@ void FootstepPlannerNode::initPlugins(ros::NodeHandle &nh)
   PluginManager::addPlugin<GroundContactStepCostEstimator>();
 
   PluginManager::addPlugin<EuclideanHeuristic>();
+  PluginManager::addPlugin<DynamicsHeuristic>();
   PluginManager::addPlugin<StepCostHeuristic>();
 }
 

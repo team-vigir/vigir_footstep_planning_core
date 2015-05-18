@@ -60,21 +60,20 @@ public:
    * orientation.
    * @param max_hash_size
    */
-  PlanningState(double x, double y, double z, double roll, double pitch, double yaw, double swing_height, double sway_duration, double step_duration,
-                Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = NULL, const PlanningState *succ_state = NULL);
+  PlanningState(double x, double y, double z, double roll, double pitch, double yaw,
+                Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = nullptr, const PlanningState *succ_state = nullptr);
 
   /**
    * @brief x, y and theta as discrete bin values (as used internally by
    * the planner).
    */
-  PlanningState(int x, int y, double z, double roll, double pitch, int yaw, double swing_height, double sway_duration, double step_duration,
-                Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = NULL, const PlanningState *succ_state = NULL);
+  PlanningState(int x, int y, double z, double roll, double pitch, int yaw,
+                Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = nullptr, const PlanningState *succ_state = nullptr);
 
-  PlanningState(const geometry_msgs::Pose& pose, double swing_height, double sway_duration, double step_duration,
-                Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = NULL, const PlanningState *succ_state = NULL);
+  PlanningState(const geometry_msgs::Pose& pose, Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = nullptr, const PlanningState *succ_state = nullptr);
 
   /// Create a (discrete) PlanningState from a (continuous) State.
-  PlanningState(const State& s, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = NULL, const PlanningState *succ_state = NULL);
+  PlanningState(const State& s, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state = nullptr, const PlanningState *succ_state = nullptr);
 
   /// Copy constructor.
   PlanningState(const PlanningState& s);

@@ -8,7 +8,7 @@ max_hash_size: 1048576
 
 # default cost to perform one footstep (in addition to ALL other costs, corresponds to 'meters')
 const_step_cost_estimator:
-  step_cost: 0.05
+  step_cost: 0.1
 
 # parameters for BoundaryStepCostEstimator (multipliers)
 boundary_step_cost_estimator:
@@ -27,6 +27,8 @@ dynamic_step_cost_estimator:
   upper_step_limit: 0.5
   max_near_distance: 1.0
 
+# parameters for heuristics
+max_heuristic_value: 1000.0
 heuristic_scale: 1.0
 
 # cost to estimate the difference between the current orientation and the goal
@@ -103,8 +105,13 @@ sway_duration: 0.10
 step_duration: 0.63
 swing_height:  0.10     # Ignored if it is less than 0.1
 
+dynamics:
+  body: # zero values will disable dynamic constraints
+    max_vel: 0.0
+    max_acc: 0.0
+
 ### misc ###################################################################
 feedback_rate: 10.0 # [Hz]
-threads: 2
+threads: 4
 jobs_per_thread: 50
 

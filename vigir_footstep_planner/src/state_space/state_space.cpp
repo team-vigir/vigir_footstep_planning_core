@@ -1,4 +1,4 @@
-#include <vigir_footstep_planner/footstep_planner_environment.h>
+#include <vigir_footstep_planner/state_space/state_space.h>
 
 namespace vigir_footstep_planning
 {
@@ -30,15 +30,7 @@ StateSpace::StateSpace(const EnvironmentParameters& params, std::vector<int*>& s
       // generate area of samplings for gpr/map-based planning
       for (int theta = params.ivMaxInvStepRangeTheta; theta <= params.ivMaxStepRangeTheta; theta++)
       {
-        Footstep f(cont_val(x, params.cell_size), cont_val(y, params.cell_size), angle_cell_2_state(theta, params.angle_bin_size),
-                   params.swing_height,
-                   params.sway_duration,
-                   params.step_duration,
-                   0.0,
-                   params.cell_size,
-                   params.num_angle_bins,
-                   params.hash_table_size);
-
+        Footstep f(cont_val(x, params.cell_size), cont_val(y, params.cell_size), angle_cell_2_state(theta, params.angle_bin_size), 0.0, params.cell_size, params.num_angle_bins, params.hash_table_size);
         ivContFootstepSet.push_back(f);
       }
     }
@@ -344,7 +336,7 @@ PlanningState* StateSpace::createNewHashEntry(const PlanningState& s)
   unsigned int state_hash = s.getHashTag();
   PlanningState* new_state = new PlanningState(s);
 
-  boost::mutex::scoped_lock lock(hash_table_mutex);
+  boost::unique_lock<boost::shared_mutex> lock(hash_table_shared_mutex);
 
   size_t state_id = ivStateId2State.size();
   assert(state_id < (size_t)std::numeric_limits<int>::max());
@@ -377,7 +369,7 @@ PlanningState* StateSpace::getHashEntry(const PlanningState& s)
 {
   unsigned int state_hash = s.getHashTag();
   std::vector<PlanningState*>::const_iterator state_iter;
-  boost::mutex::scoped_lock lock(hash_table_mutex);
+  boost::shared_lock<boost::shared_mutex> lock(hash_table_shared_mutex);
   for (state_iter = ivpStateHash2State[state_hash].begin(); state_iter != ivpStateHash2State[state_hash].end(); ++state_iter)
   {
     if (*(*state_iter) == s)
@@ -401,14 +393,74 @@ bool StateSpace::reachable(const State& stand_foot, const State& swing_foot_afte
   return RobotModel::isReachable(stand_foot, swing_foot_after);
 }
 
-bool StateSpace::closeToStart(const State& from) const
+bool StateSpace::closeToStart(const PlanningState& from) const
 {
-  return reachable(ivStateId2State[ivIdPlanningStart]->getState(), from);
+  assert(from.getSuccState() != nullptr);
+  return reachable(ivStateId2State[ivIdPlanningStart]->getState(), from.getState());
+
+  // check if first goal pose can be reached
+  const State& left = (from.getLeg() == LEFT) ? from.getState() : from.getSuccState()->getState();
+  const State& right = (from.getLeg() == RIGHT) ? from.getState() : from.getSuccState()->getState();
+  State start = ivStateId2State[ivIdPlanningStart]->getState();
+
+  PostProcessor::postProcessBackward(left, right, start);
+  if (!reachable(from.getState(), start))
+    return false;
+
+  // check if second (final) goal can be reached
+  State final_start;
+  if (start.getLeg() == LEFT)
+  {
+    final_start = start_foot_right->getState();
+    PostProcessor::postProcessBackward(start, right, final_start);
+  }
+  else
+  {
+    final_start = start_foot_left->getState();
+    PostProcessor::postProcessBackward(left, start, final_start);
+  }
+
+  final_start.setBodyVelocity(geometry_msgs::Vector3()); // set velocity to zero
+  if (!reachable(start, final_start))
+    return false;
+
+  return true;
 }
 
-bool StateSpace::closeToGoal(const State& from) const
+bool StateSpace::closeToGoal(const PlanningState& from) const
 {
-  return reachable(from, ivStateId2State[ivIdPlanningGoal]->getState());
+  if (from.getLeg() == ivStateId2State[ivIdPlanningGoal]->getLeg())
+    return false;
+
+  assert(from.getPredState() != nullptr);
+
+  // check if first goal pose can be reached
+  const State& left = (from.getLeg() == LEFT) ? from.getState() : from.getPredState()->getState();
+  const State& right = (from.getLeg() == RIGHT) ? from.getState() : from.getPredState()->getState();
+  State goal = ivStateId2State[ivIdPlanningGoal]->getState();
+
+  PostProcessor::postProcessForward(left, right, goal);
+  if (!reachable(from.getState(), goal))
+    return false;
+
+  // check if second (final) goal can be reached
+  State final_goal;
+  if (goal.getLeg() == LEFT)
+  {
+    final_goal = goal_foot_right->getState();
+    PostProcessor::postProcessForward(goal, right, final_goal);
+  }
+  else
+  {
+    final_goal = goal_foot_left->getState();
+    PostProcessor::postProcessForward(left, goal, final_goal);
+  }
+
+  final_goal.setBodyVelocity(geometry_msgs::Vector3()); // set velocity to zero
+  if (!reachable(goal, final_goal))
+    return false;
+
+  return true;
 }
 
 bool StateSpace::getStepCost(const State& stand_foot, const State& swing_foot_before, const State& swing_foot_after, double& cost, double& risk) const

@@ -51,21 +51,27 @@ bool StepCostEstimator::getCost(const State& left_foot, const State& right_foot,
   risk = 0.0;
   double risk_multiplier = 1.0;
 
+  //ROS_INFO("-----------------------------------");
+
   for (std::vector<StepCostEstimatorPlugin::Ptr>::const_iterator itr = Instance()->step_cost_estimators.begin(); itr != Instance()->step_cost_estimators.end(); itr++)
   {
     const StepCostEstimatorPlugin::Ptr& step_cost_estimator = *itr;
+    if (!step_cost_estimator)
+      continue;
+
     double c, c_m, r, r_m;
-    if (step_cost_estimator && !step_cost_estimator->getCost(left_foot, right_foot, swing_foot, c, c_m, r, r_m))
-      return false;
-    else
+    if (step_cost_estimator->getCost(left_foot, right_foot, swing_foot, c, c_m, r, r_m))
     {
       cost += c;
       cost_multiplier *= c_m;
       risk += r;
       risk_multiplier *= r_m;
+      //ROS_INFO("[%s]: %.3f %.3f %.3f %.3f", step_cost_estimator->getName().c_str(), c, r, c_m, r_m);
     }
+    else
+      return false;
   }
-  
+
   cost *= cost_multiplier;
   risk *= risk_multiplier;
 

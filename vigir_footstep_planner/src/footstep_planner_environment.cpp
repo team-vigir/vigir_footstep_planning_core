@@ -225,7 +225,7 @@ void FootstepPlannerEnvironment::GetPreds(int TargetStateID, std::vector<int> *P
   stateExpanded(*current);
 
   // check if start is reachable
-  if (state_space->closeToStart(current->getState()))
+  if (state_space->closeToStart(*current))
   {
     const PlanningState* start = state_space->ivStateId2State[state_space->ivIdPlanningStart];
     if (*(current->getSuccState()) == *start)
@@ -338,7 +338,7 @@ void FootstepPlannerEnvironment::GetSuccs(int SourceStateID, std::vector<int> *S
   stateExpanded(*current);
 
   // check if goal is reachable
-  if (state_space->closeToGoal(current->getState()))
+  if (state_space->closeToGoal(*current))
   {
     const PlanningState* goal = state_space->ivStateId2State[state_space->ivIdPlanningGoal];
     if (*(current->getPredState()) == *goal)

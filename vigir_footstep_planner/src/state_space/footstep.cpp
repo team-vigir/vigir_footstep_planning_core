@@ -29,15 +29,11 @@
 
 namespace vigir_footstep_planning
 {
-Footstep::Footstep(double x, double y, double theta, double swing_height, double sway_duration, double step_duration,
-                   double step_cost, double cell_size, int num_angle_bins, int max_hash_size)
+Footstep::Footstep(double x, double y, double theta, double step_cost, double cell_size, int num_angle_bins, int max_hash_size)
   : ivCellSize(cell_size)
   , ivNumAngleBins(num_angle_bins)
   , ivAngleBinSize(2.0*M_PI / ivNumAngleBins)
   , ivTheta(angle_state_2_cell(theta, ivAngleBinSize))
-  , ivSwingHeight(swing_height)
-  , ivSwayDuration(sway_duration)
-  , ivStepDuration(step_duration)
   , ivStepCost(step_cost)
   , ivMaxHashSize(max_hash_size)
   , ivDiscSuccessorLeft(num_angle_bins)
@@ -71,7 +67,12 @@ void Footstep::init(double x, double y)
 
 PlanningState Footstep::performMeOnThisState(const PlanningState& current) const
 {
-  State state = current.getState();
+  assert(current.getPredState() != nullptr);
+
+  const State& left = (current.getLeg() == LEFT) ? current.getState() : current.getPredState()->getState();
+  const State& right = (current.getLeg() == RIGHT) ? current.getState() : current.getPredState()->getState();
+
+  State swing = current.getState();
   int x = current.getX();
   int y = current.getY();
   int yaw = current.getYaw();
@@ -88,7 +89,7 @@ PlanningState Footstep::performMeOnThisState(const PlanningState& current) const
     x += xy.first;
     y += xy.second;
     yaw += ivTheta;
-    state.setLeg(LEFT);
+    swing.setLeg(LEFT);
   }
   else // leg == LEFT
   {
@@ -96,24 +97,31 @@ PlanningState Footstep::performMeOnThisState(const PlanningState& current) const
     x += xy.first;
     y += xy.second;
     yaw -= ivTheta;
-    state.setLeg(RIGHT);
+    swing.setLeg(RIGHT);
   }
 
-  state.setX(cell_2_state(x, ivCellSize));
-  state.setY(cell_2_state(y, ivCellSize));
-  state.setZ(current.getState().getZ());
+  swing.setX(cell_2_state(x, ivCellSize));
+  swing.setY(cell_2_state(y, ivCellSize));
+  swing.setZ(current.getState().getZ());
 
   double yaw_d = angles::normalize_angle(angle_cell_2_state(yaw, ivAngleBinSize));
-  state.setYaw(yaw_d);
+  swing.setYaw(yaw_d);
 
-  WorldModel::update3DData(state);
+  WorldModel::update3DData(swing);
 
-  return PlanningState(state, ivCellSize, ivAngleBinSize, ivMaxHashSize, &current, NULL);
+  PostProcessor::postProcessForward(left, right, swing);
+
+  return PlanningState(swing, ivCellSize, ivAngleBinSize, ivMaxHashSize, &current, nullptr);
 }
 
 PlanningState Footstep::reverseMeOnThisState(const PlanningState& current) const
 {
-  State state = current.getState();
+  assert(current.getSuccState() != nullptr);
+
+  const State& left = (current.getLeg() == LEFT) ? current.getState() : current.getSuccState()->getState();
+  const State& right = (current.getLeg() == RIGHT) ? current.getState() : current.getSuccState()->getState();
+
+  State swing = current.getState();
   int x = current.getX();
   int y = current.getY();
   int yaw = current.getYaw();
@@ -130,7 +138,7 @@ PlanningState Footstep::reverseMeOnThisState(const PlanningState& current) const
     x += xy.first;
     y += xy.second;
     yaw += ivTheta;
-    state.setLeg(LEFT);
+    swing.setLeg(LEFT);
   }
   else // leg == LEFT
   {
@@ -138,19 +146,21 @@ PlanningState Footstep::reverseMeOnThisState(const PlanningState& current) const
     x += xy.first;
     y += xy.second;
     yaw -= ivTheta;
-    state.setLeg(RIGHT);
+    swing.setLeg(RIGHT);
   }
 
-  state.setX(cell_2_state(x, ivCellSize));
-  state.setY(cell_2_state(y, ivCellSize));
-  state.setZ(current.getState().getZ());
+  swing.setX(cell_2_state(x, ivCellSize));
+  swing.setY(cell_2_state(y, ivCellSize));
+  swing.setZ(current.getState().getZ());
 
   double yaw_d = angles::normalize_angle(angle_cell_2_state(yaw, ivAngleBinSize));
-  state.setYaw(yaw_d);
+  swing.setYaw(yaw_d);
 
-  WorldModel::update3DData(state);
+  WorldModel::update3DData(swing);
 
-  return PlanningState(state, ivCellSize, ivAngleBinSize, ivMaxHashSize, NULL, &current);
+  PostProcessor::postProcessBackward(left, right, swing);
+
+  return PlanningState(swing, ivCellSize, ivAngleBinSize, ivMaxHashSize, nullptr, &current);
 }
 
 int Footstep::calculateForwardStep(Leg leg, int global_theta, double x, double y, int* footstep_x, int* footstep_y) const

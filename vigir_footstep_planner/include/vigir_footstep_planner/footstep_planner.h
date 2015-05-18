@@ -64,7 +64,6 @@
 #include <vigir_footstep_planning_lib/parameter_manager.h>
 #include <vigir_footstep_planning_lib/modeling/state.h>
 #include <vigir_footstep_planning_lib/plugins/plugin_manager.h>
-#include <vigir_footstep_planning_lib/plugins/post_process_plugin.h>
 #include <vigir_footstep_planning_lib/plugins/step_plan_msg_plugin.h>
 
 #include <vigir_foot_pose_transformer/foot_pose_transformer.h>
@@ -74,6 +73,9 @@
 #include <vigir_footstep_planner/state_space/footstep.h>
 #include <vigir_footstep_planner/step_cost_estimators/step_cost_estimator.h>
 #include <vigir_footstep_planner/heuristics/heuristic.h>
+
+#include <vigir_footstep_planner/post_processor/post_processor.h>
+
 #include <vigir_footstep_planner/robot_model/robot_model.h>
 #include <vigir_footstep_planner/world_model/world_model.h>
 
@@ -223,9 +225,6 @@ protected:
   /// @brief Returns the foot pose of a leg for a given robot pose.
   State getFootPose(const State& robot, Leg leg, double dx, double dy, double dyaw);
   State getFootPose(const State& robot, Leg leg);
-
-  /// @brief get parallel foot
-  State getParallelFootPose(const State& foot, double additional_seperation = 0.0);
 
   /// @brief Sets the planning algorithm used by SBPL.
   void setPlanner();

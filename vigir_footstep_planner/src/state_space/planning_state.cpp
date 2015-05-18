@@ -27,11 +27,12 @@
 #include <vigir_footstep_planner/state_space/planning_state.h>
 
 
+
 namespace vigir_footstep_planning
 {
-PlanningState::PlanningState(double x, double y, double z, double roll, double pitch, double yaw, double swing_height, double sway_duration, double step_duration,
+PlanningState::PlanningState(double x, double y, double z, double roll, double pitch, double yaw,
                              Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state, const PlanningState *succ_state)
-  : ivState(State(x, y, z, roll, pitch, yaw, swing_height, sway_duration, step_duration, leg))
+  : ivState(State(x, y, z, roll, pitch, yaw, leg))
   , ivX(state_2_cell(x, cell_size))
   , ivY(state_2_cell(y, cell_size))
   , ivYaw(angle_state_2_cell(yaw, angle_bin_size))
@@ -45,9 +46,9 @@ PlanningState::PlanningState(double x, double y, double z, double roll, double p
 }
 
 
-PlanningState::PlanningState(int x, int y, double z, double roll, double pitch, int yaw, double swing_height, double sway_duration, double step_duration,
+PlanningState::PlanningState(int x, int y, double z, double roll, double pitch, int yaw,
                              Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state, const PlanningState *succ_state)
-  : ivState(State(cell_2_state(x, cell_size), cell_2_state(y, cell_size), z, roll, pitch, angles::normalize_angle(angle_cell_2_state(yaw, angle_bin_size)), swing_height, sway_duration, step_duration, leg))
+  : ivState(State(cell_2_state(x, cell_size), cell_2_state(y, cell_size), z, roll, pitch, angles::normalize_angle(angle_cell_2_state(yaw, angle_bin_size)), leg))
   , ivX(x)
   , ivY(y)
   , ivYaw(yaw)
@@ -60,9 +61,9 @@ PlanningState::PlanningState(int x, int y, double z, double roll, double pitch, 
   ivHashTag = calc_hash_tag(ivX, ivY, ivYaw, leg, hash_pred, hash_succ, max_hash_size);
 }
 
-PlanningState::PlanningState(const geometry_msgs::Pose& pose, double swing_height, double sway_duration, double step_duration,
+PlanningState::PlanningState(const geometry_msgs::Pose& pose,
                              Leg leg, double cell_size, double angle_bin_size, int max_hash_size, const PlanningState *pred_state, const PlanningState *succ_state)
-  : ivState(State(pose, swing_height, sway_duration, step_duration, leg))
+  : ivState(State(pose, leg))
   , ivX(state_2_cell(pose.position.x, cell_size))
   , ivY(state_2_cell(pose.position.y, cell_size))
   , ivpPredState(pred_state)

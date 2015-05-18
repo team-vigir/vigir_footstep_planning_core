@@ -24,6 +24,7 @@ void ExpandStateJob::run()
   new_state = NULL;
   successful = false;
 
+  /// TODO: backward search case
   next.reset(new PlanningState(footstep.performMeOnThisState(state)));
   State& next_state = next->getState();
 

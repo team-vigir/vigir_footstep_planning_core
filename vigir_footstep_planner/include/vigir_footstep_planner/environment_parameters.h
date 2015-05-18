@@ -69,9 +69,6 @@ struct EnvironmentParameters
   double max_inverse_step_range_x, max_inverse_step_range_y, max_inverse_step_range_theta;
   double max_step_range_width;        // maximal step distance based on step polygon
   double max_step_dist;               // maximal distance in footstep primitives
-  double swing_height;                // swing height and step duration used as default
-  double sway_duration;
-  double step_duration;
 
   int    hash_table_size;             // Size of the hash table storing the planning states expanded during the search. (Also referred to by max_hash_size.)
   double cell_size;                   // The size of each grid cell used to discretize the robot positions.

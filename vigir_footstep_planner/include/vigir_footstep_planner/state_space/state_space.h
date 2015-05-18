@@ -37,6 +37,8 @@
 #include <tr1/unordered_set>
 #include <tr1/hashtable.h>
 
+#include <sbpl/headers.h>
+
 #include <vigir_footstep_planning_lib/math.h>
 #include <vigir_footstep_planning_lib/modeling/state.h>
 
@@ -47,6 +49,7 @@
 #include <vigir_footstep_planner/world_model/grid_map_2d.h>
 
 #include <vigir_footstep_planner/robot_model/robot_model.h>
+#include <vigir_footstep_planner/post_processor/post_processor.h>
 #include <vigir_footstep_planner/step_cost_estimators/step_cost_estimator.h>
 #include <vigir_footstep_planner/heuristics/heuristic.h>
 
@@ -163,13 +166,13 @@ public:
    * @return True iff 'goal' can be reached by an arbitrary footstep.
    * (Used for forward planning.)
    */
-  bool closeToGoal(const State& from) const;
+  bool closeToGoal(const PlanningState& from) const;
 
   /**
    * @return True iff 'start' can be reached by an arbitrary footstep.
    * (Used for backward planning.)
    */
-  bool closeToStart(const State& from) const;
+  bool closeToStart(const PlanningState& from) const;
 
 
   /// @return computes step cost based on the swing_foot from 'before' to 'after' while standing on stand_foot
@@ -224,7 +227,7 @@ public:
 
   exp_states_t ivRandomStates;  ///< random intermediate states for R*
 
-  mutable boost::mutex hash_table_mutex;
+  mutable boost::shared_mutex hash_table_shared_mutex;
 };
 }
 

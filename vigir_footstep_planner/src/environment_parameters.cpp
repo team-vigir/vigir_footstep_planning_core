@@ -45,11 +45,6 @@ EnvironmentParameters::EnvironmentParameters(const ParameterSet& params)
   params.getParam("collision_check/num_angle_bins", num_angle_bins);
   angle_bin_size = 2.0*M_PI / static_cast<double>(num_angle_bins);
 
-  // standard step params
-  params.getParam("sway_duration", sway_duration);
-  params.getParam("step_duration", step_duration);
-  params.getParam("swing_height", swing_height);
-
   // step range
   XmlRpc::XmlRpcValue step_range_x;
   XmlRpc::XmlRpcValue step_range_y;

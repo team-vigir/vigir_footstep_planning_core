@@ -28,7 +28,10 @@
 #define FOOTSTEP_PLANNER_FOOTSTEP_H_
 
 #include <vigir_footstep_planner/state_space/planning_state.h>
+
+#include <vigir_footstep_planner/post_processor/post_processor.h>
 #include <vigir_footstep_planner/world_model/world_model.h>
+
 
 
 namespace vigir_footstep_planning
@@ -58,8 +61,7 @@ public:
    * PlanningState for further explanation).
    * @param max_hash_size The maximal hash size.
    */
-  Footstep(double x, double y, double theta, double swing_height, double sway_duration, double step_duration,
-           double step_cost, double cell_size, int num_angle_bins, int max_hash_size);
+  Footstep(double x, double y, double theta, double step_cost, double cell_size, int num_angle_bins, int max_hash_size);
   ~Footstep();
 
   /**
@@ -118,11 +120,6 @@ private:
 
   /// The (discretized) rotation of the footstep.
   int ivTheta;
-
-  /// default values
-  double ivSwingHeight;
-  double ivSwayDuration;
-  double ivStepDuration;
 
   double ivStepCost;
 
