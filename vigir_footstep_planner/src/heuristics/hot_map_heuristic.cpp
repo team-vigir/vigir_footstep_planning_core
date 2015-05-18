@@ -27,6 +27,8 @@ void HotMapHeuristic::reset()
 
 void HotMapHeuristic::loadParams(const ParameterSet& params)
 {
+  HeuristicPlugin::loadParams(params);
+
   params.getParam("collision_check/cell_size", cell_size);
   int num_angle_bins;
   params.getParam("collision_check/num_angle_bins", num_angle_bins);

@@ -14,6 +14,8 @@ StepCostHeuristic::StepCostHeuristic()
 
 void StepCostHeuristic::loadParams(const ParameterSet& params)
 {
+  HeuristicPlugin::loadParams(params);
+
   params.getParam("const_step_cost_estimator/step_cost", step_cost, 0.1);
   params.getParam("diff_angle_cost", diff_angle_cost);
   params.getParam("max_step_dist/x", max_step_dist_x_inv);

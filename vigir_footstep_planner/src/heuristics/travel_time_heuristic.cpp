@@ -14,6 +14,8 @@ TravelTimeHeuristic::TravelTimeHeuristic()
 
 void TravelTimeHeuristic::loadParams(const ParameterSet& params)
 {
+  HeuristicPlugin::loadParams(params);
+
   params.getParam("max_step_dist/x", max_step_dist_x_inv);
   max_step_dist_x_inv = 1.0/max_step_dist_x_inv;
   params.getParam("max_step_dist/y", max_step_dist_y_inv);

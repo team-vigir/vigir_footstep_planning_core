@@ -32,7 +32,7 @@ double OccupancyGridMapHeuristic::getHeuristicValue(const State& from, const Sta
     return 0.0;
 
   if (d < 0.01)
-    return 1000.0;
+    return max_heuristic_value;
 
   return 5.0*std::max(0.0, 0.5-d);
 }

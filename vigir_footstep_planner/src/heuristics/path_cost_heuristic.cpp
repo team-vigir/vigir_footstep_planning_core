@@ -23,6 +23,8 @@ PathCostHeuristic::~PathCostHeuristic()
 
 void PathCostHeuristic::loadParams(const ParameterSet& params)
 {
+  HeuristicPlugin::loadParams(params);
+
   params.getParam("collision_check/cell_size", ivCellSize);
   params.getParam("collision_check/num_angle_bins", ivNumAngleBins);
   ivAngleBinSize = 2.0*M_PI / static_cast<double>(ivNumAngleBins);
