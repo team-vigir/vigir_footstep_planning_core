@@ -661,7 +661,7 @@ msgs::ErrorStatus FootstepPlanner::planPattern(msgs::StepPlanRequestService::Req
 
   // generate common used step placements
   Footstep parallel_step(0.0, env_params->foot_seperation, 0.0, 0.0, cell_size, num_angle_bins, env_params->hash_table_size);
-  Footstep parallel_step_extra(0.0, env_params->foot_seperation*(extra_seperation_factor-1.0), 0.0, 0.0, cell_size, num_angle_bins, env_params->hash_table_size);
+  Footstep parallel_step_extra(0.0, env_params->foot_seperation*extra_seperation_factor, 0.0, 0.0, cell_size, num_angle_bins, env_params->hash_table_size);
   Footstep step_up(1.4*env_params->foot_size.x, env_params->foot_seperation, 0.0, 0.0, cell_size, num_angle_bins, env_params->hash_table_size);
   Footstep step_down(1.1*env_params->foot_size.x, env_params->foot_seperation, 0.0, 0.0, cell_size, num_angle_bins, env_params->hash_table_size);
 
