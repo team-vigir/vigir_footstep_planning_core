@@ -283,7 +283,12 @@ bool PatternGenerator::updateFeetStartPoseByStepMap(const std::map<unsigned int,
 
 void PatternGenerator::updateFootstepMap(std::map<unsigned int, msgs::Step>& map, const std::vector<msgs::Step>& vec) const
 {
-  for (std::vector<msgs::Step>::const_iterator itr = vec.begin(); itr != vec.end(); itr++)
+  std::vector<msgs::Step>::const_iterator itr = vec.begin();
+
+  if (!map.empty())
+   itr++;
+
+  for (; itr != vec.end(); itr++)
     map[itr->step_index] = *itr;
 }
 
