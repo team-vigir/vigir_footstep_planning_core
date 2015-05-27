@@ -36,7 +36,6 @@
 #include <vigir_footstep_planner/state_space/footstep.h>
 #include <vigir_footstep_planner/state_space/planning_state.h>
 #include <vigir_footstep_planner/state_space/state_space.h>
-#include <vigir_footstep_planner/world_model/world_model.h>
 
 
 

@@ -153,15 +153,6 @@ public:
 
   PlanningState *createHashEntryIfNotExists(const PlanningState& s);
 
-
-  /**
-   * @return True iff 'swing_foot_after' can be reached by an arbitrary footstep that
-   * can be performed by the robot from within 'stand_foot'. This check is based
-   * on given step range polygon in config. (This method is used to check
-   * whether the goal/start can be reached from within the current state.)
-   */
-  bool reachable(const State& stand_foot, const State& State) const;
-
   /**
    * @return True iff 'goal' can be reached by an arbitrary footstep.
    * (Used for forward planning.)

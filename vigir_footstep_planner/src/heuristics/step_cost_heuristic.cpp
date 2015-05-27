@@ -30,9 +30,10 @@ double StepCostHeuristic::getHeuristicValue(const State& from, const State& to, 
     return 0.0;
 
   // expected steps
-  tf::Transform step = from.getPose().inverse() * to.getPose();
-  double expected_steps_x = std::abs(step.getOrigin().x()) * max_step_dist_x_inv;
-  double expected_steps_y = std::abs(step.getOrigin().y()) * max_step_dist_y_inv;
+  tf::Transform dstep;
+  getDeltaStep(from.getPose(), to.getPose(), dstep);
+  double expected_steps_x = std::abs(dstep.getOrigin().x()) * max_step_dist_x_inv;
+  double expected_steps_y = std::abs(dstep.getOrigin().y()) * max_step_dist_y_inv;
   double expected_steps = std::ceil(std::max(expected_steps_x, expected_steps_y));
 
   double diff_angle = 0.0;

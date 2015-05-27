@@ -331,7 +331,7 @@ msgs::ErrorStatus FootstepPlanner::updateStepPlan(msgs::StepPlan& step_plan, uin
       // check reachability
       if (mode & msgs::UpdateMode::UPDATE_MODE_CHECK_VALIDITY)
       {
-        cur_step.valid = ivPlannerEnvironmentPtr->getStateSpace()->reachable(prev_state, cur_state);
+        cur_step.valid = RobotModel::isReachable(prev_state, cur_state);
       }
 
       // check collision

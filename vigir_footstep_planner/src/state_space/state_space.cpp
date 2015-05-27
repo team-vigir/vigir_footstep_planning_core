@@ -388,15 +388,10 @@ PlanningState* StateSpace::createHashEntryIfNotExists(const PlanningState& s)
   return hash_entry;
 }
 
-bool StateSpace::reachable(const State& stand_foot, const State& swing_foot_after) const
-{
-  return RobotModel::isReachable(stand_foot, swing_foot_after);
-}
-
 bool StateSpace::closeToStart(const PlanningState& from) const
 {
   assert(from.getSuccState() != nullptr);
-  return reachable(ivStateId2State[ivIdPlanningStart]->getState(), from.getState());
+  return RobotModel::isReachable(ivStateId2State[ivIdPlanningStart]->getState(), from.getState());
 
   // check if first goal pose can be reached
   const State& left = (from.getLeg() == LEFT) ? from.getState() : from.getSuccState()->getState();
@@ -404,7 +399,7 @@ bool StateSpace::closeToStart(const PlanningState& from) const
   State start = ivStateId2State[ivIdPlanningStart]->getState();
 
   PostProcessor::postProcessBackward(left, right, start);
-  if (!reachable(from.getState(), start))
+  if (!RobotModel::isReachable(from.getState(), start))
     return false;
 
   // check if second (final) goal can be reached
@@ -421,7 +416,7 @@ bool StateSpace::closeToStart(const PlanningState& from) const
   }
 
   final_start.setBodyVelocity(geometry_msgs::Vector3()); // set velocity to zero
-  if (!reachable(start, final_start))
+  if (!RobotModel::isReachable(start, final_start))
     return false;
 
   return true;
@@ -440,7 +435,7 @@ bool StateSpace::closeToGoal(const PlanningState& from) const
   State goal = ivStateId2State[ivIdPlanningGoal]->getState();
 
   PostProcessor::postProcessForward(left, right, goal);
-  if (!reachable(from.getState(), goal))
+  if (!RobotModel::isReachable(from.getState(), goal))
     return false;
 
   // check if second (final) goal can be reached
@@ -457,7 +452,7 @@ bool StateSpace::closeToGoal(const PlanningState& from) const
   }
 
   final_goal.setBodyVelocity(geometry_msgs::Vector3()); // set velocity to zero
-  if (!reachable(goal, final_goal))
+  if (!RobotModel::isReachable(goal, final_goal))
     return false;
 
   return true;

@@ -1,5 +1,8 @@
 #include <vigir_footstep_planner/threading/expand_state_job.h>
 
+#include <vigir_footstep_planner/robot_model/robot_model.h>
+#include <vigir_footstep_planner/world_model/world_model.h>
+
 namespace vigir_footstep_planning
 {
 namespace threading
@@ -32,7 +35,7 @@ void ExpandStateJob::run()
     return;
 
   // check reachability due to discretization
-  if (!state_space.reachable(state.getState(), next_state))
+  if (!RobotModel::isReachable(state.getState(), next_state))
     return;
 
   // lookup costs
