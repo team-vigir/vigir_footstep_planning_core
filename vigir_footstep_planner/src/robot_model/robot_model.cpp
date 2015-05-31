@@ -49,4 +49,15 @@ bool RobotModel::isReachable(const State& current, const State& next)
   }
   return true;
 }
+
+bool RobotModel::isReachable(const State& left, const State& right, const State& swing)
+{
+  for (std::vector<ReachabilityPlugin::Ptr>::const_iterator itr = Instance()->reachability_plugins.begin(); itr != Instance()->reachability_plugins.end(); itr++)
+  {
+    const ReachabilityPlugin::Ptr& reachability_plugin = *itr;
+    if (reachability_plugin && !reachability_plugin->isReachable(left, right, swing))
+      return false;
+  }
+  return true;
+}
 }

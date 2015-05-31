@@ -48,6 +48,7 @@ public:
   static void loadParams(const ParameterSet& params);
 
   static bool isReachable(const State& current, const State& next);
+  static bool isReachable(const State& left, const State& right, const State& swing);
 
   // typedefs
   typedef boost::shared_ptr<RobotModel> Ptr;

@@ -28,6 +28,9 @@ void ExpandStateJob::run()
   successful = false;
 
   /// TODO: backward search case
+  if (state.getPredState() == nullptr)
+    return;
+
   next.reset(new PlanningState(footstep.performMeOnThisState(state)));
   State& next_state = next->getState();
 
@@ -35,7 +38,9 @@ void ExpandStateJob::run()
     return;
 
   // check reachability due to discretization
-  if (!RobotModel::isReachable(state.getState(), next_state))
+  const State& left_foot = state.getLeg() == LEFT ? state.getState() : state.getPredState()->getState();
+  const State& right_foot = state.getLeg() == RIGHT ? state.getState() : state.getPredState()->getState();
+  if (!RobotModel::isReachable(left_foot, right_foot, next_state))
     return;
 
   // lookup costs

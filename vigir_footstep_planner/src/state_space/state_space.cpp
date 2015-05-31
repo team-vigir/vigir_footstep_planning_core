@@ -390,33 +390,35 @@ PlanningState* StateSpace::createHashEntryIfNotExists(const PlanningState& s)
 
 bool StateSpace::closeToStart(const PlanningState& from) const
 {
+  if (from.getLeg() == ivStateId2State[ivIdPlanningStart]->getLeg())
+    return false;
+
   assert(from.getSuccState() != nullptr);
-  return RobotModel::isReachable(ivStateId2State[ivIdPlanningStart]->getState(), from.getState());
 
   // check if first goal pose can be reached
-  const State& left = (from.getLeg() == LEFT) ? from.getState() : from.getSuccState()->getState();
-  const State& right = (from.getLeg() == RIGHT) ? from.getState() : from.getSuccState()->getState();
-  State start = ivStateId2State[ivIdPlanningStart]->getState();
+  State left_foot = (from.getLeg() == LEFT) ? from.getState() : from.getSuccState()->getState();
+  State right_foot = (from.getLeg() == RIGHT) ? from.getState() : from.getSuccState()->getState();
+  State start_foot = ivStateId2State[ivIdPlanningStart]->getState();
 
-  PostProcessor::postProcessBackward(left, right, start);
-  if (!RobotModel::isReachable(from.getState(), start))
+  PostProcessor::postProcessBackward(left_foot, right_foot, start_foot);
+  if (!RobotModel::isReachable(left_foot, right_foot, start_foot))
     return false;
 
   // check if second (final) goal can be reached
-  State final_start;
-  if (start.getLeg() == LEFT)
+  if (start_foot.getLeg() == LEFT)
   {
-    final_start = start_foot_right->getState();
-    PostProcessor::postProcessBackward(start, right, final_start);
+    left_foot = start_foot;
+    start_foot = start_foot_right->getState();
   }
   else
   {
-    final_start = start_foot_left->getState();
-    PostProcessor::postProcessBackward(left, start, final_start);
+    right_foot = start_foot;
+    start_foot = start_foot_left->getState();
   }
 
-  final_start.setBodyVelocity(geometry_msgs::Vector3()); // set velocity to zero
-  if (!RobotModel::isReachable(start, final_start))
+  PostProcessor::postProcessBackward(left_foot, right_foot, start_foot);
+  start_foot.setBodyVelocity(geometry_msgs::Vector3()); // set velocity to zero
+  if (!RobotModel::isReachable(left_foot, right_foot, start_foot))
     return false;
 
   return true;
@@ -430,29 +432,29 @@ bool StateSpace::closeToGoal(const PlanningState& from) const
   assert(from.getPredState() != nullptr);
 
   // check if first goal pose can be reached
-  const State& left = (from.getLeg() == LEFT) ? from.getState() : from.getPredState()->getState();
-  const State& right = (from.getLeg() == RIGHT) ? from.getState() : from.getPredState()->getState();
-  State goal = ivStateId2State[ivIdPlanningGoal]->getState();
+  State left_foot = (from.getLeg() == LEFT) ? from.getState() : from.getPredState()->getState();
+  State right_foot = (from.getLeg() == RIGHT) ? from.getState() : from.getPredState()->getState();
+  State goal_foot = ivStateId2State[ivIdPlanningGoal]->getState();
 
-  PostProcessor::postProcessForward(left, right, goal);
-  if (!RobotModel::isReachable(from.getState(), goal))
+  PostProcessor::postProcessForward(left_foot, right_foot, goal_foot);
+  if (!RobotModel::isReachable(left_foot, right_foot, goal_foot))
     return false;
 
   // check if second (final) goal can be reached
-  State final_goal;
-  if (goal.getLeg() == LEFT)
+  if (goal_foot.getLeg() == LEFT)
   {
-    final_goal = goal_foot_right->getState();
-    PostProcessor::postProcessForward(goal, right, final_goal);
+    left_foot = goal_foot;
+    goal_foot = goal_foot_right->getState();
   }
   else
   {
-    final_goal = goal_foot_left->getState();
-    PostProcessor::postProcessForward(left, goal, final_goal);
+    right_foot = goal_foot;
+    goal_foot = goal_foot_left->getState();
   }
 
-  final_goal.setBodyVelocity(geometry_msgs::Vector3()); // set velocity to zero
-  if (!RobotModel::isReachable(goal, final_goal))
+  PostProcessor::postProcessForward(left_foot, right_foot, goal_foot);
+  goal_foot.setBodyVelocity(geometry_msgs::Vector3()); // set velocity to zero
+  if (!RobotModel::isReachable(left_foot, right_foot, goal_foot))
     return false;
 
   return true;
