@@ -58,7 +58,7 @@ public:
 
   double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;
 
-private:
+protected:
   double step_cost;
   double diff_angle_cost;
 
