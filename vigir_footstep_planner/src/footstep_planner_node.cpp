@@ -356,10 +356,10 @@ void FootstepPlannerNode::setParameterSetAction(SimpleActionServer<msgs::SetPara
 
 void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)
 {
-  boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex);
-
   // preempt any previous goal if active
   footstep_planner->preemptPlanning();
+
+  boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex);
 
   // accept new goal
   const msgs::StepPlanRequestGoalConstPtr& goal(as->acceptNewGoal());
