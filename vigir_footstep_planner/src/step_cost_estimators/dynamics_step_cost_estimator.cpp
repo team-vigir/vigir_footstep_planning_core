@@ -1,12 +1,11 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/step_cost_estimators/dynamics_step_cost_estimator.h>
+
+
 
 namespace vigir_footstep_planning
 {
-DynamicsStepCostEstimator::DynamicsStepCostEstimator(const ParameterSet& params)
-  : StepCostEstimatorPlugin("dynamics_step_cost_estimator", params)
-{
-}
-
 DynamicsStepCostEstimator::DynamicsStepCostEstimator()
   : StepCostEstimatorPlugin("dynamics_step_cost_estimator")
 {
@@ -65,3 +64,5 @@ bool DynamicsStepCostEstimator::getCost(const State& left_foot, const State& rig
   return true;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::DynamicsStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

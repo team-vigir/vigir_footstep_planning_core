@@ -11,28 +11,28 @@ void FootstepPlannerNode::initPlugins(ros::NodeHandle &nh)
   PluginManager::addPlugin(new RobotModelPlugin(nh));
   PluginManager::addPlugin<StepPlanMsgPlugin>();
 
-  PluginManager::addPlugin<DynamicsReachability>();
-  PluginManager::addPlugin<ReachabilityPolygon>();
+  PluginManager::addPlugin("vigir_footstep_planning::ReachabilityPolygon");
+  //PluginManager::addPlugin("vigir_footstep_planning::DynamicsReachability");
 
-  PluginManager::addPlugin<StepDynamicsPostProcessPlugin>();
+  PluginManager::addPlugin("vigir_footstep_planning::StepDynamicsPostProcessPlugin");
 
   // note: ordered by name -> collision check order
   PluginManager::addPlugin(new TerrainModel("1_terrain_model", nh, "/terrain_model"));
   PluginManager::addPlugin(new UpperBodyGridMapModel("2_upper_body_collision_check", nh, "/body_level_grid_map"));
   PluginManager::addPlugin(new FootGridMapModel("3_foot_collision_check", nh, "/ground_level_grid_map"));
 
-  PluginManager::addPlugin<ConstStepCostEstimator>();
-  PluginManager::addPlugin<EuclideanStepCostEstimator>();
-  PluginManager::addPlugin<BoundaryStepCostEstimator>();
-  //PluginManager::addPlugin<DynamicsStepCostEstimator>();
-  PluginManager::addPlugin<GroundContactStepCostEstimator>();
+  PluginManager::addPlugin("vigir_footstep_planning::ConstStepCostEstimator");
+  PluginManager::addPlugin("vigir_footstep_planning::EuclideanStepCostEstimator");
+  //PluginManager::addPlugin("vigir_footstep_planning::BoundaryStepCostEstimator");
+  //PluginManager::addPlugin("vigir_footstep_planning::DynamicsStepCostEstimator");
+  PluginManager::addPlugin("vigir_footstep_planning::GroundContactStepCostEstimator");
 
-  PluginManager::addPlugin<EuclideanHeuristic>();
-  PluginManager::addPlugin<DynamicsHeuristic>();
-  PluginManager::addPlugin<StepCostHeuristic>();
+  PluginManager::addPlugin("vigir_footstep_planning::EuclideanHeuristic");
+  PluginManager::addPlugin("vigir_footstep_planning::DynamicsHeuristic");
+  PluginManager::addPlugin("vigir_footstep_planning::StepCostHeuristic");
 }
 
-void FootstepPlannerNode::init(ros::NodeHandle &nh)
+void FootstepPlannerNode::init(ros::NodeHandle& nh)
 {
   // init parameter manager topics
   ParameterManager::initTopics(nh);
@@ -56,12 +56,11 @@ void FootstepPlannerNode::init(ros::NodeHandle &nh)
     ParameterManager::setActive(names.front());
   }
 
-  nh.getParam("foot/size/x", foot_size.x);
-  nh.getParam("foot/size/y", foot_size.y);
-  nh.getParam("foot/size/z", foot_size.z);
+  getFootSize(nh, foot_size);
 
   // init planner
   footstep_planner.reset(new FootstepPlanner(nh));
+  PluginManager::initializePlugins(nh);
 
   // subscribe topics
   set_parameter_set_sub = nh.subscribe<msgs::ParameterSet>("set_parameter_set", 1, &FootstepPlannerNode::setParams, this);
@@ -226,6 +225,9 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
   // get start feet pose
   msgs::Feet start_feet_pose;
   msgs::ErrorStatus status = determineStartFeetPose(start_feet_pose, generate_feet_pose_client, goal_pose->header);
+
+  //start_feet_pose.left.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0, -0.1, -0.05);
+  //start_feet_pose.right.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0, -0.1, 0.05);
 
   if (hasError(status))
   {

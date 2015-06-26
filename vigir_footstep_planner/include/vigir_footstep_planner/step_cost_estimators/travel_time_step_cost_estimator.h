@@ -39,7 +39,6 @@ class TravelTimeStepCostEstimator
   : public StepCostEstimatorPlugin
 {
 public:
-  TravelTimeStepCostEstimator(const ParameterSet& params);
   TravelTimeStepCostEstimator();
 
   void loadParams(const ParameterSet& params) override;

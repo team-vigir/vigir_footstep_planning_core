@@ -1,12 +1,11 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/step_cost_estimators/boundary_step_cost_estimator.h>
+
+
 
 namespace vigir_footstep_planning
 {
-BoundaryStepCostEstimator::BoundaryStepCostEstimator(const ParameterSet& params)
-  : StepCostEstimatorPlugin("boundary_step_cost_estimator", params)
-{
-}
-
 BoundaryStepCostEstimator::BoundaryStepCostEstimator()
   : StepCostEstimatorPlugin("boundary_step_cost_estimator")
 {
@@ -75,3 +74,5 @@ bool BoundaryStepCostEstimator::getCost(const State& left_foot, const State& rig
   return true;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::BoundaryStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

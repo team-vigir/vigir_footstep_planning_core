@@ -1,12 +1,11 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/robot_model/dynamics_reachability.h>
+
+
 
 namespace vigir_footstep_planning
 {
-DynamicsReachability::DynamicsReachability(const ParameterSet& params)
-  : ReachabilityPlugin("dynamics_reachability", params)
-{
-}
-
 DynamicsReachability::DynamicsReachability()
   : ReachabilityPlugin("dynamics_reachability")
 {
@@ -46,3 +45,5 @@ bool DynamicsReachability::isReachable(const State& current, const State& next) 
   return true;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::DynamicsReachability, vigir_footstep_planning::ReachabilityPlugin)

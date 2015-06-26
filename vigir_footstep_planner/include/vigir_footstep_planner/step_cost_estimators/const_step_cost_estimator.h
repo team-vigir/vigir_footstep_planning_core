@@ -39,7 +39,6 @@ class ConstStepCostEstimator
   : public StepCostEstimatorPlugin
 {
 public:
-  ConstStepCostEstimator(const ParameterSet& params);
   ConstStepCostEstimator();
 
   void loadParams(const ParameterSet& params) override;

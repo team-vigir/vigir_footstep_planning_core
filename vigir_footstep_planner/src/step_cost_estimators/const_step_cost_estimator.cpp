@@ -1,12 +1,11 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/step_cost_estimators/const_step_cost_estimator.h>
+
+
 
 namespace vigir_footstep_planning
 {
-ConstStepCostEstimator::ConstStepCostEstimator(const ParameterSet& params)
-  : StepCostEstimatorPlugin("const_step_cost_estimator", params)
-{
-}
-
 ConstStepCostEstimator::ConstStepCostEstimator()
   : StepCostEstimatorPlugin("const_step_cost_estimator")
 {
@@ -26,3 +25,5 @@ bool ConstStepCostEstimator::getCost(const State& /*left_foot*/, const State& /*
   return true;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::ConstStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

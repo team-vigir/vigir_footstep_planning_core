@@ -1,12 +1,11 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/step_cost_estimators/ground_contact_step_cost_estimator.h>
+
+
 
 namespace vigir_footstep_planning
 {
-GroundContactStepCostEstimator::GroundContactStepCostEstimator(const ParameterSet& params)
-  : StepCostEstimatorPlugin("ground_contact_step_cost_estimator", params)
-{
-}
-
 GroundContactStepCostEstimator::GroundContactStepCostEstimator()
   : StepCostEstimatorPlugin("ground_contact_step_cost_estimator")
 {
@@ -35,3 +34,5 @@ bool GroundContactStepCostEstimator::getCost(const State& /*left_foot*/, const S
   return true;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::GroundContactStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

@@ -51,7 +51,6 @@ class StepCostHeuristic
   : public HeuristicPlugin
 {
 public:
-  StepCostHeuristic(const ParameterSet& params);
   StepCostHeuristic();
 
   void loadParams(const ParameterSet& params) override;

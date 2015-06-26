@@ -1,12 +1,11 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/step_cost_estimators/travel_time_step_cost_estimator.h>
+
+
 
 namespace vigir_footstep_planning
 {
-TravelTimeStepCostEstimator::TravelTimeStepCostEstimator(const ParameterSet& params)
-  : StepCostEstimatorPlugin("travel_time_cost_estimator", params)
-{
-}
-
 TravelTimeStepCostEstimator::TravelTimeStepCostEstimator()
   : StepCostEstimatorPlugin("travel_time_cost_estimator")
 {
@@ -47,3 +46,5 @@ bool TravelTimeStepCostEstimator::getCost(const State& left_foot, const State& r
   return true;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::TravelTimeStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

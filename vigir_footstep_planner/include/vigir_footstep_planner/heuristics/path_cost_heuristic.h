@@ -58,7 +58,6 @@ class PathCostHeuristic
   : public HeuristicPlugin
 {
 public:
-  PathCostHeuristic(const ParameterSet& params);
   PathCostHeuristic();
 
   ~PathCostHeuristic();

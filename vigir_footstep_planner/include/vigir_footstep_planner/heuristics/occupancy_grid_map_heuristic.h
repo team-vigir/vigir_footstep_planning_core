@@ -44,8 +44,11 @@ class OccupancyGridMapHeuristic
   : public HeuristicPlugin
 {
 public:
-  OccupancyGridMapHeuristic(const ParameterSet& params, ros::NodeHandle& nh, const std::string& topic);
-  OccupancyGridMapHeuristic(ros::NodeHandle& nh, const std::string& topic);
+  OccupancyGridMapHeuristic();
+
+  void loadParams(const ParameterSet& params) override;
+
+  bool initialize(ros::NodeHandle& nh, const ParameterSet& params) override;
 
   double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;
 
@@ -59,6 +62,7 @@ protected:
   mutable boost::shared_mutex grid_map_shared_mutex;
 
   // grid map data
+  std::string grid_map_topic;
   vigir_gridmap_2d::GridMap2D distance_map;
 };
 }

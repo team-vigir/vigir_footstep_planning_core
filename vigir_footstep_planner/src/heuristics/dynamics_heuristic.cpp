@@ -1,12 +1,11 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/heuristics/dynamics_heuristic.h>
+
+
 
 namespace vigir_footstep_planning
 {
-DynamicsHeuristic::DynamicsHeuristic(const ParameterSet& params)
-  : HeuristicPlugin("dynamics_heuristic", params)
-{
-}
-
 DynamicsHeuristic::DynamicsHeuristic()
   : HeuristicPlugin("dynamics_heuristic")
 {
@@ -38,3 +37,5 @@ double DynamicsHeuristic::getHeuristicValue(const State& from, const State& to, 
   return 0.0;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::DynamicsHeuristic, vigir_footstep_planning::HeuristicPlugin)

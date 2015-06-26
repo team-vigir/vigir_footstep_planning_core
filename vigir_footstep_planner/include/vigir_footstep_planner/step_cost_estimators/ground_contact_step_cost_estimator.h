@@ -41,7 +41,6 @@ class GroundContactStepCostEstimator
   : public StepCostEstimatorPlugin
 {
 public:
-  GroundContactStepCostEstimator(const ParameterSet& params);
   GroundContactStepCostEstimator();
 
   void loadParams(const ParameterSet& params) override;

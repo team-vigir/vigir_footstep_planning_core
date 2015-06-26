@@ -43,7 +43,6 @@ class MapStepCostEstimator
   : public StepCostEstimatorPlugin
 {
 public:
-  MapStepCostEstimator(const ParameterSet& params);
   MapStepCostEstimator();
 
   void loadParams(const ParameterSet& params) override;

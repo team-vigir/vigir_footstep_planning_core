@@ -41,7 +41,6 @@ class DynamicsReachability
   : public ReachabilityPlugin
 {
 public:
-  DynamicsReachability(const ParameterSet& params);
   DynamicsReachability();
 
   void loadParams(const ParameterSet& params) override;

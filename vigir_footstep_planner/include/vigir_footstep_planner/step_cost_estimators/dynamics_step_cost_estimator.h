@@ -41,7 +41,6 @@ class DynamicsStepCostEstimator
   : public StepCostEstimatorPlugin
 {
 public:
-  DynamicsStepCostEstimator(const ParameterSet& params);
   DynamicsStepCostEstimator();
 
   void loadParams(const ParameterSet& params) override;

@@ -1,17 +1,32 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/heuristics/occupancy_grid_map_heuristic.h>
+
+
 
 namespace vigir_footstep_planning
 {
-OccupancyGridMapHeuristic::OccupancyGridMapHeuristic(const ParameterSet& params, ros::NodeHandle& nh, const std::string& topic)
-: HeuristicPlugin("occupancy_grid_map_heuristic", params)
-{
-  occupancy_grid_map_sub = nh.subscribe<nav_msgs::OccupancyGrid>(topic, 1, &OccupancyGridMapHeuristic::mapCallback, this);
-}
-
-OccupancyGridMapHeuristic::OccupancyGridMapHeuristic(ros::NodeHandle& nh, const std::string& topic)
+OccupancyGridMapHeuristic::OccupancyGridMapHeuristic()
 : HeuristicPlugin("occupancy_grid_map_heuristic")
 {
-  occupancy_grid_map_sub = nh.subscribe<nav_msgs::OccupancyGrid>(topic, 1, &OccupancyGridMapHeuristic::mapCallback, this);
+}
+
+void OccupancyGridMapHeuristic::loadParams(const ParameterSet& params)
+{
+  HeuristicPlugin::loadParams(params);
+
+  params.getParam("occupancy_grid_map_heuristic/grid_map_topic", grid_map_topic);
+}
+
+bool OccupancyGridMapHeuristic::initialize(ros::NodeHandle& nh, const ParameterSet& params)
+{
+  if (!HeuristicPlugin::initialize(nh, params))
+    return false;
+
+  // subscribe topics
+  occupancy_grid_map_sub = nh.subscribe<nav_msgs::OccupancyGrid>(grid_map_topic, 1, &OccupancyGridMapHeuristic::mapCallback, this);
+
+  return true;
 }
 
 void OccupancyGridMapHeuristic::mapCallback(const nav_msgs::OccupancyGridConstPtr& occupancy_grid_map)
@@ -37,3 +52,5 @@ double OccupancyGridMapHeuristic::getHeuristicValue(const State& from, const Sta
   return 5.0*std::max(0.0, 0.5-d);
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::OccupancyGridMapHeuristic, vigir_footstep_planning::HeuristicPlugin)

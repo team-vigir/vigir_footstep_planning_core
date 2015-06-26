@@ -1,28 +1,14 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/heuristics/hot_map_heuristic.h>
+
+
 
 namespace vigir_footstep_planning
 {
-HotMapHeuristic::HotMapHeuristic(const ParameterSet& params, ros::NodeHandle& nh)
-: HeuristicPlugin("hot_map_heuristic", params)
-{
-  // publish topics
-  hot_map_pub = nh.advertise<nav_msgs::OccupancyGrid>("hot_map", 1);
-  publish_timer = nh.createTimer(ros::Duration(1.0), &HotMapHeuristic::publishHotMap, this);
-}
-
-HotMapHeuristic::HotMapHeuristic(ros::NodeHandle& nh)
+HotMapHeuristic::HotMapHeuristic()
 : HeuristicPlugin("hot_map_heuristic")
 {
-  // publish topics
-  hot_map_pub = nh.advertise<nav_msgs::OccupancyGrid>("hot_map", 1);
-  publish_timer = nh.createTimer(ros::Duration(1.0), &HotMapHeuristic::publishHotMap, this);
-}
-
-void HotMapHeuristic::reset()
-{
-  boost::unique_lock<boost::shared_mutex> lock(hot_map_shared_mutex);
-  hot_map.clear();
-  total_hit_counter = 0;
 }
 
 void HotMapHeuristic::loadParams(const ParameterSet& params)
@@ -33,6 +19,25 @@ void HotMapHeuristic::loadParams(const ParameterSet& params)
   int num_angle_bins;
   params.getParam("collision_check/num_angle_bins", num_angle_bins);
   angle_bin_size = 2.0*M_PI / static_cast<double>(num_angle_bins);
+}
+
+bool HotMapHeuristic::initialize(ros::NodeHandle& nh, const ParameterSet& params)
+{
+  if (!HeuristicPlugin::initialize(nh, params))
+    return false;
+
+  // publish topics
+  hot_map_pub = nh.advertise<nav_msgs::OccupancyGrid>("hot_map", 1);
+  publish_timer = nh.createTimer(ros::Duration(1.0), &HotMapHeuristic::publishHotMap, this);
+
+  return true;
+}
+
+void HotMapHeuristic::reset()
+{
+  boost::unique_lock<boost::shared_mutex> lock(hot_map_shared_mutex);
+  hot_map.clear();
+  total_hit_counter = 0;
 }
 
 double HotMapHeuristic::getHeuristicValue(const State& from, const State& to, const State& /*start*/, const State& /*goal*/) const
@@ -67,3 +72,5 @@ void HotMapHeuristic::publishHotMap(const ros::TimerEvent& /*publish_timer*/) co
   }
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::HotMapHeuristic, vigir_footstep_planning::HeuristicPlugin)

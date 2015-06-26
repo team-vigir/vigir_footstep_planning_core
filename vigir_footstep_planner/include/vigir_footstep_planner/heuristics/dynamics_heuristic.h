@@ -44,7 +44,6 @@ class DynamicsHeuristic
   : public HeuristicPlugin
 {
 public:
-  DynamicsHeuristic(const ParameterSet& params);
   DynamicsHeuristic();
 
   void loadParams(const ParameterSet& params) override;

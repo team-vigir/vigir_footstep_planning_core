@@ -40,7 +40,6 @@ class TravelTimeHeuristic
   : public HeuristicPlugin
 {
 public:
-  TravelTimeHeuristic(const ParameterSet& params);
   TravelTimeHeuristic();
 
   void loadParams(const ParameterSet& params) override;

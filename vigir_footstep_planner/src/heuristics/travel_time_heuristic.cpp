@@ -1,12 +1,11 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/heuristics/travel_time_heuristic.h>
+
+
 
 namespace vigir_footstep_planning
 {
-TravelTimeHeuristic::TravelTimeHeuristic(const ParameterSet& params)
-  : HeuristicPlugin("travel_time_heuristic", params)
-{
-}
-
 TravelTimeHeuristic::TravelTimeHeuristic()
   : HeuristicPlugin("travel_time_heuristic")
 {
@@ -56,3 +55,5 @@ double TravelTimeHeuristic::getHeuristicValue(const State& from, const State& to
   return expected_steps * (step_duration + const_sway_time);
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::TravelTimeHeuristic, vigir_footstep_planning::HeuristicPlugin)

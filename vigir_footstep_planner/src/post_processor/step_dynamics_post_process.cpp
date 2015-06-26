@@ -1,12 +1,11 @@
+#include <pluginlib/class_list_macros.h>
+
 #include <vigir_footstep_planner/post_processor/step_dynamics_post_process.h>
+
+
 
 namespace vigir_footstep_planning
 {
-StepDynamicsPostProcessPlugin::StepDynamicsPostProcessPlugin(const ParameterSet& params)
-  : PostProcessPlugin("step_dynamics_post_processor", params)
-{
-}
-
 StepDynamicsPostProcessPlugin::StepDynamicsPostProcessPlugin()
   : PostProcessPlugin("step_dynamics_post_processor")
 {
@@ -78,3 +77,5 @@ void StepDynamicsPostProcessPlugin::determineDynamics(const State& swing_foot_be
   }
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::StepDynamicsPostProcessPlugin, vigir_footstep_planning::PostProcessPlugin)

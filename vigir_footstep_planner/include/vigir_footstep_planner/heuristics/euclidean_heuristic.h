@@ -46,7 +46,6 @@ class EuclideanHeuristic
   : public HeuristicPlugin
 {
 public:
-  EuclideanHeuristic(const ParameterSet& params);
   EuclideanHeuristic();
 
   double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;

@@ -41,7 +41,6 @@ class BoundaryStepCostEstimator
   : public StepCostEstimatorPlugin
 {
 public:
-  BoundaryStepCostEstimator(const ParameterSet& params);
   BoundaryStepCostEstimator();
 
   void loadParams(const ParameterSet& params) override;

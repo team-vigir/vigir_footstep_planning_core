@@ -42,7 +42,6 @@ class StepDynamicsPostProcessPlugin
   : public PostProcessPlugin
 {
 public:
-  StepDynamicsPostProcessPlugin(const ParameterSet& params);
   StepDynamicsPostProcessPlugin();
 
   void loadParams(const ParameterSet& params) override;
