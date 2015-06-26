@@ -8,28 +8,34 @@ FootstepPlannerNode::FootstepPlannerNode()
 
 void FootstepPlannerNode::initPlugins(ros::NodeHandle &nh)
 {
+  PluginManager::addPluginClassLoader<ReachabilityPlugin>("vigir_footstep_planning::ReachabilityPlugin");
+  PluginManager::addPluginClassLoader<StepCostEstimatorPlugin>("vigir_footstep_planning::StepCostEstimatorPlugin");
+  PluginManager::addPluginClassLoader<HeuristicPlugin>("vigir_footstep_planning::HeuristicPlugin");
+  PluginManager::addPluginClassLoader<PostProcessPlugin>("vigir_footstep_planning::PostProcessPlugin");
+  PluginManager::addPluginClassLoader<PostProcessPlugin>("vigir_footstep_planning::PostProcessPlugin");
+
   PluginManager::addPlugin(new RobotModelPlugin(nh));
   PluginManager::addPlugin<StepPlanMsgPlugin>();
 
-  PluginManager::addPlugin("vigir_footstep_planning::ReachabilityPolygon");
-  //PluginManager::addPlugin("vigir_footstep_planning::DynamicsReachability");
-
-  PluginManager::addPlugin("vigir_footstep_planning::StepDynamicsPostProcessPlugin");
+  PluginManager::addPlugin<ReachabilityPlugin>("vigir_footstep_planning::ReachabilityPolygon");
+  //PluginManager::addPlugin<ReachabilityPlugin>("vigir_footstep_planning::DynamicsReachability");
 
   // note: ordered by name -> collision check order
   PluginManager::addPlugin(new TerrainModel("1_terrain_model", nh, "/terrain_model"));
   PluginManager::addPlugin(new UpperBodyGridMapModel("2_upper_body_collision_check", nh, "/body_level_grid_map"));
   PluginManager::addPlugin(new FootGridMapModel("3_foot_collision_check", nh, "/ground_level_grid_map"));
 
-  PluginManager::addPlugin("vigir_footstep_planning::ConstStepCostEstimator");
-  PluginManager::addPlugin("vigir_footstep_planning::EuclideanStepCostEstimator");
-  //PluginManager::addPlugin("vigir_footstep_planning::BoundaryStepCostEstimator");
-  //PluginManager::addPlugin("vigir_footstep_planning::DynamicsStepCostEstimator");
-  PluginManager::addPlugin("vigir_footstep_planning::GroundContactStepCostEstimator");
+  PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::ConstStepCostEstimator");
+  PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::EuclideanStepCostEstimator");
+  //PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::BoundaryStepCostEstimator");
+  //PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::DynamicsStepCostEstimator");
+  PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::GroundContactStepCostEstimator");
 
-  PluginManager::addPlugin("vigir_footstep_planning::EuclideanHeuristic");
-  PluginManager::addPlugin("vigir_footstep_planning::DynamicsHeuristic");
-  PluginManager::addPlugin("vigir_footstep_planning::StepCostHeuristic");
+  PluginManager::addPlugin<HeuristicPlugin>("vigir_footstep_planning::EuclideanHeuristic");
+  PluginManager::addPlugin<HeuristicPlugin>("vigir_footstep_planning::DynamicsHeuristic");
+  PluginManager::addPlugin<HeuristicPlugin>("vigir_footstep_planning::StepCostHeuristic");
+
+  PluginManager::addPlugin<PostProcessPlugin>("vigir_footstep_planning::StepDynamicsPostProcessPlugin");
 }
 
 void FootstepPlannerNode::init(ros::NodeHandle& nh)
