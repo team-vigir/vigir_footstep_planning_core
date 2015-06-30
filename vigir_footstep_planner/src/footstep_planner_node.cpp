@@ -8,6 +8,9 @@ FootstepPlannerNode::FootstepPlannerNode()
 
 void FootstepPlannerNode::initPlugins(ros::NodeHandle &nh)
 {
+  // init plugin manager topics
+  PluginManager::initTopics(nh);
+
   PluginManager::addPluginClassLoader<ReachabilityPlugin>("vigir_footstep_planning::ReachabilityPlugin");
   PluginManager::addPluginClassLoader<StepCostEstimatorPlugin>("vigir_footstep_planning::StepCostEstimatorPlugin");
   PluginManager::addPluginClassLoader<HeuristicPlugin>("vigir_footstep_planning::HeuristicPlugin");
