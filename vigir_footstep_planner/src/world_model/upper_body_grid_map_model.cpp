@@ -2,7 +2,7 @@
 
 namespace vigir_footstep_planning
 {
-UpperBodyGridMapModel::UpperBodyGridMapModel(const std::string& name, const ParameterSet& params, ros::NodeHandle& nh, const std::string& topic)
+UpperBodyGridMapModel::UpperBodyGridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params, ros::NodeHandle& nh, const std::string& topic)
   : GridMapModel(name, params, UPPER_BODY, nh, topic)
 {
   // get upper body dimensions

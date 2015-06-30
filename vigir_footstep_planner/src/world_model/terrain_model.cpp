@@ -2,7 +2,7 @@
 
 namespace vigir_footstep_planning
 {
-TerrainModel::TerrainModel(const std::string& name, const ParameterSet& params, ros::NodeHandle &nh, const std::string& topic)
+TerrainModel::TerrainModel(const std::string& name, const vigir_generic_params::ParameterSet& params, ros::NodeHandle &nh, const std::string& topic)
   : TerrainModelPlugin(name, params, FOOT_CONTACT_SUPPORT)
 {
   // get foot dimensions
@@ -32,7 +32,7 @@ void TerrainModel::reset()
     terrain_model->reset();
 }
 
-void TerrainModel::loadParams(const ParameterSet& params)
+void TerrainModel::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   TerrainModelPlugin::loadParams(params);
 

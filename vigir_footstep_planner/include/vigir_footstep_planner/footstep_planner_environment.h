@@ -46,7 +46,8 @@
 #include <vigir_footstep_planner/environment_parameters.h>
 #include <vigir_footstep_planner/state_space/state_space.h>
 
-#include <vigir_footstep_planning_lib/plugins/plugin_manager.h>
+#include <vigir_pluginlib/plugin_manager.h>
+
 #include <vigir_footstep_planning_lib/helper.h>
 
 #include <vigir_footstep_planner/step_cost_estimators/step_cost_estimator.h>

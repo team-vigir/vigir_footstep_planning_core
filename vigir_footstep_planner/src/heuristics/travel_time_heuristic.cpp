@@ -11,7 +11,7 @@ TravelTimeHeuristic::TravelTimeHeuristic()
 {
 }
 
-void TravelTimeHeuristic::loadParams(const ParameterSet& params)
+void TravelTimeHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   HeuristicPlugin::loadParams(params);
 

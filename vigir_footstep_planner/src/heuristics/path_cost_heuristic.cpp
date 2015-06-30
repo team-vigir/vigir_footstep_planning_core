@@ -20,7 +20,7 @@ PathCostHeuristic::~PathCostHeuristic()
     resetGrid();
 }
 
-void PathCostHeuristic::loadParams(const ParameterSet& params)
+void PathCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   HeuristicPlugin::loadParams(params);
 

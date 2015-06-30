@@ -56,11 +56,11 @@ class TerrainModel
   : public TerrainModelPlugin
 {
 public:
-  TerrainModel(const std::string& name, const ParameterSet& params, ros::NodeHandle &nh, const std::string& topic);
+  TerrainModel(const std::string& name, const vigir_generic_params::ParameterSet& params, ros::NodeHandle &nh, const std::string& topic);
   TerrainModel(const std::string& name, ros::NodeHandle &nh, const std::string& topic);
 
   void reset();
-  void loadParams(const ParameterSet& params) override;
+  void loadParams(const vigir_generic_params::ParameterSet& params) override;
 
   bool isAccessible(const State& s) const override;
   bool isAccessible(const State& next, const State& current) const override;

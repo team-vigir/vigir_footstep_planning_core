@@ -18,7 +18,7 @@ Heuristic::Ptr& Heuristic::Instance()
 void Heuristic::loadPlugins()
 {
   // get step cost estimator plugins
-  PluginManager::getPluginsByType(Instance()->heuristics);
+  vigir_pluginlib::PluginManager::getPluginsByType(Instance()->heuristics);
 
   if (Instance()->heuristics.empty())
     ROS_ERROR("[Heuristic] loadPlugins: Couldn't find any heuristic. Fix it immediatly!");
@@ -34,7 +34,7 @@ void Heuristic::loadPlugins()
   }
 }
 
-void Heuristic::loadParams(const ParameterSet& params)
+void Heuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   for (std::vector<HeuristicPlugin::Ptr>::iterator itr = Instance()->heuristics.begin(); itr != Instance()->heuristics.end(); itr++)
   {

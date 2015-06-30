@@ -11,7 +11,7 @@ MapStepCostEstimator::MapStepCostEstimator()
 {
 }
 
-void MapStepCostEstimator::loadParams(const ParameterSet& params)
+void MapStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   std::string filename;
   params.getParam("map_step_cost_estimator/file", filename);

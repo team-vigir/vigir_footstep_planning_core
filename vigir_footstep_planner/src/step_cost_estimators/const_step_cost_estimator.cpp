@@ -11,7 +11,7 @@ ConstStepCostEstimator::ConstStepCostEstimator()
 {
 }
 
-void ConstStepCostEstimator::loadParams(const ParameterSet& params)
+void ConstStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   params.getParam("const_step_cost_estimator/step_cost", const_step_cost, 0.1);
 }

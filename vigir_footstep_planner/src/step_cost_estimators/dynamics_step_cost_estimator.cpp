@@ -11,7 +11,7 @@ DynamicsStepCostEstimator::DynamicsStepCostEstimator()
 {
 }
 
-void DynamicsStepCostEstimator::loadParams(const ParameterSet& params)
+void DynamicsStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   params.getParam("dynamic_step_cost_estimator/lower_step_limit", lower_step_limit);
   params.getParam("dynamic_step_cost_estimator/upper_step_limit", upper_step_limit);

@@ -18,7 +18,7 @@ RobotModel::Ptr& RobotModel::Instance()
 void RobotModel::loadPlugins()
 {
   // get collision check plugins
-  PluginManager::getPluginsByType(Instance()->reachability_plugins);
+  vigir_pluginlib::PluginManager::getPluginsByType(Instance()->reachability_plugins);
 
   ROS_INFO("[RobotModel] Plugins loaded:");
   for (std::vector<ReachabilityPlugin::Ptr>::const_iterator itr = Instance()->reachability_plugins.begin(); itr != Instance()->reachability_plugins.end(); itr++)

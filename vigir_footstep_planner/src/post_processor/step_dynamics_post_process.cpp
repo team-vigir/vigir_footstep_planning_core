@@ -11,7 +11,7 @@ StepDynamicsPostProcessPlugin::StepDynamicsPostProcessPlugin()
 {
 }
 
-void StepDynamicsPostProcessPlugin::loadParams(const ParameterSet& params)
+void StepDynamicsPostProcessPlugin::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   params.getParam("swing_height", default_swing_height);
   params.getParam("sway_duration", default_sway_duration);

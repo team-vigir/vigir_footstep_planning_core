@@ -67,7 +67,6 @@ protected:
 
   // service clients
   ros::ServiceClient generate_feet_pose_client;
-  ros::ServiceClient parameter_client;
 
   // internal data structure of step plan
   StepPlan::Ptr step_plan;

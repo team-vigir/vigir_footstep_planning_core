@@ -11,7 +11,7 @@ StepCostHeuristic::StepCostHeuristic()
 {
 }
 
-void StepCostHeuristic::loadParams(const ParameterSet& params)
+void StepCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   HeuristicPlugin::loadParams(params);
 

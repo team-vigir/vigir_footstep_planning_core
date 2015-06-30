@@ -97,20 +97,20 @@ protected:
   void planningPreemptionActionCallback(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as);
 
   // subscriber
-  void setParams(const msgs::ParameterSetConstPtr& params);
+  void setParams(const vigir_generic_params::ParameterSetMsgConstPtr& params);
   void setParams(const std_msgs::StringConstPtr& params_name);
   void stepPlanRequest(const msgs::StepPlanRequestConstPtr& plan_request);
   void goalPoseCallback(const geometry_msgs::PoseStampedConstPtr& goal_pose);
 
   // service calls
-  bool setParamsService(msgs::SetParameterSetService::Request& req, msgs::SetParameterSetService::Response& resp);
+  bool setParamsService(vigir_generic_params::SetParameterSetService::Request& req, vigir_generic_params::SetParameterSetService::Response& resp);
   bool stepPlanRequestService(msgs::StepPlanRequestService::Request& req, msgs::StepPlanRequestService::Response& resp);
   bool updateFootService(msgs::UpdateFootService::Request& req, msgs::UpdateFootService::Response& resp);
   bool updateFeetService(msgs::UpdateFeetService::Request& req, msgs::UpdateFeetService::Response& resp);
   bool updateStepPlanService(msgs::UpdateStepPlanService::Request& req, msgs::UpdateStepPlanService::Response& resp);
 
   // action server calls
-  void setParameterSetAction(SimpleActionServer<msgs::SetParameterSetAction>::Ptr& as);
+  void setParameterSetAction(SimpleActionServer<vigir_generic_params::SetParameterSetAction>::Ptr& as);
   void stepPlanRequestAction(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as);
   void stepPlanRequestPreempt(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as);
   void updateFootAction(SimpleActionServer<msgs::UpdateFootAction>::Ptr& as);
@@ -142,6 +142,7 @@ protected:
   ros::ServiceServer update_step_plan_srv;
 
   // action servers
+  SimpleActionServer<vigir_generic_params::SetParameterSetAction>::Ptr set_parameter_set_as;
   SimpleActionServer<msgs::StepPlanRequestAction>::Ptr step_plan_request_as;
   SimpleActionServer<msgs::UpdateFootAction>::Ptr update_foot_as;
   SimpleActionServer<msgs::UpdateFeetAction>::Ptr update_feet_as;

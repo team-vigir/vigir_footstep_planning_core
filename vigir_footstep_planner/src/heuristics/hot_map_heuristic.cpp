@@ -11,7 +11,7 @@ HotMapHeuristic::HotMapHeuristic()
 {
 }
 
-void HotMapHeuristic::loadParams(const ParameterSet& params)
+void HotMapHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   HeuristicPlugin::loadParams(params);
 
@@ -21,7 +21,7 @@ void HotMapHeuristic::loadParams(const ParameterSet& params)
   angle_bin_size = 2.0*M_PI / static_cast<double>(num_angle_bins);
 }
 
-bool HotMapHeuristic::initialize(ros::NodeHandle& nh, const ParameterSet& params)
+bool HotMapHeuristic::initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params)
 {
   if (!HeuristicPlugin::initialize(nh, params))
     return false;

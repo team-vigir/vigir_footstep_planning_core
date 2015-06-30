@@ -11,14 +11,14 @@ OccupancyGridMapHeuristic::OccupancyGridMapHeuristic()
 {
 }
 
-void OccupancyGridMapHeuristic::loadParams(const ParameterSet& params)
+void OccupancyGridMapHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   HeuristicPlugin::loadParams(params);
 
   params.getParam("occupancy_grid_map_heuristic/grid_map_topic", grid_map_topic);
 }
 
-bool OccupancyGridMapHeuristic::initialize(ros::NodeHandle& nh, const ParameterSet& params)
+bool OccupancyGridMapHeuristic::initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params)
 {
   if (!HeuristicPlugin::initialize(nh, params))
     return false;

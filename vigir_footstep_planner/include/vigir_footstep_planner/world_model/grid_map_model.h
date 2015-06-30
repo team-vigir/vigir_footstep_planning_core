@@ -46,10 +46,10 @@ class GridMapModel
   : public CollisionCheckGridMapPlugin
 {
 public:
-  GridMapModel(const std::string& name, const ParameterSet& params, unsigned int collision_check_flag, ros::NodeHandle &nh, const std::string& topic);
+  GridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params, unsigned int collision_check_flag, ros::NodeHandle &nh, const std::string& topic);
   GridMapModel(const std::string& name, unsigned int collision_check_flag, ros::NodeHandle &nh, const std::string& topic);
 
-  void loadParams(const ParameterSet& params) override;
+  void loadParams(const vigir_generic_params::ParameterSet& params) override;
 
 protected:
   void mapCallback(const nav_msgs::OccupancyGridConstPtr& occupancy_grid_map);

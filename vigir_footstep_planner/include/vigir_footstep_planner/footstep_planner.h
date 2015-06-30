@@ -55,15 +55,17 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 
+#include <vigir_generic_params/generic_params_msgs.h>
+#include <vigir_generic_params/parameter_manager.h>
+
+#include <vigir_pluginlib/plugin_manager.h>
+
 #include <vigir_footstep_planning_msgs/footstep_planning_msgs.h>
-#include <vigir_footstep_planning_msgs/parameter_set.h>
 
 #include <vigir_terrain_classifier/TerrainModelService.h>
 
 #include <vigir_footstep_planning_lib/math.h>
-#include <vigir_footstep_planning_lib/parameter_manager.h>
 #include <vigir_footstep_planning_lib/modeling/state.h>
-#include <vigir_footstep_planning_lib/plugins/plugin_manager.h>
 #include <vigir_footstep_planning_lib/plugins/step_plan_msg_plugin.h>
 
 #include <vigir_foot_pose_transformer/foot_pose_transformer.h>
@@ -101,7 +103,7 @@ public:
 
   bool isPlanning() const;
 
-  bool setParams(const ParameterSet& params);
+  bool setParams(const vigir_generic_params::ParameterSet& params);
 
   msgs::ErrorStatus updateFoot(msgs::Foot& foot, uint8_t mode, bool transform = true) const;
   msgs::ErrorStatus updateFeet(msgs::Feet& feet, uint8_t mode, bool transform = true) const;

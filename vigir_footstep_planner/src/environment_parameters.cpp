@@ -2,7 +2,7 @@
 
 namespace vigir_footstep_planning
 {
-EnvironmentParameters::EnvironmentParameters(const ParameterSet& params)
+EnvironmentParameters::EnvironmentParameters(const vigir_generic_params::ParameterSet& params)
 {
   // get robot specific parameters not included in the parameter set
   ros::NodeHandle nh;
@@ -103,7 +103,7 @@ EnvironmentParameters::EnvironmentParameters(const ParameterSet& params)
 
   // upload online generated parameters
   /// TODO: Find smarter way
-  ParameterSet& params_(const_cast<ParameterSet&>(params));
+  vigir_generic_params::ParameterSet& params_(const_cast<vigir_generic_params::ParameterSet&>(params));
 
   params_.setParam("max_step_range/x", max_step_range_x);
   params_.setParam("max_step_range/y", max_step_range_y);

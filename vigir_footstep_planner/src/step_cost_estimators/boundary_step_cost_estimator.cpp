@@ -11,7 +11,7 @@ BoundaryStepCostEstimator::BoundaryStepCostEstimator()
 {
 }
 
-void BoundaryStepCostEstimator::loadParams(const ParameterSet& params)
+void BoundaryStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   params.getParam("boundary_step_cost_estimator/max_diff_z", max_diff_z);
   params.getParam("boundary_step_cost_estimator/long_step_dist", long_step_dist);

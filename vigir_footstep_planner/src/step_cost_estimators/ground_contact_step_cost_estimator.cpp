@@ -11,7 +11,7 @@ GroundContactStepCostEstimator::GroundContactStepCostEstimator()
 {
 }
 
-void GroundContactStepCostEstimator::loadParams(const ParameterSet& params)
+void GroundContactStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   params.getParam("foot_contact_support/minimal_support", min_contact_support);
 }

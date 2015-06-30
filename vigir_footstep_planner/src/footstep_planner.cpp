@@ -201,14 +201,14 @@ bool FootstepPlanner::extractPath(const std::vector<int>& state_ids)
   return true;
 }
 
-bool FootstepPlanner::setParams(const ParameterSet& params)
+bool FootstepPlanner::setParams(const vigir_generic_params::ParameterSet& params)
 {
   boost::recursive_mutex::scoped_lock lock(planner_mutex);
 
   // reinitialize the planner environment parameters
   env_params.reset(new EnvironmentParameters(params));
 
-  PluginManager::loadParams(params);
+  vigir_pluginlib::PluginManager::loadParams(params);
 
   // reinitialize robot model
   RobotModel::loadPlugins();
@@ -794,7 +794,7 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
 
   // init msg
   StepPlanMsgPlugin::Ptr plugin;
-  if (PluginManager::getPlugin(plugin))
+  if (vigir_pluginlib::PluginManager::getPlugin(plugin))
   {
     plugin->initMsg(resp.step_plan);
     plugin->initMsg(step);

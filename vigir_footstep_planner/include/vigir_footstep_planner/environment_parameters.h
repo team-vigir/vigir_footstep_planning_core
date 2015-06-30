@@ -31,8 +31,9 @@
 
 #include <ros/ros.h>
 
+#include <vigir_generic_params/parameter_manager.h>
+
 #include <vigir_footstep_planning_lib/math.h>
-#include <vigir_footstep_planning_lib/parameter_manager.h>
 
 #include <vigir_footstep_planner/state_space/footstep.h>
 
@@ -42,7 +43,7 @@ namespace vigir_footstep_planning
 {
 struct EnvironmentParameters
 {
-  EnvironmentParameters(const ParameterSet& params);
+  EnvironmentParameters(const vigir_generic_params::ParameterSet& params);
   virtual ~EnvironmentParameters();
 
   // typedefs

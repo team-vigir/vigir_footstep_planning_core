@@ -33,7 +33,8 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <vigir_footstep_planning_lib/plugins/plugin_manager.h>
+#include <vigir_pluginlib/plugin_manager.h>
+
 #include <vigir_footstep_planning_lib/plugins/step_cost_estimator_plugin.h>
 
 
@@ -45,7 +46,7 @@ class StepCostEstimator
 {
 public:
   static void loadPlugins();
-  static void loadParams(const ParameterSet& params);
+  static void loadParams(const vigir_generic_params::ParameterSet& params);
 
   static bool getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& risk);
   static bool getCost(const State& left_foot, const State& right_foot, const State& swing_foot, float& cost, float& risk);

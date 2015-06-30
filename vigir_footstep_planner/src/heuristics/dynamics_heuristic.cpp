@@ -11,7 +11,7 @@ DynamicsHeuristic::DynamicsHeuristic()
 {
 }
 
-void DynamicsHeuristic::loadParams(const ParameterSet& params)
+void DynamicsHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   HeuristicPlugin::loadParams(params);
 

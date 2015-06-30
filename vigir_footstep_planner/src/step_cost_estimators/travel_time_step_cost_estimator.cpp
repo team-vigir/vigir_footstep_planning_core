@@ -11,7 +11,7 @@ TravelTimeStepCostEstimator::TravelTimeStepCostEstimator()
 {
 }
 
-void TravelTimeStepCostEstimator::loadParams(const ParameterSet& params)
+void TravelTimeStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   params.getParam("travel_time_cost_estimator/sway/parabol_a", a_sway_inv, 0.0);
   a_sway_inv = 1.0/a_sway_inv;

@@ -18,7 +18,7 @@ StepCostEstimator::Ptr& StepCostEstimator::Instance()
 void StepCostEstimator::loadPlugins()
 {
   // get step cost estimator plugins
-  PluginManager::getPluginsByType(Instance()->step_cost_estimators);
+  vigir_pluginlib::PluginManager::getPluginsByType(Instance()->step_cost_estimators);
 
   if (Instance()->step_cost_estimators.empty())
     ROS_ERROR("[StepCostEstimator] loadPlugins: Couldn't find any step cost estimator. Fix it immediatly!");
@@ -34,7 +34,7 @@ void StepCostEstimator::loadPlugins()
   }
 }
 
-void StepCostEstimator::loadParams(const ParameterSet& params)
+void StepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   for (std::vector<StepCostEstimatorPlugin::Ptr>::iterator itr = Instance()->step_cost_estimators.begin(); itr != Instance()->step_cost_estimators.end(); itr++)
   {

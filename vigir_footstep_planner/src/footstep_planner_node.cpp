@@ -9,36 +9,35 @@ FootstepPlannerNode::FootstepPlannerNode()
 void FootstepPlannerNode::initPlugins(ros::NodeHandle &nh)
 {
   // init plugin manager topics
-  PluginManager::initTopics(nh);
+  vigir_pluginlib::PluginManager::initTopics(nh);
 
-  PluginManager::addPluginClassLoader<ReachabilityPlugin>("vigir_footstep_planning::ReachabilityPlugin");
-  PluginManager::addPluginClassLoader<StepCostEstimatorPlugin>("vigir_footstep_planning::StepCostEstimatorPlugin");
-  PluginManager::addPluginClassLoader<HeuristicPlugin>("vigir_footstep_planning::HeuristicPlugin");
-  PluginManager::addPluginClassLoader<PostProcessPlugin>("vigir_footstep_planning::PostProcessPlugin");
-  PluginManager::addPluginClassLoader<PostProcessPlugin>("vigir_footstep_planning::PostProcessPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<ReachabilityPlugin>("vigir_footstep_planning::ReachabilityPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<StepCostEstimatorPlugin>("vigir_footstep_planning::StepCostEstimatorPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<HeuristicPlugin>("vigir_footstep_planning::HeuristicPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<PostProcessPlugin>("vigir_footstep_planning::PostProcessPlugin");
 
-  PluginManager::addPlugin(new RobotModelPlugin(nh));
-  PluginManager::addPlugin<StepPlanMsgPlugin>();
+  vigir_pluginlib::PluginManager::addPlugin(new RobotModelPlugin(nh));
+  vigir_pluginlib::PluginManager::addPlugin<StepPlanMsgPlugin>();
 
-  PluginManager::addPlugin<ReachabilityPlugin>("vigir_footstep_planning::ReachabilityPolygon");
-  //PluginManager::addPlugin<ReachabilityPlugin>("vigir_footstep_planning::DynamicsReachability");
+  vigir_pluginlib::PluginManager::addPlugin<ReachabilityPlugin>("vigir_footstep_planning::ReachabilityPolygon");
+  //vigir_pluginlib::PluginManager::addPlugin<ReachabilityPlugin>("vigir_footstep_planning::DynamicsReachability");
 
   // note: ordered by name -> collision check order
-  PluginManager::addPlugin(new TerrainModel("1_terrain_model", nh, "/terrain_model"));
-  PluginManager::addPlugin(new UpperBodyGridMapModel("2_upper_body_collision_check", nh, "/body_level_grid_map"));
-  PluginManager::addPlugin(new FootGridMapModel("3_foot_collision_check", nh, "/ground_level_grid_map"));
+  vigir_pluginlib::PluginManager::addPlugin(new TerrainModel("1_terrain_model", nh, "/terrain_model"));
+  vigir_pluginlib::PluginManager::addPlugin(new UpperBodyGridMapModel("2_upper_body_collision_check", nh, "/body_level_grid_map"));
+  vigir_pluginlib::PluginManager::addPlugin(new FootGridMapModel("3_foot_collision_check", nh, "/ground_level_grid_map"));
 
-  PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::ConstStepCostEstimator");
-  PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::EuclideanStepCostEstimator");
-  //PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::BoundaryStepCostEstimator");
-  //PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::DynamicsStepCostEstimator");
-  PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::GroundContactStepCostEstimator");
+  vigir_pluginlib::PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::ConstStepCostEstimator");
+  vigir_pluginlib::PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::EuclideanStepCostEstimator");
+  //vigir_pluginlib::PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::BoundaryStepCostEstimator");
+  //vigir_pluginlib::PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::DynamicsStepCostEstimator");
+  vigir_pluginlib::PluginManager::addPlugin<StepCostEstimatorPlugin>("vigir_footstep_planning::GroundContactStepCostEstimator");
 
-  PluginManager::addPlugin<HeuristicPlugin>("vigir_footstep_planning::EuclideanHeuristic");
-  PluginManager::addPlugin<HeuristicPlugin>("vigir_footstep_planning::DynamicsHeuristic");
-  PluginManager::addPlugin<HeuristicPlugin>("vigir_footstep_planning::StepCostHeuristic");
+  vigir_pluginlib::PluginManager::addPlugin<HeuristicPlugin>("vigir_footstep_planning::EuclideanHeuristic");
+  vigir_pluginlib::PluginManager::addPlugin<HeuristicPlugin>("vigir_footstep_planning::DynamicsHeuristic");
+  vigir_pluginlib::PluginManager::addPlugin<HeuristicPlugin>("vigir_footstep_planning::StepCostHeuristic");
 
-  PluginManager::addPlugin<PostProcessPlugin>("vigir_footstep_planning::StepDynamicsPostProcessPlugin");
+  vigir_pluginlib::PluginManager::addPlugin<PostProcessPlugin>("vigir_footstep_planning::StepDynamicsPostProcessPlugin");
 }
 
 void FootstepPlannerNode::init(ros::NodeHandle& nh)
@@ -69,10 +68,10 @@ void FootstepPlannerNode::init(ros::NodeHandle& nh)
 
   // init planner
   footstep_planner.reset(new FootstepPlanner(nh));
-  PluginManager::initializePlugins(nh);
+  vigir_pluginlib::PluginManager::initializePlugins(nh);
 
   // subscribe topics
-  set_parameter_set_sub = nh.subscribe<msgs::ParameterSet>("set_parameter_set", 1, &FootstepPlannerNode::setParams, this);
+  set_parameter_set_sub = nh.subscribe<vigir_generic_params::ParameterSetMsg>("set_parameter_set", 1, &FootstepPlannerNode::setParams, this);
   set_active_parameter_set_sub = nh.subscribe<std_msgs::String>("set_active_parameter_set", 1, &FootstepPlannerNode::setParams, this);
   step_plan_request_sub = nh.subscribe("step_plan_request", 1, &FootstepPlannerNode::stepPlanRequest, this);
   goal_pose_sub = nh.subscribe("/goal_pose", 1, &FootstepPlannerNode::goalPoseCallback, this);
@@ -96,6 +95,8 @@ void FootstepPlannerNode::init(ros::NodeHandle& nh)
   update_step_plan_srv = nh.advertiseService("update_step_plan", &FootstepPlannerNode::updateStepPlanService, this);
 
   // init action servers
+  set_parameter_set_as = SimpleActionServer<vigir_generic_params::SetParameterSetAction>::create(nh, "set_parameter_set", true, boost::bind(&FootstepPlannerNode::setParameterSetAction, this, boost::ref(set_parameter_set_as)));
+
   step_plan_request_as = SimpleActionServer<msgs::StepPlanRequestAction>::create(nh, "step_plan_request", true, boost::bind(&FootstepPlannerNode::stepPlanRequestAction, this, boost::ref(step_plan_request_as))
                                                                                                               , boost::bind(&FootstepPlannerNode::stepPlanRequestPreempt, this, boost::ref(step_plan_request_as)));
   update_foot_as = SimpleActionServer<msgs::UpdateFootAction>::create(nh, "update_foot", true, boost::bind(&FootstepPlannerNode::updateFootAction, this, boost::ref(update_foot_as)));
@@ -180,17 +181,17 @@ void FootstepPlannerNode::planningPreemptionActionCallback(SimpleActionServer<ms
 
 // --- Subscriber calls ---
 
-void FootstepPlannerNode::setParams(const msgs::ParameterSetConstPtr& params)
+void FootstepPlannerNode::setParams(const vigir_generic_params::ParameterSetMsgConstPtr& params)
 {
-  if (params->parameters.empty())
-    ROS_ERROR("[FootstepPlannerNode] setParams: Empty parameter set was given.");
-  else if (!footstep_planner->setParams(ParameterSet(*params)))
+  if (params->params.empty())
+    ROS_WARN("[FootstepPlannerNode] setParams: Empty parameter set was given.");
+  else if(!footstep_planner->setParams(vigir_generic_params::ParameterSet(*params)))
     ROS_ERROR("[FootstepPlannerNode] setParams: Couldn't set parameter set '%s'!", params->name.data.c_str());
 }
 
 void FootstepPlannerNode::setParams(const std_msgs::StringConstPtr& params_name)
 {
-  ParameterSet params;
+  vigir_generic_params::ParameterSet params;
 
   if (!ParameterManager::getParameterSet(params_name->data, params))
     ROS_ERROR("[FootstepPlannerNode] setParams: Unknown parameter set '%s'!", params_name->data.c_str());
@@ -288,12 +289,12 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 
 // --- service calls ---
 
-bool FootstepPlannerNode::setParamsService(msgs::SetParameterSetService::Request& req, msgs::SetParameterSetService::Response& resp)
+bool FootstepPlannerNode::setParamsService(vigir_generic_params::SetParameterSetService::Request& req, vigir_generic_params::SetParameterSetService::Response& resp)
 {
-  if (req.params.parameters.empty())
-    resp.status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlannerNode", "setParamsService: Empty parameter set was given.");
-  else if(!footstep_planner->setParams(ParameterSet(req.params)))
-    resp.status = ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlannerNode", "setParamsService: Couldn't set parameter set '" + req.params.name.data + "'!");
+  if (req.params.params.empty())
+    ROS_WARN("[FootstepPlannerNode] setParamsService: Empty parameter set was given.");
+  else if(!footstep_planner->setParams(vigir_generic_params::ParameterSet(req.params)))
+    ROS_ERROR("[FootstepPlannerNode] setParamsService: Couldn't set parameter set '%s'!", req.params.name.data.c_str());
 
   return true; // return always true, so status is sent
 }
@@ -344,9 +345,9 @@ bool FootstepPlannerNode::updateStepPlanService(msgs::UpdateStepPlanService::Req
 
 //--- action server calls ---
 
-void FootstepPlannerNode::setParameterSetAction(SimpleActionServer<msgs::SetParameterSetAction>::Ptr& as)
+void FootstepPlannerNode::setParameterSetAction(SimpleActionServer<vigir_generic_params::SetParameterSetAction>::Ptr& as)
 {
-  const msgs::SetParameterSetGoalConstPtr& goal(as->acceptNewGoal());
+  const vigir_generic_params::SetParameterSetGoalConstPtr& goal(as->acceptNewGoal());
 
   // check if new goal was preempted in the meantime
   if (as->isPreemptRequested())
@@ -355,14 +356,14 @@ void FootstepPlannerNode::setParameterSetAction(SimpleActionServer<msgs::SetPara
     return;
   }
 
-  msgs::SetParameterSetResult result;
+  vigir_generic_params::SetParameterSetResult result;
 
-  if (goal->params.parameters.empty())
-    result.status = ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlannerNode", "setParameterSetAction: Empty parameter set was given.");
-  else if(!footstep_planner->setParams(ParameterSet(goal->params)))
-    result.status = ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlannerNode", "setParameterSetAction: Couldn't set parameter set '" + goal->params.name.data + "'!");
+  if (goal->params.name.data.empty())
+    ROS_WARN("[FootstepPlannerNode] setParameterSetAction: Empty parameter set was given.");
+  else if(!footstep_planner->setParams(vigir_generic_params::ParameterSet(goal->params)))
+    ROS_ERROR("[FootstepPlannerNode] setParameterSetAction: Couldn't set parameter set '%s'!", goal->params.name.data.c_str());
 
-  as->finish(result);
+  as->setSucceeded(result);
 }
 
 void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)

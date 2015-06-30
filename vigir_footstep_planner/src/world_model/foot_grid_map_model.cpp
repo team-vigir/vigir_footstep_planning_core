@@ -2,7 +2,7 @@
 
 namespace vigir_footstep_planning
 {
-FootGridMapModel::FootGridMapModel(const std::string& name, const ParameterSet& params, ros::NodeHandle& nh, const std::string& topic)
+FootGridMapModel::FootGridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params, ros::NodeHandle& nh, const std::string& topic)
   : GridMapModel(name, params, FOOT, nh, topic)
 {
   // get foot dimensions

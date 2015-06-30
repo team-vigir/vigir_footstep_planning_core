@@ -18,7 +18,7 @@ WorldModel::Ptr& WorldModel::Instance()
 void WorldModel::loadPlugins()
 {
   // get collision check plugins
-  PluginManager::getPluginsByType(Instance()->collision_check_models);
+  vigir_pluginlib::PluginManager::getPluginsByType(Instance()->collision_check_models);
 
   ROS_INFO("[WorldModel] Plugins loaded:");
   for (std::vector<CollisionCheckPlugin::Ptr>::const_iterator itr = Instance()->collision_check_models.begin(); itr != Instance()->collision_check_models.end(); itr++)
@@ -29,7 +29,7 @@ void WorldModel::loadPlugins()
   }
 
   // get terrain model
-  PluginManager::getPlugin(Instance()->terrain_model);
+  vigir_pluginlib::PluginManager::getPlugin(Instance()->terrain_model);
   if (Instance()->terrain_model)
   {
     ROS_INFO("[WorldModel] Found terrain model:");
@@ -37,7 +37,7 @@ void WorldModel::loadPlugins()
   }
 }
 
-void WorldModel::loadParams(const ParameterSet& params)
+void WorldModel::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   for (std::vector<CollisionCheckPlugin::Ptr>::iterator itr = Instance()->collision_check_models.begin(); itr != Instance()->collision_check_models.end(); itr++)
   {
