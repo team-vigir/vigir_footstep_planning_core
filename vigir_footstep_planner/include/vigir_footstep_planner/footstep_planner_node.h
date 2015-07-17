@@ -71,6 +71,7 @@
 #include <vigir_footstep_planner/footstep_planner.h>
 
 
+
 namespace vigir_footstep_planning
 {
 /**
@@ -82,6 +83,8 @@ class FootstepPlannerNode
 public:
   FootstepPlannerNode();
   virtual ~FootstepPlannerNode();
+
+  void loadPlannerConfigs(ros::NodeHandle& nh) const;
 
   virtual void initPlugins(ros::NodeHandle& nh);
   virtual void init(ros::NodeHandle& nh);

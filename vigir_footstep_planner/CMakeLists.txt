@@ -238,6 +238,10 @@ install(DIRECTORY launch
   FILES_MATCHING PATTERN "*.launch"
 )
 
+install(FILES basic_plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 #############
 ## Testing ##
 #############

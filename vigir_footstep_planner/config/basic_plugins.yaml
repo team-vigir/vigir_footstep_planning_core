@@ -1,0 +1,2 @@
+reachability_polygon:
+  type_class: vigir_footstep_planning::ReachabilityPolygon
