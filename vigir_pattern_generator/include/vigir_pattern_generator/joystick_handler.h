@@ -77,6 +77,13 @@ protected:
   // joystick input
   sensor_msgs::Joy::ConstPtr last_joy_msg;
   bool enable_generator;
+
+  // joystick config
+  int yaw_axis;
+  int x_axis;
+  int y_axis;
+  int enable_generator_btn;
+  int disable_generator_btn;
 };
 }
 
