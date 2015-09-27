@@ -6,8 +6,8 @@
 
   <!-- Load camera configuration for the UI nodes and nodelets -->
   <rosparam command="load" file="$(find vigir_ocs)/launch/atlas_camera_topics.yaml" />
-  <rosparam command="load" file="$(find vigir_ocs)/launch/$(env FLOR_LEFT_HAND_TYPE)_camera_topics.yaml" />
-  <rosparam command="load" file="$(find vigir_ocs)/launch/$(env FLOR_RIGHT_HAND_TYPE)_camera_topics.yaml" />
+  <rosparam command="load" file="$(find vigir_ocs)/launch/$(env VIGIR_ATLAS_LEFT_HAND_TYPE)_camera_topics.yaml" />
+  <rosparam command="load" file="$(find vigir_ocs)/launch/$(env VIGIR_ATLAS_RIGHT_HAND_TYPE)_camera_topics.yaml" />
 
   <include file="$(find vigir_onboard)/launch/vigir_status_relay.launch" />
   <include file="$(find vigir_ocs)/launch/vigir_ocs_nodelets_no_footstep_planner.launch" />
