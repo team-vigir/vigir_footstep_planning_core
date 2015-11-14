@@ -1,0 +1,11 @@
+plugin_sets:
+  default:
+    type_class: vigir_footstep_planning::StepPlanMsgPlugin
+    type_class_package: vigir_footstep_planner
+    base_class: vigir_footstep_planning::StepPlanMsgPlugin
+    base_class_package: vigir_footstep_planner
+  default:
+    type_class: vigir_footstep_planning::StepPlanMsgPlugin
+    type_class_package: vigir_footstep_planner
+    base_class: vigir_footstep_planning::StepPlanMsgPlugin
+    base_class_package: vigir_footstep_planner
