@@ -1,11 +1,25 @@
 plugin_sets:
   default:
-    type_class: vigir_footstep_planning::StepPlanMsgPlugin
-    type_class_package: vigir_footstep_planner
-    base_class: vigir_footstep_planning::StepPlanMsgPlugin
-    base_class_package: vigir_footstep_planner
-  default:
-    type_class: vigir_footstep_planning::StepPlanMsgPlugin
-    type_class_package: vigir_footstep_planner
-    base_class: vigir_footstep_planning::StepPlanMsgPlugin
-    base_class_package: vigir_footstep_planner
+    # StepPlanMsgPlugin
+    step_plan_msg_plugin:
+      type_class: vigir_footstep_planning::StepPlanMsgPlugin
+      type_class_package: vigir_footstep_planning_lib
+      base_class: vigir_footstep_planning::StepPlanMsgPlugin
+      base_class_package: vigir_footstep_planning_lib
+
+    # ReachabilityPlugins
+    reachability_polygon: none
+
+    # StepCostEstimatorPlugins
+    const_step_cost_estimator: none
+    euclidean_step_cost_estimator: none
+    ground_contact_step_cost_estimator: none
+
+    # HeuristicPlugins
+    euclidean_heuristic: none
+    dynamics_heuristic: none
+    step_cost_heuristic: none
+
+    # PostProcessPlugins
+    step_dynamics_post_process_plugin: none
+
