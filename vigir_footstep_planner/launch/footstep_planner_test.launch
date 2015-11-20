@@ -26,7 +26,6 @@
     </node>
 
     <!-- Load plugin configurations from YAML file to parameter server -->
-    <rosparam file="$(find vigir_footstep_planner)/config/basic_plugins.yaml" command="load" />
     <rosparam file="$(find vigir_footstep_planner)/config/default_plugin_sets.yaml" command="load" />
 
     <!-- specify where to load robot specific parameters -->
