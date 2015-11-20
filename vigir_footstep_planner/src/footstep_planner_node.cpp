@@ -38,12 +38,7 @@ void FootstepPlannerNode::initPlugins(ros::NodeHandle& nh)
   vigir_pluginlib::PluginManager::addPluginClassLoader<CollisionCheckPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::CollisionCheckPlugin");
   vigir_pluginlib::PluginManager::addPluginClassLoader<TerrainModelPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::TerrainModelPlugin");
 
-  std::string plugin_set;
-  if (ParameterManager::getActive().getParam("plugin_set", plugin_set))
-    vigir_pluginlib::PluginManager::loadPluginSet(plugin_set);
-  else
-    ROS_WARN("[FootstepPlannerNode] initPlugins: No plugin set was given by parameter set '%s'", ParameterManager::getActive().getName().c_str());
-
+  /** No need to load plugin set here as it will be down in the constructor of FootstepPlanner */
   //vigir_pluginlib::PluginManager::addPlugin(new RobotModelPlugin(nh));
 }
 
@@ -55,7 +50,6 @@ void FootstepPlannerNode::init(ros::NodeHandle& nh)
   footstep_planner.reset(new FootstepPlanner(nh));
 
   // subscribe topics
-  set_parameter_set_sub = nh.subscribe<vigir_generic_params::ParameterSetMsg>("set_parameter_set", 1, &FootstepPlannerNode::setParams, this);
   set_active_parameter_set_sub = nh.subscribe<std_msgs::String>("set_active_parameter_set", 1, &FootstepPlannerNode::setParams, this);
   step_plan_request_sub = nh.subscribe("step_plan_request", 1, &FootstepPlannerNode::stepPlanRequest, this);
   goal_pose_sub = nh.subscribe("/goal_pose", 1, &FootstepPlannerNode::goalPoseCallback, this);
@@ -72,15 +66,12 @@ void FootstepPlannerNode::init(ros::NodeHandle& nh)
   generate_feet_pose_client = nh.serviceClient<msgs::GenerateFeetPoseService>("generate_feet_pose");
 
   // start own services
-  set_parameter_set_srv = nh.advertiseService("set_parameter_set", &FootstepPlannerNode::setParamsService, this);
   step_plan_request_srv = nh.advertiseService("step_plan_request", &FootstepPlannerNode::stepPlanRequestService, this);
   update_foot_srv = nh.advertiseService("update_foot", &FootstepPlannerNode::updateFootService, this);
   update_feet_srv = nh.advertiseService("update_feet", &FootstepPlannerNode::updateFeetService, this);
   update_step_plan_srv = nh.advertiseService("update_step_plan", &FootstepPlannerNode::updateStepPlanService, this);
 
   // init action servers
-  set_parameter_set_as = SimpleActionServer<vigir_generic_params::SetParameterSetAction>::create(nh, "set_parameter_set", true, boost::bind(&FootstepPlannerNode::setParameterSetAction, this, boost::ref(set_parameter_set_as)));
-
   step_plan_request_as = SimpleActionServer<msgs::StepPlanRequestAction>::create(nh, "step_plan_request", true, boost::bind(&FootstepPlannerNode::stepPlanRequestAction, this, boost::ref(step_plan_request_as))
                                                                                                               , boost::bind(&FootstepPlannerNode::stepPlanRequestPreempt, this, boost::ref(step_plan_request_as)));
   update_foot_as = SimpleActionServer<msgs::UpdateFootAction>::create(nh, "update_foot", true, boost::bind(&FootstepPlannerNode::updateFootAction, this, boost::ref(update_foot_as)));
@@ -165,14 +156,6 @@ void FootstepPlannerNode::planningPreemptionActionCallback(SimpleActionServer<ms
 
 // --- Subscriber calls ---
 
-void FootstepPlannerNode::setParams(const vigir_generic_params::ParameterSetMsgConstPtr& params)
-{
-  if (params->params.empty())
-    ROS_WARN("[FootstepPlannerNode] setParams: Empty parameter set was given.");
-  else if(!footstep_planner->setParams(vigir_generic_params::ParameterSet(*params)))
-    ROS_ERROR("[FootstepPlannerNode] setParams: Couldn't set parameter set '%s'!", params->name.data.c_str());
-}
-
 void FootstepPlannerNode::setParams(const std_msgs::StringConstPtr& params_name)
 {
   vigir_generic_params::ParameterSet params;
@@ -181,6 +164,8 @@ void FootstepPlannerNode::setParams(const std_msgs::StringConstPtr& params_name)
     ROS_ERROR("[FootstepPlannerNode] setParams: Unknown parameter set '%s'!", params_name->data.c_str());
   else if (!footstep_planner->setParams(params))
     ROS_ERROR("[FootstepPlannerNode] setParams: Couldn't set parameter set '%s'!", params_name->data.c_str());
+  else
+    ParameterManager::setActive(params_name->data);
 }
 
 void FootstepPlannerNode::stepPlanRequest(const msgs::StepPlanRequestConstPtr &plan_request)
@@ -273,16 +258,6 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 
 // --- service calls ---
 
-bool FootstepPlannerNode::setParamsService(vigir_generic_params::SetParameterSetService::Request& req, vigir_generic_params::SetParameterSetService::Response& resp)
-{
-  if (req.params.params.empty())
-    ROS_WARN("[FootstepPlannerNode] setParamsService: Empty parameter set was given.");
-  else if(!footstep_planner->setParams(vigir_generic_params::ParameterSet(req.params)))
-    ROS_ERROR("[FootstepPlannerNode] setParamsService: Couldn't set parameter set '%s'!", req.params.name.data.c_str());
-
-  return true; // return always true, so status is sent
-}
-
 bool FootstepPlannerNode::stepPlanRequestService(msgs::StepPlanRequestService::Request &req, msgs::StepPlanRequestService::Response &resp)
 {
   // generate start feet pose if needed
@@ -328,27 +303,6 @@ bool FootstepPlannerNode::updateStepPlanService(msgs::UpdateStepPlanService::Req
 }
 
 //--- action server calls ---
-
-void FootstepPlannerNode::setParameterSetAction(SimpleActionServer<vigir_generic_params::SetParameterSetAction>::Ptr& as)
-{
-  const vigir_generic_params::SetParameterSetGoalConstPtr& goal(as->acceptNewGoal());
-
-  // check if new goal was preempted in the meantime
-  if (as->isPreemptRequested())
-  {
-    as->setPreempted();
-    return;
-  }
-
-  vigir_generic_params::SetParameterSetResult result;
-
-  if (goal->params.name.data.empty())
-    ROS_WARN("[FootstepPlannerNode] setParameterSetAction: Empty parameter set was given.");
-  else if(!footstep_planner->setParams(vigir_generic_params::ParameterSet(goal->params)))
-    ROS_ERROR("[FootstepPlannerNode] setParameterSetAction: Couldn't set parameter set '%s'!", goal->params.name.data.c_str());
-
-  as->setSucceeded(result);
-}
 
 void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)
 {
