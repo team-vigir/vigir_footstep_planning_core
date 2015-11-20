@@ -2,13 +2,13 @@
 
 namespace vigir_footstep_planning
 {
-GridMapModel::GridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params, unsigned int collision_check_flag, ros::NodeHandle& nh, const std::string& topic)
-  : CollisionCheckGridMapPlugin(name, params, collision_check_flag, nh, topic)
+GridMapModel::GridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params)
+  : CollisionCheckGridMapPlugin(name, params)
 {
 }
 
-GridMapModel::GridMapModel(const std::string& name, unsigned int collision_check_flag, ros::NodeHandle& nh, const std::string& topic)
-  : CollisionCheckGridMapPlugin(name, collision_check_flag, nh, topic)
+GridMapModel::GridMapModel(const std::string& name)
+  : CollisionCheckGridMapPlugin(name)
 {
 }
 

@@ -1,4 +1,5 @@
 <library path="lib/libvigir_footstep_planner">
+  <!-- ReachabilityPlugin -->
   <class type="vigir_footstep_planning::ReachabilityPolygon" base_class_type="vigir_footstep_planning::ReachabilityPlugin">
     <description>
       ReachabilityPlugin: Checking reachability of step based on reachability polygon
@@ -10,6 +11,7 @@
     </description>
   </class>
 
+  <!-- StepCostEstimatorPlugin -->
   <class type="vigir_footstep_planning::ConstStepCostEstimator" base_class_type="vigir_footstep_planning::StepCostEstimatorPlugin">
     <description>
       StepCostEstimator: Adds a constant value to each step
@@ -46,6 +48,7 @@
     </description>
   </class>
 
+  <!-- HeuristicPlugin -->
   <class type="vigir_footstep_planning::EuclideanHeuristic" base_class_type="vigir_footstep_planning::HeuristicPlugin">
     <description>
       StepCostHeuristic: Estimates remaining travel distance to goals state
@@ -82,9 +85,29 @@
     </description>
   </class>
 
+  <!-- PostProcessPlugin -->
   <class type="vigir_footstep_planning::StepDynamicsPostProcessPlugin" base_class_type="vigir_footstep_planning::PostProcessPlugin">
     <description>
       PostProcessPlugin: Determining step dynamics and timings (e.g. upper body accerlation and velocity)
+    </description>
+  </class>
+
+  <!-- CollisionCheckPlugin -->
+  <class type="vigir_footstep_planning::FootGridMapModel" base_class_type="vigir_footstep_planning::CollisionCheckPlugin">
+    <description>
+      FootGridMapModel: Performs collision checking for rectangular shaped feet using occupance grid maps
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::UpperBodyGridMapModel" base_class_type="vigir_footstep_planning::CollisionCheckPlugin">
+    <description>
+      UpperBodyGridMapModel: Performs collision checking for rectangular shaped upper body geometry using occupance grid maps
+    </description>
+  </class>
+
+  <!-- TerrainModelPlugin -->
+  <class type="vigir_footstep_planning::TerrainModel" base_class_type="vigir_footstep_planning::TerrainModelPlugin">
+    <description>
+      TerrainModel: Provides terrain model plugin based on vigir_terrain_classifier
     </description>
   </class>
 </library>

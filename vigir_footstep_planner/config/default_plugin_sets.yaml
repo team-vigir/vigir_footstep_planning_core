@@ -1,11 +1,7 @@
 plugin_sets:
   default:
     # StepPlanMsgPlugin
-    step_plan_msg_plugin:
-      type_class: vigir_footstep_planning::StepPlanMsgPlugin
-      type_class_package: vigir_footstep_planning_lib
-      base_class: vigir_footstep_planning::StepPlanMsgPlugin
-      base_class_package: vigir_footstep_planning_lib
+    step_plan_msg_plugin: none
 
     # ReachabilityPlugins
     reachability_polygon: none
@@ -22,4 +18,23 @@ plugin_sets:
 
     # PostProcessPlugins
     step_dynamics_post_process_plugin: none
+
+    # CollisionCheckPlugins
+    2_upper_body_grid_map_model:
+      import: upper_body_grid_map_model
+      params:
+        collision_check_flag: 2 # Upper Body
+        grid_map_topic: /body_level_grid_map
+    3_foot_grid_map_model:
+      import: foot_grid_map_model
+      params:
+        collision_check_flag: 1 # Foot
+        grid_map_topic: /ground_level_grid_map
+
+    # TerrainModelPlugins
+    1_terrain_model:
+      import: terrain_model
+      params:
+        collision_check_flag: 4 # Foot Contact Support
+        terrain_model_topic: /terrain_model
 

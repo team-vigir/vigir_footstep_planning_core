@@ -86,7 +86,7 @@
     <!-- Other tools can request additional information be placed here -->
     <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -Wl,-rpath,${prefix}/lib -lvigir_footstep_planner" />
 
-    <vigir_footstep_planner plugin="${prefix}/basic_plugins.xml" />
+    <vigir_footstep_planning_lib plugin="${prefix}/basic_plugins.xml" />
 
   </export>
 </package>

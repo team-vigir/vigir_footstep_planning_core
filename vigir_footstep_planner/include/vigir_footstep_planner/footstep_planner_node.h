@@ -44,29 +44,8 @@
 #include <vigir_footstep_planning_lib/visualization/footstep_planning_vis.h>
 #include <vigir_footstep_planning_lib/plugins/robot_model_plugin.h>
 #include <vigir_footstep_planning_lib/plugins/step_plan_msg_plugin.h>
-
-#include <vigir_footstep_planner/robot_model/dynamics_reachability.h>
-#include <vigir_footstep_planner/robot_model/reachability_polygon.h>
-
-#include <vigir_footstep_planner/post_processor/step_dynamics_post_process.h>
-
-#include <vigir_footstep_planner/world_model/foot_grid_map_model.h>
-#include <vigir_footstep_planner/world_model/upper_body_grid_map_model.h>
-#include <vigir_footstep_planner/world_model/terrain_model.h>
-
-#include <vigir_footstep_planner/step_cost_estimators/const_step_cost_estimator.h>
-#include <vigir_footstep_planner/step_cost_estimators/euclidean_step_cost_estimator.h>
-#include <vigir_footstep_planner/step_cost_estimators/boundary_step_cost_estimator.h>
-#include <vigir_footstep_planner/step_cost_estimators/dynamics_step_cost_estimator.h>
-#include <vigir_footstep_planner/step_cost_estimators/ground_contact_step_cost_estimator.h>
-#include <vigir_footstep_planner/step_cost_estimators/travel_time_step_cost_estimator.h>
-
-#include <vigir_footstep_planner/heuristics/dynamics_heuristic.h>
-#include <vigir_footstep_planner/heuristics/euclidean_heuristic.h>
-#include <vigir_footstep_planner/heuristics/hot_map_heuristic.h>
-#include <vigir_footstep_planner/heuristics/step_cost_heuristic.h>
-#include <vigir_footstep_planner/heuristics/occupancy_grid_map_heuristic.h>
-#include <vigir_footstep_planner/heuristics/travel_time_heuristic.h>
+#include <vigir_footstep_planning_lib/plugins/collision_check_plugin.h>
+#include <vigir_footstep_planning_lib/plugins/terrain_model_plugin.h>
 
 #include <vigir_footstep_planner/footstep_planner.h>
 

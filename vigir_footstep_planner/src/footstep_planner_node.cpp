@@ -31,26 +31,20 @@ void FootstepPlannerNode::loadPlannerConfigs(ros::NodeHandle& nh) const
 void FootstepPlannerNode::initPlugins(ros::NodeHandle& nh)
 {
   vigir_pluginlib::PluginManager::addPluginClassLoader<StepPlanMsgPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::StepPlanMsgPlugin");
-  vigir_pluginlib::PluginManager::addPluginClassLoader<ReachabilityPlugin>("vigir_footstep_planner", "vigir_footstep_planning::ReachabilityPlugin");
-  vigir_pluginlib::PluginManager::addPluginClassLoader<StepCostEstimatorPlugin>("vigir_footstep_planner", "vigir_footstep_planning::StepCostEstimatorPlugin");
-  vigir_pluginlib::PluginManager::addPluginClassLoader<HeuristicPlugin>("vigir_footstep_planner", "vigir_footstep_planning::HeuristicPlugin");
-  vigir_pluginlib::PluginManager::addPluginClassLoader<PostProcessPlugin>("vigir_footstep_planner", "vigir_footstep_planning::PostProcessPlugin");
-  //vigir_pluginlib::PluginManager::addPluginClassLoader<vigir_pluginlib::Plugin>("vigir_pluignlib", "vigir_pluginlib::Plugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<ReachabilityPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::ReachabilityPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<StepCostEstimatorPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::StepCostEstimatorPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<HeuristicPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::HeuristicPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<PostProcessPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::PostProcessPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<CollisionCheckPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::CollisionCheckPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<TerrainModelPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::TerrainModelPlugin");
 
   std::string plugin_set;
   if (ParameterManager::getActive().getParam("plugin_set", plugin_set))
     vigir_pluginlib::PluginManager::loadPluginSet(plugin_set);
   else
-    ROS_WARN("[FootstepPlannerNode] initPlugins: No plugin set was given by config file!");
+    ROS_WARN("[FootstepPlannerNode] initPlugins: No plugin set was given by parameter set '%s'", ParameterManager::getActive().getName().c_str());
 
-  vigir_pluginlib::PluginManager::addPlugin(new RobotModelPlugin(nh));
-
-  // note: ordered by name -> collision check order
-  vigir_pluginlib::PluginManager::addPlugin(new TerrainModel("1_terrain_model", nh, "/terrain_model"));
-  vigir_pluginlib::PluginManager::addPlugin(new UpperBodyGridMapModel("2_upper_body_collision_check", nh, "/body_level_grid_map"));
-  vigir_pluginlib::PluginManager::addPlugin(new FootGridMapModel("3_foot_collision_check", nh, "/ground_level_grid_map"));
-
-  vigir_pluginlib::PluginManager::addPlugin("vigir_footstep_planner", "vigir_footstep_planning::StepDynamicsPostProcessPlugin");
+  //vigir_pluginlib::PluginManager::addPlugin(new RobotModelPlugin(nh));
 }
 
 void FootstepPlannerNode::init(ros::NodeHandle& nh)

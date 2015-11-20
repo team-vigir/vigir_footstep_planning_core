@@ -74,11 +74,11 @@ foot_contact_support:
   minimal_support: 0.85
 
 collision_check:
-  # collision check flag (binary decoded)
+  # collision check mask (binary decoded)
   # - 1 feet
   # - 2 upper body
   # - 4 foot contact support
-  collision_check_flag: 4
+  collision_check_mask: 4
 
   # footstep collision check accuracy
   # - 0 (just the circumcircle of the foot)

@@ -1,108 +1,131 @@
+# ReachabilityPlugin
 dynamics_reachability:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::DynamicsReachability
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::ReachabilityPlugin
 
 reachability_polygon:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::ReachabilityPolygon
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::ReachabilityPlugin
 
 
-
+# StepCostEstimatorPlugin
 boundary_step_cost_estimator:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::BoundaryStepCostEstimator
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::StepCostEstimatorPlugin
 
 const_step_cost_estimator:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::ConstStepCostEstimator
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::StepCostEstimatorPlugin
 
 dynamics_step_cost_estimator:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::DynamicsStepCostEstimator
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::StepCostEstimatorPlugin
 
 euclidean_step_cost_estimator:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::EuclideanStepCostEstimator
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::StepCostEstimatorPlugin
 
 ground_contact_step_cost_estimator:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::GroundContactStepCostEstimator
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::StepCostEstimatorPlugin
 
 map_step_cost_estimator:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::MapStepCostEstimator
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::StepCostEstimatorPlugin
 
 travel_time_step_cost_estimator:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::TravelTimeStepCostEstimator
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::StepCostEstimatorPlugin
 
 
-
+# HeuristicPlugin
 dynamics_heuristic:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::DynamicsHeuristic
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::HeuristicPlugin
 
 euclidean_heuristic:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::EuclideanHeuristic
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::HeuristicPlugin
 
 hot_map_heuristic:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::HotMapHeuristic
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::HeuristicPlugin
 
 occupancy_grid_map_heuristic:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::OccupancyGridMapHeuristic
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::HeuristicPlugin
 
 path_cost_heuristic:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::PathCostHeuristic
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::HeuristicPlugin
 
 step_cost_heuristic:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::StepCostHeuristic
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::HeuristicPlugin
 
 travel_time_heuristic:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::TravelTimeHeuristic
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::HeuristicPlugin
 
 
-
+# PostProcessPlugin
 step_dynamics_post_process_plugin:
   type_class_package: vigir_footstep_planner
   type_class: vigir_footstep_planning::StepDynamicsPostProcessPlugin
-  base_class_package: vigir_footstep_planner
+  base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::PostProcessPlugin
+
+
+# CollisionCheckPlugin
+foot_grid_map_model:
+  type_class_package: vigir_footstep_planner
+  type_class: vigir_footstep_planning::FootGridMapModel
+  base_class_package: vigir_footstep_planning_lib
+  base_class: vigir_footstep_planning::CollisionCheckPlugin
+upper_body_grid_map_model:
+  type_class_package: vigir_footstep_planner
+  type_class: vigir_footstep_planning::UpperBodyGridMapModel
+  base_class_package: vigir_footstep_planning_lib
+  base_class: vigir_footstep_planning::CollisionCheckPlugin
+
+
+# TerrainModelPlugin
+terrain_model:
+  type_class_package: vigir_footstep_planner
+  type_class: vigir_footstep_planning::TerrainModel
+  base_class_package: vigir_footstep_planning_lib
+  base_class: vigir_footstep_planning::TerrainModelPlugin
+
 
