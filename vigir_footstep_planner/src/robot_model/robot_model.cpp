@@ -25,7 +25,7 @@ void RobotModel::loadPlugins()
   {
     const ReachabilityPlugin::Ptr& reachability_plugin = *itr;
     if (reachability_plugin)
-      ROS_INFO("    %s (%s)", reachability_plugin->getName().c_str(), reachability_plugin->getTypeId().c_str());
+      ROS_INFO("    %s (%s)", reachability_plugin->getName().c_str(), reachability_plugin->getTypeClass().c_str());
   }
 }
 

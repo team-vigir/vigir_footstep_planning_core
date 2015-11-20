@@ -28,7 +28,7 @@ void PostProcessor::loadPlugins()
   {
     const PostProcessPlugin::Ptr& post_processor = *itr;
     if (post_processor)
-      ROS_INFO("    %s (%s)", post_processor->getName().c_str(), post_processor->getTypeId().c_str());
+      ROS_INFO("    %s (%s)", post_processor->getName().c_str(), post_processor->getTypeClass().c_str());
   }
 }
 

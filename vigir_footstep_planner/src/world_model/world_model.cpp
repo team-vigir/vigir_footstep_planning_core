@@ -25,7 +25,7 @@ void WorldModel::loadPlugins()
   {
     const CollisionCheckPlugin::Ptr& collision_check_model = *itr;
     if (collision_check_model)
-      ROS_INFO("    %s (%s)", collision_check_model->getName().c_str(), collision_check_model->getTypeId().c_str());
+      ROS_INFO("    %s (%s)", collision_check_model->getName().c_str(), collision_check_model->getTypeClass().c_str());
   }
 
   // get terrain model
@@ -33,7 +33,7 @@ void WorldModel::loadPlugins()
   if (Instance()->terrain_model)
   {
     ROS_INFO("[WorldModel] Found terrain model:");
-    ROS_INFO("    %s (%s)", Instance()->terrain_model->getName().c_str(), Instance()->terrain_model->getTypeId().c_str());
+    ROS_INFO("    %s (%s)", Instance()->terrain_model->getName().c_str(), Instance()->terrain_model->getTypeClass().c_str());
   }
 }
 
