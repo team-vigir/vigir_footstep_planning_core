@@ -60,7 +60,7 @@ namespace vigir_footstep_planning
 class FootstepPlannerNode
 {
 public:
-  FootstepPlannerNode();
+  FootstepPlannerNode(ros::NodeHandle& nh);
   virtual ~FootstepPlannerNode();
 
   void loadPlannerConfigs(ros::NodeHandle& nh) const;

@@ -2,8 +2,11 @@
 
 namespace vigir_footstep_planning
 {
-FootstepPlannerNode::FootstepPlannerNode()
+FootstepPlannerNode::FootstepPlannerNode(ros::NodeHandle& nh)
 {
+  loadPlannerConfigs(nh);
+  initPlugins(nh);
+  init(nh);
 }
 
 void FootstepPlannerNode::loadPlannerConfigs(ros::NodeHandle& nh) const
@@ -422,10 +425,7 @@ int main(int argc, char** argv)
   vigir_pluginlib::PluginManager::initialize(nh);
 
   // init footstep planner
-  vigir_footstep_planning::FootstepPlannerNode footstep_planner_node;
-  footstep_planner_node.loadPlannerConfigs(nh);
-  footstep_planner_node.initPlugins(nh);
-  footstep_planner_node.init(nh);
+  vigir_footstep_planning::FootstepPlannerNode footstep_planner_node(nh);
 
   ros::spin();
 

@@ -127,5 +127,3 @@ terrain_model:
   type_class: vigir_footstep_planning::TerrainModel
   base_class_package: vigir_footstep_planning_lib
   base_class: vigir_footstep_planning::TerrainModelPlugin
-
-

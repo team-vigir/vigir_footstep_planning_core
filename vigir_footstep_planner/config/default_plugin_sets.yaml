@@ -37,4 +37,3 @@ plugin_sets:
       params:
         collision_check_flag: 4 # Foot Contact Support
         terrain_model_topic: /terrain_model
-
