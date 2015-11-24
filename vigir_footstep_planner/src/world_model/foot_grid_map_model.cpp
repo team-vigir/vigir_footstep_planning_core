@@ -1,6 +1,8 @@
+#include <vigir_footstep_planner/world_model/foot_grid_map_model.h>
+
 #include <pluginlib/class_list_macros.h>
 
-#include <vigir_footstep_planner/world_model/foot_grid_map_model.h>
+
 
 namespace vigir_footstep_planning
 {

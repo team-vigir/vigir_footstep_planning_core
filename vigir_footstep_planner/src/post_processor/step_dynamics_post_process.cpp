@@ -1,6 +1,6 @@
-#include <pluginlib/class_list_macros.h>
-
 #include <vigir_footstep_planner/post_processor/step_dynamics_post_process.h>
+
+#include <pluginlib/class_list_macros.h>
 
 
 

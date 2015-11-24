@@ -1,6 +1,6 @@
-#include <pluginlib/class_list_macros.h>
-
 #include <vigir_footstep_planner/robot_model/dynamics_reachability.h>
+
+#include <pluginlib/class_list_macros.h>
 
 
 

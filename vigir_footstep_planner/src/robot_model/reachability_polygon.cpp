@@ -1,6 +1,6 @@
-#include <pluginlib/class_list_macros.h>
-
 #include <vigir_footstep_planner/robot_model/reachability_polygon.h>
+
+#include <pluginlib/class_list_macros.h>
 
 
 

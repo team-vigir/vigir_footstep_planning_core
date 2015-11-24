@@ -1,6 +1,6 @@
-#include <pluginlib/class_list_macros.h>
-
 #include <vigir_footstep_planner/heuristics/euclidean_heuristic.h>
+
+#include <pluginlib/class_list_macros.h>
 
 
 

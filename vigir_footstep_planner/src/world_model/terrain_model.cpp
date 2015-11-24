@@ -1,6 +1,8 @@
+#include <vigir_footstep_planner/world_model/terrain_model.h>
+
 #include <pluginlib/class_list_macros.h>
 
-#include <vigir_footstep_planner/world_model/terrain_model.h>
+
 
 namespace vigir_footstep_planning
 {

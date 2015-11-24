@@ -1,6 +1,6 @@
-#include <pluginlib/class_list_macros.h>
-
 #include <vigir_footstep_planner/step_cost_estimators/boundary_step_cost_estimator.h>
+
+#include <pluginlib/class_list_macros.h>
 
 
 
