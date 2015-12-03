@@ -19,11 +19,14 @@
       <arg name="namespace" value="$(arg namespace)" />
     </include>
 
-    <!-- run local footstep planner -->
+    <!-- start footstep planner -->
     <!-- launch-prefix="valgrind -\-tool=callgrind -\-log-file=/home/alex/vigir/cachegrind/cachegrind.out" -->
     <node name="footstep_planner" pkg="vigir_footstep_planner" type="footstep_planner_node" respawn="true" output="screen">
       <remap from="body_level_grid_map" to="ground_level_grid_map" />
     </node>
+
+    <!-- load plugin configurations from YAML file to parameter server -->
+    <rosparam file="$(find vigir_footstep_planner)/config/default_plugin_sets.yaml" command="load" />
 
     <!-- specify where to load robot specific parameters -->
     <rosparam file="$(find vigir_footstep_planner)/config/robot_params.yaml" command="load" />

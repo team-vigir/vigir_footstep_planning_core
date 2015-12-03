@@ -34,19 +34,18 @@
 //@TODO_ADD_AUTHOR_INFO
 #include <vigir_footstep_planner/step_cost_estimators/travel_time_step_cost_estimator.h>
 
+#include <pluginlib/class_list_macros.h>
+
+
+
 namespace vigir_footstep_planning
 {
-TravelTimeStepCostEstimator::TravelTimeStepCostEstimator(const ParameterSet& params)
-  : StepCostEstimatorPlugin("travel_time_cost_estimator", params)
-{
-}
-
 TravelTimeStepCostEstimator::TravelTimeStepCostEstimator()
   : StepCostEstimatorPlugin("travel_time_cost_estimator")
 {
 }
 
-void TravelTimeStepCostEstimator::loadParams(const ParameterSet& params)
+void TravelTimeStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   params.getParam("travel_time_cost_estimator/sway/parabol_a", a_sway_inv, 0.0);
   a_sway_inv = 1.0/a_sway_inv;
@@ -81,3 +80,5 @@ bool TravelTimeStepCostEstimator::getCost(const State& left_foot, const State& r
   return true;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::TravelTimeStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

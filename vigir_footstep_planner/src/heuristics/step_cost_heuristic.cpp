@@ -34,19 +34,18 @@
 //@TODO_ADD_AUTHOR_INFO
 #include <vigir_footstep_planner/heuristics/step_cost_heuristic.h>
 
+#include <pluginlib/class_list_macros.h>
+
+
+
 namespace vigir_footstep_planning
 {
-StepCostHeuristic::StepCostHeuristic(const ParameterSet& params)
-  : HeuristicPlugin("step_cost_heuristic", params)
-{
-}
-
 StepCostHeuristic::StepCostHeuristic()
   : HeuristicPlugin("step_cost_heuristic")
 {
 }
 
-void StepCostHeuristic::loadParams(const ParameterSet& params)
+void StepCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   HeuristicPlugin::loadParams(params);
 
@@ -82,3 +81,5 @@ double StepCostHeuristic::getHeuristicValue(const State& from, const State& to, 
   return expected_steps * step_cost + diff_angle * diff_angle_cost;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::StepCostHeuristic, vigir_footstep_planning::HeuristicPlugin)

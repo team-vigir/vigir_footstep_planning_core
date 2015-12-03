@@ -36,8 +36,8 @@
 
 namespace vigir_footstep_planning
 {
-GlobalFootstepPlannerNode::GlobalFootstepPlannerNode()
-  : FootstepPlannerNode()
+GlobalFootstepPlannerNode::GlobalFootstepPlannerNode(ros::NodeHandle& nh)
+  : FootstepPlannerNode(nh)
 {
 }
 
@@ -237,9 +237,12 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "vigir_global_footstep_planner");
 
   ros::NodeHandle nh;
-  vigir_footstep_planning::GlobalFootstepPlannerNode globalPlannerNode;
-  globalPlannerNode.initPlugins(nh);
-  globalPlannerNode.init(nh);
+
+  // init parameter and plugin manager
+  vigir_generic_params::ParameterManager::initialize(nh);
+  vigir_pluginlib::PluginManager::initialize(nh);
+
+  vigir_footstep_planning::GlobalFootstepPlannerNode globalPlannerNode(nh);
 
   ros::spin();
 

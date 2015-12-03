@@ -43,10 +43,9 @@ class MapStepCostEstimator
   : public StepCostEstimatorPlugin
 {
 public:
-  MapStepCostEstimator(const ParameterSet& params);
   MapStepCostEstimator();
 
-  void loadParams(const ParameterSet& params) override;
+  void loadParams(const vigir_generic_params::ParameterSet& params) override;
 
   bool getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const override;
 

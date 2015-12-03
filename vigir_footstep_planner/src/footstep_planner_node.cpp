@@ -36,41 +36,15 @@
 
 namespace vigir_footstep_planning
 {
-FootstepPlannerNode::FootstepPlannerNode()
+FootstepPlannerNode::FootstepPlannerNode(ros::NodeHandle& nh)
 {
+  loadPlannerConfigs(nh);
+  initPlugins(nh);
+  init(nh);
 }
 
-void FootstepPlannerNode::initPlugins(ros::NodeHandle &nh)
+void FootstepPlannerNode::loadPlannerConfigs(ros::NodeHandle& nh) const
 {
-  PluginManager::addPlugin(new RobotModelPlugin(nh));
-  PluginManager::addPlugin<StepPlanMsgPlugin>();
-
-  PluginManager::addPlugin<DynamicsReachability>();
-  PluginManager::addPlugin<ReachabilityPolygon>();
-
-  PluginManager::addPlugin<StepDynamicsPostProcessPlugin>();
-
-  // note: ordered by name -> collision check order
-  PluginManager::addPlugin(new TerrainModel("1_terrain_model", nh, "/terrain_model"));
-  PluginManager::addPlugin(new UpperBodyGridMapModel("2_upper_body_collision_check", nh, "/body_level_grid_map"));
-  PluginManager::addPlugin(new FootGridMapModel("3_foot_collision_check", nh, "/ground_level_grid_map"));
-
-  PluginManager::addPlugin<ConstStepCostEstimator>();
-  PluginManager::addPlugin<EuclideanStepCostEstimator>();
-  PluginManager::addPlugin<BoundaryStepCostEstimator>();
-  //PluginManager::addPlugin<DynamicsStepCostEstimator>();
-  PluginManager::addPlugin<GroundContactStepCostEstimator>();
-
-  PluginManager::addPlugin<EuclideanHeuristic>();
-  PluginManager::addPlugin<DynamicsHeuristic>();
-  PluginManager::addPlugin<StepCostHeuristic>();
-}
-
-void FootstepPlannerNode::init(ros::NodeHandle &nh)
-{
-  // init parameter manager topics
-  ParameterManager::initTopics(nh);
-
   // load parameters
   if (nh.hasParam("planner_configs_path"))
   {
@@ -89,16 +63,30 @@ void FootstepPlannerNode::init(ros::NodeHandle &nh)
 
     ParameterManager::setActive(names.front());
   }
+}
 
-  nh.getParam("foot/size/x", foot_size.x);
-  nh.getParam("foot/size/y", foot_size.y);
-  nh.getParam("foot/size/z", foot_size.z);
+void FootstepPlannerNode::initPlugins(ros::NodeHandle& nh)
+{
+  vigir_pluginlib::PluginManager::addPluginClassLoader<StepPlanMsgPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::StepPlanMsgPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<ReachabilityPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::ReachabilityPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<StepCostEstimatorPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::StepCostEstimatorPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<HeuristicPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::HeuristicPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<PostProcessPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::PostProcessPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<CollisionCheckPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::CollisionCheckPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<TerrainModelPlugin>("vigir_footstep_planning_lib", "vigir_footstep_planning::TerrainModelPlugin");
+
+  /** No need to load plugin set here as it will be down in the constructor of FootstepPlanner */
+  //vigir_pluginlib::PluginManager::addPlugin(new RobotModelPlugin(nh));
+}
+
+void FootstepPlannerNode::init(ros::NodeHandle& nh)
+{
+  getFootSize(nh, foot_size);
 
   // init planner
   footstep_planner.reset(new FootstepPlanner(nh));
 
   // subscribe topics
-  set_parameter_set_sub = nh.subscribe<msgs::ParameterSet>("set_parameter_set", 1, &FootstepPlannerNode::setParams, this);
   set_active_parameter_set_sub = nh.subscribe<std_msgs::String>("set_active_parameter_set", 1, &FootstepPlannerNode::setParams, this);
   step_plan_request_sub = nh.subscribe("step_plan_request", 1, &FootstepPlannerNode::stepPlanRequest, this);
   goal_pose_sub = nh.subscribe("/goal_pose", 1, &FootstepPlannerNode::goalPoseCallback, this);
@@ -115,7 +103,6 @@ void FootstepPlannerNode::init(ros::NodeHandle &nh)
   generate_feet_pose_client = nh.serviceClient<msgs::GenerateFeetPoseService>("generate_feet_pose");
 
   // start own services
-  set_parameter_set_srv = nh.advertiseService("set_parameter_set", &FootstepPlannerNode::setParamsService, this);
   step_plan_request_srv = nh.advertiseService("step_plan_request", &FootstepPlannerNode::stepPlanRequestService, this);
   update_foot_srv = nh.advertiseService("update_foot", &FootstepPlannerNode::updateFootService, this);
   update_feet_srv = nh.advertiseService("update_feet", &FootstepPlannerNode::updateFeetService, this);
@@ -206,22 +193,16 @@ void FootstepPlannerNode::planningPreemptionActionCallback(SimpleActionServer<ms
 
 // --- Subscriber calls ---
 
-void FootstepPlannerNode::setParams(const msgs::ParameterSetConstPtr& params)
-{
-  if (params->parameters.empty())
-    ROS_ERROR("[FootstepPlannerNode] setParams: Empty parameter set was given.");
-  else if (!footstep_planner->setParams(ParameterSet(*params)))
-    ROS_ERROR("[FootstepPlannerNode] setParams: Couldn't set parameter set '%s'!", params->name.data.c_str());
-}
-
 void FootstepPlannerNode::setParams(const std_msgs::StringConstPtr& params_name)
 {
-  ParameterSet params;
+  vigir_generic_params::ParameterSet params;
 
   if (!ParameterManager::getParameterSet(params_name->data, params))
     ROS_ERROR("[FootstepPlannerNode] setParams: Unknown parameter set '%s'!", params_name->data.c_str());
   else if (!footstep_planner->setParams(params))
     ROS_ERROR("[FootstepPlannerNode] setParams: Couldn't set parameter set '%s'!", params_name->data.c_str());
+  else
+    ParameterManager::setActive(params_name->data);
 }
 
 void FootstepPlannerNode::stepPlanRequest(const msgs::StepPlanRequestConstPtr &plan_request)
@@ -260,6 +241,9 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
   // get start feet pose
   msgs::Feet start_feet_pose;
   msgs::ErrorStatus status = determineStartFeetPose(start_feet_pose, generate_feet_pose_client, goal_pose->header);
+
+  //start_feet_pose.left.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0, -0.1, -0.05);
+  //start_feet_pose.right.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0, -0.1, 0.05);
 
   if (hasError(status))
   {
@@ -311,16 +295,6 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 
 // --- service calls ---
 
-bool FootstepPlannerNode::setParamsService(msgs::SetParameterSetService::Request& req, msgs::SetParameterSetService::Response& resp)
-{
-  if (req.params.parameters.empty())
-    resp.status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlannerNode", "setParamsService: Empty parameter set was given.");
-  else if(!footstep_planner->setParams(ParameterSet(req.params)))
-    resp.status = ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlannerNode", "setParamsService: Couldn't set parameter set '" + req.params.name.data + "'!");
-
-  return true; // return always true, so status is sent
-}
-
 bool FootstepPlannerNode::stepPlanRequestService(msgs::StepPlanRequestService::Request &req, msgs::StepPlanRequestService::Response &resp)
 {
   // generate start feet pose if needed
@@ -366,27 +340,6 @@ bool FootstepPlannerNode::updateStepPlanService(msgs::UpdateStepPlanService::Req
 }
 
 //--- action server calls ---
-
-void FootstepPlannerNode::setParameterSetAction(SimpleActionServer<msgs::SetParameterSetAction>::Ptr& as)
-{
-  const msgs::SetParameterSetGoalConstPtr& goal(as->acceptNewGoal());
-
-  // check if new goal was preempted in the meantime
-  if (as->isPreemptRequested())
-  {
-    as->setPreempted();
-    return;
-  }
-
-  msgs::SetParameterSetResult result;
-
-  if (goal->params.parameters.empty())
-    result.status = ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlannerNode", "setParameterSetAction: Empty parameter set was given.");
-  else if(!footstep_planner->setParams(ParameterSet(goal->params)))
-    result.status = ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlannerNode", "setParameterSetAction: Couldn't set parameter set '" + goal->params.name.data + "'!");
-
-  as->finish(result);
-}
 
 void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)
 {
@@ -500,9 +453,13 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "vigir_footstep_planner");
 
   ros::NodeHandle nh;
-  vigir_footstep_planning::FootstepPlannerNode footstep_planner_node;
-  footstep_planner_node.initPlugins(nh);
-  footstep_planner_node.init(nh);
+
+  // init parameter and plugin manager
+  vigir_generic_params::ParameterManager::initialize(nh);
+  vigir_pluginlib::PluginManager::initialize(nh);
+
+  // init footstep planner
+  vigir_footstep_planning::FootstepPlannerNode footstep_planner_node(nh);
 
   ros::spin();
 

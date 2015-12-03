@@ -33,7 +33,8 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <vigir_footstep_planning_lib/plugins/plugin_manager.h>
+#include <vigir_pluginlib/plugin_manager.h>
+
 #include <vigir_footstep_planning_lib/plugins/reachability_plugin.h>
 
 

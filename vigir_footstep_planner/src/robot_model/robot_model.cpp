@@ -52,14 +52,14 @@ RobotModel::Ptr& RobotModel::Instance()
 void RobotModel::loadPlugins()
 {
   // get collision check plugins
-  PluginManager::getPluginsByType(Instance()->reachability_plugins);
+  vigir_pluginlib::PluginManager::getPluginsByType(Instance()->reachability_plugins);
 
   ROS_INFO("[RobotModel] Plugins loaded:");
   for (std::vector<ReachabilityPlugin::Ptr>::const_iterator itr = Instance()->reachability_plugins.begin(); itr != Instance()->reachability_plugins.end(); itr++)
   {
     const ReachabilityPlugin::Ptr& reachability_plugin = *itr;
     if (reachability_plugin)
-      ROS_INFO("    %s (%s)", reachability_plugin->getName().c_str(), reachability_plugin->getTypeId().c_str());
+      ROS_INFO("    %s (%s)", reachability_plugin->getName().c_str(), reachability_plugin->getTypeClass().c_str());
   }
 }
 

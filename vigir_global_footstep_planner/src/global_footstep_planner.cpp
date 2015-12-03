@@ -58,7 +58,6 @@ void GlobalFootstepPlanner::init(ros::NodeHandle& nh)
 
   // start service clients
   generate_feet_pose_client = nh.serviceClient<msgs::GenerateFeetPoseService>("generate_feet_pose");
-  parameter_client = nh.serviceClient<msgs::SetParameterSetService>("set_planner_parameters");
 }
 
 msgs::ErrorStatus GlobalFootstepPlanner::setStepPlan(const msgs::StepPlan& step_plan)

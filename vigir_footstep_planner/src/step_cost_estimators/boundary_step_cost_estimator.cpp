@@ -34,19 +34,18 @@
 //@TODO_ADD_AUTHOR_INFO
 #include <vigir_footstep_planner/step_cost_estimators/boundary_step_cost_estimator.h>
 
+#include <pluginlib/class_list_macros.h>
+
+
+
 namespace vigir_footstep_planning
 {
-BoundaryStepCostEstimator::BoundaryStepCostEstimator(const ParameterSet& params)
-  : StepCostEstimatorPlugin("boundary_step_cost_estimator", params)
-{
-}
-
 BoundaryStepCostEstimator::BoundaryStepCostEstimator()
   : StepCostEstimatorPlugin("boundary_step_cost_estimator")
 {
 }
 
-void BoundaryStepCostEstimator::loadParams(const ParameterSet& params)
+void BoundaryStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   params.getParam("boundary_step_cost_estimator/max_diff_z", max_diff_z);
   params.getParam("boundary_step_cost_estimator/long_step_dist", long_step_dist);
@@ -109,3 +108,5 @@ bool BoundaryStepCostEstimator::getCost(const State& left_foot, const State& rig
   return true;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::BoundaryStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

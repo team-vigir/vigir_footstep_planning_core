@@ -52,7 +52,7 @@ PostProcessor::Ptr& PostProcessor::Instance()
 void PostProcessor::loadPlugins()
 {
   // get collision check plugins
-  PluginManager::getPluginsByType(Instance()->post_process_plugins);
+  vigir_pluginlib::PluginManager::getPluginsByType(Instance()->post_process_plugins);
 
   ROS_INFO("[PostProcessor] Plugins loaded:");
   if (Instance()->post_process_plugins.empty())
@@ -62,11 +62,11 @@ void PostProcessor::loadPlugins()
   {
     const PostProcessPlugin::Ptr& post_processor = *itr;
     if (post_processor)
-      ROS_INFO("    %s (%s)", post_processor->getName().c_str(), post_processor->getTypeId().c_str());
+      ROS_INFO("    %s (%s)", post_processor->getName().c_str(), post_processor->getTypeClass().c_str());
   }
 }
 
-void PostProcessor::loadParams(const ParameterSet& params)
+void PostProcessor::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   for (std::vector<PostProcessPlugin::Ptr>::iterator itr = Instance()->post_process_plugins.begin(); itr != Instance()->post_process_plugins.end(); itr++)
   {

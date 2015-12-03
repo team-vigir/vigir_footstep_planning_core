@@ -44,31 +44,11 @@
 #include <vigir_footstep_planning_lib/visualization/footstep_planning_vis.h>
 #include <vigir_footstep_planning_lib/plugins/robot_model_plugin.h>
 #include <vigir_footstep_planning_lib/plugins/step_plan_msg_plugin.h>
-
-#include <vigir_footstep_planner/robot_model/dynamics_reachability.h>
-#include <vigir_footstep_planner/robot_model/reachability_polygon.h>
-
-#include <vigir_footstep_planner/post_processor/step_dynamics_post_process.h>
-
-#include <vigir_footstep_planner/world_model/foot_grid_map_model.h>
-#include <vigir_footstep_planner/world_model/upper_body_grid_map_model.h>
-#include <vigir_footstep_planner/world_model/terrain_model.h>
-
-#include <vigir_footstep_planner/step_cost_estimators/const_step_cost_estimator.h>
-#include <vigir_footstep_planner/step_cost_estimators/euclidean_step_cost_estimator.h>
-#include <vigir_footstep_planner/step_cost_estimators/boundary_step_cost_estimator.h>
-#include <vigir_footstep_planner/step_cost_estimators/dynamics_step_cost_estimator.h>
-#include <vigir_footstep_planner/step_cost_estimators/ground_contact_step_cost_estimator.h>
-#include <vigir_footstep_planner/step_cost_estimators/travel_time_step_cost_estimator.h>
-
-#include <vigir_footstep_planner/heuristics/dynamics_heuristic.h>
-#include <vigir_footstep_planner/heuristics/euclidean_heuristic.h>
-#include <vigir_footstep_planner/heuristics/hot_map_heuristic.h>
-#include <vigir_footstep_planner/heuristics/step_cost_heuristic.h>
-#include <vigir_footstep_planner/heuristics/occupancy_grid_map_heuristic.h>
-#include <vigir_footstep_planner/heuristics/travel_time_heuristic.h>
+#include <vigir_footstep_planning_lib/plugins/collision_check_plugin.h>
+#include <vigir_footstep_planning_lib/plugins/terrain_model_plugin.h>
 
 #include <vigir_footstep_planner/footstep_planner.h>
+
 
 
 namespace vigir_footstep_planning
@@ -80,8 +60,10 @@ namespace vigir_footstep_planning
 class FootstepPlannerNode
 {
 public:
-  FootstepPlannerNode();
+  FootstepPlannerNode(ros::NodeHandle& nh);
   virtual ~FootstepPlannerNode();
+
+  void loadPlannerConfigs(ros::NodeHandle& nh) const;
 
   virtual void initPlugins(ros::NodeHandle& nh);
   virtual void init(ros::NodeHandle& nh);
@@ -97,20 +79,17 @@ protected:
   void planningPreemptionActionCallback(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as);
 
   // subscriber
-  void setParams(const msgs::ParameterSetConstPtr& params);
   void setParams(const std_msgs::StringConstPtr& params_name);
   void stepPlanRequest(const msgs::StepPlanRequestConstPtr& plan_request);
   void goalPoseCallback(const geometry_msgs::PoseStampedConstPtr& goal_pose);
 
   // service calls
-  bool setParamsService(msgs::SetParameterSetService::Request& req, msgs::SetParameterSetService::Response& resp);
   bool stepPlanRequestService(msgs::StepPlanRequestService::Request& req, msgs::StepPlanRequestService::Response& resp);
   bool updateFootService(msgs::UpdateFootService::Request& req, msgs::UpdateFootService::Response& resp);
   bool updateFeetService(msgs::UpdateFeetService::Request& req, msgs::UpdateFeetService::Response& resp);
   bool updateStepPlanService(msgs::UpdateStepPlanService::Request& req, msgs::UpdateStepPlanService::Response& resp);
 
   // action server calls
-  void setParameterSetAction(SimpleActionServer<msgs::SetParameterSetAction>::Ptr& as);
   void stepPlanRequestAction(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as);
   void stepPlanRequestPreempt(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as);
   void updateFootAction(SimpleActionServer<msgs::UpdateFootAction>::Ptr& as);
@@ -118,7 +97,6 @@ protected:
   void updateStepPlanAction(SimpleActionServer<msgs::UpdateStepPlanAction>::Ptr& as);
 
   // subscribers
-  ros::Subscriber set_parameter_set_sub;
   ros::Subscriber set_active_parameter_set_sub;
   ros::Subscriber step_plan_request_sub;
   ros::Subscriber goal_pose_sub;
@@ -135,7 +113,6 @@ protected:
   ros::ServiceClient generate_feet_pose_client;
 
   // service servers
-  ros::ServiceServer set_parameter_set_srv;
   ros::ServiceServer step_plan_request_srv;
   ros::ServiceServer update_foot_srv;
   ros::ServiceServer update_feet_srv;

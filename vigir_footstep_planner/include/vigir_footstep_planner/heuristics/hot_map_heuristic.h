@@ -70,12 +70,13 @@ struct StateKey
 };
 
 public:
-  HotMapHeuristic(const ParameterSet& params, ros::NodeHandle& nh);
-  HotMapHeuristic(ros::NodeHandle& nh);
+  HotMapHeuristic();
+
+  void loadParams(const vigir_generic_params::ParameterSet& params) override;
+
+  bool initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params) override;
 
   void reset();
-
-  void loadParams(const ParameterSet& params) override;
 
   double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;
 

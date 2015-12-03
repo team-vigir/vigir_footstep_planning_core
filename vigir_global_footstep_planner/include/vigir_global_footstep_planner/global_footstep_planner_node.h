@@ -45,7 +45,7 @@ class GlobalFootstepPlannerNode
   : public FootstepPlannerNode
 {
 public:
-  GlobalFootstepPlannerNode();
+  GlobalFootstepPlannerNode(ros::NodeHandle& nh);
   virtual ~GlobalFootstepPlannerNode();
 
   void init(ros::NodeHandle& nh);

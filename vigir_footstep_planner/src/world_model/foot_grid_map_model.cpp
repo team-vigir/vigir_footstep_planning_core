@@ -34,20 +34,36 @@
 //@TODO_ADD_AUTHOR_INFO
 #include <vigir_footstep_planner/world_model/foot_grid_map_model.h>
 
+#include <pluginlib/class_list_macros.h>
+
+
+
 namespace vigir_footstep_planning
 {
-FootGridMapModel::FootGridMapModel(const std::string& name, const ParameterSet& params, ros::NodeHandle& nh, const std::string& topic)
-  : GridMapModel(name, params, FOOT, nh, topic)
+FootGridMapModel::FootGridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params)
+  : GridMapModel(name, params)
 {
-  // get foot dimensions
-  getFootSize(nh, foot_size);
 }
 
-FootGridMapModel::FootGridMapModel(const std::string& name, ros::NodeHandle& nh, const std::string& topic)
-  : GridMapModel(name, FOOT, nh, topic)
+FootGridMapModel::FootGridMapModel(const std::string& name)
+  : GridMapModel(name)
 {
+}
+
+FootGridMapModel::FootGridMapModel()
+  : GridMapModel("foot_grid_map_model")
+{
+}
+
+bool FootGridMapModel::initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params)
+{
+  if (!GridMapModel::initialize(nh, params))
+    return false;
+
   // get foot dimensions
   getFootSize(nh, foot_size);
+
+  return true;
 }
 
 bool FootGridMapModel::isAccessible(const State& s) const
@@ -69,3 +85,5 @@ bool FootGridMapModel::isAccessible(const State& s) const
   return !collision_check(x, y, cos(theta), sin(theta), foot_size.x, foot_size.y);
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::FootGridMapModel, vigir_footstep_planning::CollisionCheckPlugin)

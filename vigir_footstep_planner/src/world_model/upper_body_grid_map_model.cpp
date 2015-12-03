@@ -34,22 +34,37 @@
 //@TODO_ADD_AUTHOR_INFO
 #include <vigir_footstep_planner/world_model/upper_body_grid_map_model.h>
 
+#include <pluginlib/class_list_macros.h>
+
+
+
 namespace vigir_footstep_planning
 {
-UpperBodyGridMapModel::UpperBodyGridMapModel(const std::string& name, const ParameterSet& params, ros::NodeHandle& nh, const std::string& topic)
-  : GridMapModel(name, params, UPPER_BODY, nh, topic)
+UpperBodyGridMapModel::UpperBodyGridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params)
+  : GridMapModel(name, params)
 {
-  // get upper body dimensions
-  getUpperBodySize(nh, upper_body_size);
-  getUpperBodyOriginShift(nh, upper_body_origin_shift);
 }
 
-UpperBodyGridMapModel::UpperBodyGridMapModel(const std::string& name, ros::NodeHandle& nh, const std::string& topic)
-  : GridMapModel(name, UPPER_BODY, nh, topic)
+UpperBodyGridMapModel::UpperBodyGridMapModel(const std::string& name)
+  : GridMapModel(name)
 {
+}
+
+UpperBodyGridMapModel::UpperBodyGridMapModel()
+  : GridMapModel("upper_body_grid_map_model")
+{
+}
+
+bool UpperBodyGridMapModel::initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params)
+{
+  if (!GridMapModel::initialize(nh, params))
+    return false;
+
   // get upper body dimensions
   getUpperBodySize(nh, upper_body_size);
   getUpperBodyOriginShift(nh, upper_body_origin_shift);
+
+  return true;
 }
 
 bool UpperBodyGridMapModel::isAccessible(const State& /*s*/) const
@@ -96,3 +111,5 @@ bool UpperBodyGridMapModel::isAccessible(const State& next, const State& current
   return !collision_check(x, y, cos_theta, sin_theta, upper_body_size.x, upper_body_size.y);
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::UpperBodyGridMapModel, vigir_footstep_planning::CollisionCheckPlugin)

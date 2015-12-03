@@ -34,14 +34,12 @@
 //@TODO_ADD_AUTHOR_INFO
 #include <vigir_footstep_planner/robot_model/reachability_polygon.h>
 
+#include <pluginlib/class_list_macros.h>
+
+
+
 namespace vigir_footstep_planning
 {
-ReachabilityPolygon::ReachabilityPolygon(const ParameterSet& params)
-  : ReachabilityPlugin("reachability_polygon", params)
-  , ivpStepRange(nullptr)
-{
-}
-
 ReachabilityPolygon::ReachabilityPolygon()
   : ReachabilityPlugin("reachability_polygon")
   , ivpStepRange(nullptr)
@@ -176,3 +174,5 @@ bool ReachabilityPolygon::isReachable(const State& current, const State& next) c
   return true;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::ReachabilityPolygon, vigir_footstep_planning::ReachabilityPlugin)

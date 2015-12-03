@@ -34,19 +34,18 @@
 //@TODO_ADD_AUTHOR_INFO
 #include <vigir_footstep_planner/step_cost_estimators/dynamics_step_cost_estimator.h>
 
+#include <pluginlib/class_list_macros.h>
+
+
+
 namespace vigir_footstep_planning
 {
-DynamicsStepCostEstimator::DynamicsStepCostEstimator(const ParameterSet& params)
-  : StepCostEstimatorPlugin("dynamics_step_cost_estimator", params)
-{
-}
-
 DynamicsStepCostEstimator::DynamicsStepCostEstimator()
   : StepCostEstimatorPlugin("dynamics_step_cost_estimator")
 {
 }
 
-void DynamicsStepCostEstimator::loadParams(const ParameterSet& params)
+void DynamicsStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   params.getParam("dynamic_step_cost_estimator/lower_step_limit", lower_step_limit);
   params.getParam("dynamic_step_cost_estimator/upper_step_limit", upper_step_limit);
@@ -99,3 +98,5 @@ bool DynamicsStepCostEstimator::getCost(const State& left_foot, const State& rig
   return true;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::DynamicsStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

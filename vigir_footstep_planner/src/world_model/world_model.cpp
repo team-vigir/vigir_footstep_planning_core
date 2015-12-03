@@ -52,26 +52,26 @@ WorldModel::Ptr& WorldModel::Instance()
 void WorldModel::loadPlugins()
 {
   // get collision check plugins
-  PluginManager::getPluginsByType(Instance()->collision_check_models);
+  vigir_pluginlib::PluginManager::getPluginsByType(Instance()->collision_check_models);
 
   ROS_INFO("[WorldModel] Plugins loaded:");
   for (std::vector<CollisionCheckPlugin::Ptr>::const_iterator itr = Instance()->collision_check_models.begin(); itr != Instance()->collision_check_models.end(); itr++)
   {
     const CollisionCheckPlugin::Ptr& collision_check_model = *itr;
     if (collision_check_model)
-      ROS_INFO("    %s (%s)", collision_check_model->getName().c_str(), collision_check_model->getTypeId().c_str());
+      ROS_INFO("    %s (%s)", collision_check_model->getName().c_str(), collision_check_model->getTypeClass().c_str());
   }
 
   // get terrain model
-  PluginManager::getPlugin(Instance()->terrain_model);
+  vigir_pluginlib::PluginManager::getPlugin(Instance()->terrain_model);
   if (Instance()->terrain_model)
   {
     ROS_INFO("[WorldModel] Found terrain model:");
-    ROS_INFO("    %s (%s)", Instance()->terrain_model->getName().c_str(), Instance()->terrain_model->getTypeId().c_str());
+    ROS_INFO("    %s (%s)", Instance()->terrain_model->getName().c_str(), Instance()->terrain_model->getTypeClass().c_str());
   }
 }
 
-void WorldModel::loadParams(const ParameterSet& params)
+void WorldModel::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   for (std::vector<CollisionCheckPlugin::Ptr>::iterator itr = Instance()->collision_check_models.begin(); itr != Instance()->collision_check_models.end(); itr++)
   {

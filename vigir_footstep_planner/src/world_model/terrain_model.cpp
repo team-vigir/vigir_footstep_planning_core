@@ -34,39 +34,44 @@
 //@TODO_ADD_AUTHOR_INFO
 #include <vigir_footstep_planner/world_model/terrain_model.h>
 
+#include <pluginlib/class_list_macros.h>
+
+
+
 namespace vigir_footstep_planning
 {
-TerrainModel::TerrainModel(const std::string& name, const ParameterSet& params, ros::NodeHandle &nh, const std::string& topic)
-  : TerrainModelPlugin(name, params, FOOT_CONTACT_SUPPORT)
+TerrainModel::TerrainModel(const std::string& name, const vigir_generic_params::ParameterSet& params)
+  : TerrainModelPlugin(name, params)
 {
+}
+
+TerrainModel::TerrainModel(const std::string& name)
+  : TerrainModelPlugin(name)
+{
+}
+
+TerrainModel::TerrainModel()
+  : TerrainModelPlugin("terrain_model")
+{
+}
+
+bool TerrainModel::initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params)
+{
+  if (!TerrainModelPlugin::initialize(nh, params))
+    return false;
+
   // get foot dimensions
   getFootSize(nh, foot_size);
 
   // subscribe
+  std::string topic;
+  getPluginParam("terrain_model_topic", topic, std::string("/terrain_model"));
   terrain_model_sub = nh.subscribe(topic, 1, &TerrainModel::setTerrainModel, this);
+
+  return true;
 }
 
-TerrainModel::TerrainModel(const std::string& name, ros::NodeHandle &nh, const std::string& topic)
-  : TerrainModelPlugin(name, FOOT_CONTACT_SUPPORT)
-{
-  // get foot dimensions
-  getFootSize(nh, foot_size);
-
-  // subscribe
-  terrain_model_sub = nh.subscribe(topic, 1, &TerrainModel::setTerrainModel, this);
-}
-
-void TerrainModel::reset()
-{
-  TerrainModelPlugin::reset();
-
-  boost::unique_lock<boost::shared_mutex> lock(terrain_model_shared_mutex);
-
-  if (terrain_model)
-    terrain_model->reset();
-}
-
-void TerrainModel::loadParams(const ParameterSet& params)
+void TerrainModel::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   TerrainModelPlugin::loadParams(params);
 
@@ -77,6 +82,16 @@ void TerrainModel::loadParams(const ParameterSet& params)
   params.getParam("foot_contact_support/max_intrusion_z", max_intrusion_z);
   params.getParam("foot_contact_support/max_ground_clearance", max_ground_clearance);
   params.getParam("foot_contact_support/minimal_support", minimal_support);
+}
+
+void TerrainModel::reset()
+{
+  TerrainModelPlugin::reset();
+
+  boost::unique_lock<boost::shared_mutex> lock(terrain_model_shared_mutex);
+
+  if (terrain_model)
+    terrain_model->reset();
 }
 
 bool TerrainModel::isAccessible(const State& s) const
@@ -279,3 +294,5 @@ bool TerrainModel::update3DData(State& s) const
   return result;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::TerrainModel, vigir_footstep_planning::TerrainModelPlugin)

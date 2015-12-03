@@ -43,7 +43,6 @@ class ReachabilityPolygon
   : public ReachabilityPlugin
 {
 public:
-  ReachabilityPolygon(const ParameterSet& params);
   ReachabilityPolygon();
   ~ReachabilityPolygon();
 

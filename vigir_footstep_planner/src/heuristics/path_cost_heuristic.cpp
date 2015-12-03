@@ -34,18 +34,17 @@
 //@TODO_ADD_AUTHOR_INFO
 #include <vigir_footstep_planner/heuristics/path_cost_heuristic.h>
 
+#include <pluginlib/class_list_macros.h>
+
+
+
 namespace vigir_footstep_planning
 {
-PathCostHeuristic::PathCostHeuristic(const ParameterSet& params)
-  : HeuristicPlugin("path_cost_heuristic", params)
+PathCostHeuristic::PathCostHeuristic()
+  : HeuristicPlugin("path_cost_heuristic")
   , ivpGrid(NULL)
   , ivGoalX(-1)
   , ivGoalY(-1)
-{
-}
-
-PathCostHeuristic::PathCostHeuristic()
-  : HeuristicPlugin("path_cost_heuristic")
 {
 }
 
@@ -55,7 +54,7 @@ PathCostHeuristic::~PathCostHeuristic()
     resetGrid();
 }
 
-void PathCostHeuristic::loadParams(const ParameterSet& params)
+void PathCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
   HeuristicPlugin::loadParams(params);
 
@@ -191,3 +190,5 @@ void PathCostHeuristic::resetGrid()
   ivpGrid = NULL;
 }
 }
+
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::PathCostHeuristic, vigir_footstep_planning::HeuristicPlugin)

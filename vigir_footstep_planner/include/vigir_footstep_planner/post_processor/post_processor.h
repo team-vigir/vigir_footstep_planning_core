@@ -33,7 +33,8 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <vigir_footstep_planning_lib/plugins/plugin_manager.h>
+#include <vigir_pluginlib/plugin_manager.h>
+
 #include <vigir_footstep_planning_lib/plugins/post_process_plugin.h>
 
 
@@ -45,7 +46,7 @@ class PostProcessor
 {
 public:
   static void loadPlugins();
-  static void loadParams(const ParameterSet& params);
+  static void loadParams(const vigir_generic_params::ParameterSet& params);
 
   static void postProcessForward(const State& left_foot, const State& right_foot, State& swing_foot);
   static void postProcessBackward(const State& left_foot, const State& right_foot, State& swing_foot);

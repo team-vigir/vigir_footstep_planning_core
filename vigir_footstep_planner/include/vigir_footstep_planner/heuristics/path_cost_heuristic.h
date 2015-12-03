@@ -58,12 +58,11 @@ class PathCostHeuristic
   : public HeuristicPlugin
 {
 public:
-  PathCostHeuristic(const ParameterSet& params);
   PathCostHeuristic();
 
   ~PathCostHeuristic();
 
-  void loadParams(const ParameterSet& params) override;
+  void loadParams(const vigir_generic_params::ParameterSet& params) override;
 
   /**
    * @return The estimated costs needed to reach the state 'to' from within the

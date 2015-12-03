@@ -33,7 +33,8 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <vigir_footstep_planning_lib/plugins/plugin_manager.h>
+#include <vigir_pluginlib/plugin_manager.h>
+
 #include <vigir_footstep_planning_lib/plugins/collision_check_plugin.h>
 #include <vigir_footstep_planning_lib/plugins/terrain_model_plugin.h>
 
@@ -49,7 +50,7 @@ class WorldModel
 {
 public:
   static void loadPlugins();
-  static void loadParams(const ParameterSet& params);
+  static void loadParams(const vigir_generic_params::ParameterSet& params);
 
   // evaluation will be done in alphabetical order of plugin names
   static bool isAccessible(const State& s);
