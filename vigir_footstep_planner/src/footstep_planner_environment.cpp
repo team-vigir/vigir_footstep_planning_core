@@ -8,8 +8,8 @@ FootstepPlannerEnvironment::FootstepPlannerEnvironment(const EnvironmentParamete
   , feedback_cb(feedback_cb)
   , params(params)
   , ivNumExpandedStates(0)
-  , last_feedback_flush(ros::Time::now())
   , frame_id("/world")
+  , last_feedback_flush(ros::Time::now())
 {
   state_space.reset(new StateSpace(params, StateID2IndexMapping));
 
@@ -414,7 +414,7 @@ void FootstepPlannerEnvironment::GetRandomSuccsatDistance(int SourceStateID, std
     return;
 
 
-  const PlanningState* currentState = state_space->ivStateId2State[SourceStateID];
+  //const PlanningState* currentState = state_space->ivStateId2State[SourceStateID];
   // TODO: state_space->closeToGoal?
   //
   //    	if (state_space->closeToGoal(currentState->getState()))
@@ -434,7 +434,7 @@ void FootstepPlannerEnvironment::GetRandomPredsatDistance(int TargetStateID, std
   if (TargetStateID == state_space->ivIdStartFootLeft || TargetStateID == state_space->ivIdStartFootRight)
     return;
 
-  const PlanningState* currentState = state_space->ivStateId2State[TargetStateID];
+  //const PlanningState* currentState = state_space->ivStateId2State[TargetStateID];
 
   // TODO: ???
   //    	if(state_space->closeToStart(currentState->getState()))

@@ -197,7 +197,7 @@ void GlobalFootstepPlannerNode::setStepPlanAction(SimpleActionServer<msgs::SetSt
 
 void GlobalFootstepPlannerNode::getStepPlanAction(SimpleActionServer<msgs::GetStepPlanAction>::Ptr& as)
 {
-  const msgs::GetStepPlanGoalConstPtr& goal(as->acceptNewGoal());
+  as->acceptNewGoal();
 
   // check if new goal was preempted in the meantime
   if (as->isPreemptRequested())

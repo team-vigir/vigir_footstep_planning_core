@@ -60,6 +60,7 @@ bool MapStepCostEstimator::getCost(const State& left_foot, const State& right_fo
   //  ROS_INFO("Cost: %f + %f + %f Yaw: %f", dist, risk_cost, default_step_cost, state[5]);
 
   cost = dist + 2*risk*risk;
+  return true;
 }
 
 void MapStepCostEstimator::insert(const std::vector<double> &key, const std::pair<double, double> &entry)

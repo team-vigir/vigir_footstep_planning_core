@@ -58,7 +58,7 @@ public:
   static TerrainModelPlugin::Ptr getTerrainModel();
 
   /**
-  /* @brief update z, roll and pitch of state based on terrain model
+   * @brief update z, roll and pitch of state based on terrain model
    * @return false if terrain model is available but has no data for given state,
    *         otherwise true even if no terrain model is available
    **/

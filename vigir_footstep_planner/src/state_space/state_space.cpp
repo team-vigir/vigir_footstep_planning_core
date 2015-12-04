@@ -4,6 +4,7 @@ namespace vigir_footstep_planning
 {
 StateSpace::StateSpace(const EnvironmentParameters& params, std::vector<int*>& state_ID2_index_mapping)
   : params(params)
+  , frame_id("/world")
   , ivIdPlanningStart(-1)
   , ivIdPlanningGoal(-1)
   , ivIdStartFootLeft(-1)
@@ -12,9 +13,8 @@ StateSpace::StateSpace(const EnvironmentParameters& params, std::vector<int*>& s
   , ivIdGoalFootRight(-1)
   , state_ID2_index_mapping(state_ID2_index_mapping)
   , ivpStateHash2State(new std::vector<PlanningState*>[params.hash_table_size])
-  , ivRandomNodeDist(params.random_node_distance / params.cell_size)
   , ivHeuristicExpired(false)
-  , frame_id("/world")
+  , ivRandomNodeDist(params.random_node_distance / params.cell_size)
 {
   // determine whether a (x,y) translation can be performed by the robot by
   // checking if it is within a certain area of performable steps

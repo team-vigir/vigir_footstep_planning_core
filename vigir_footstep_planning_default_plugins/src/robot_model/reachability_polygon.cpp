@@ -42,7 +42,7 @@ void ReachabilityPolygon::loadParams(const ParameterSet& params)
   step_range.clear();
   step_range.reserve(step_range_x.size());
 
-  for (size_t i = 0; i < step_range_x.size(); i++)
+  for (int i = 0; i < step_range_x.size(); i++)
   {
     double x = static_cast<double>(step_range_x[i]);
     double y = static_cast<double>(step_range_y[i]);

@@ -216,7 +216,7 @@ void PatternGenerator::update(const ros::TimerEvent& timer)
 
   // check if more steps are needed
   int queued_steps = getNextStartStepIndex() - last_performed_step_index;
-  if (queued_steps < number_of_steps_needed)
+  if (queued_steps < static_cast<int>(number_of_steps_needed))
     generateSteps(number_of_steps_needed-queued_steps);
 
   if (isSimulationMode())

@@ -20,8 +20,8 @@ StepCostKey::StepCostKey(const State &left_foot, const State &right_foot, const 
 
 StepCostKey::StepCostKey(const StepCostKey &other)
   : std::vector<int>(other)
-  , cell_size(cell_size)
-  , angle_bin_size(angle_bin_size)
+  , cell_size(other.cell_size)
+  , angle_bin_size(other.angle_bin_size)
 {
 }
 

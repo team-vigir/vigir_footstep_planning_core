@@ -159,7 +159,7 @@ msgs::ErrorStatus GlobalFootstepPlanner::editStep(const msgs::EditStep& edit_ste
     {
       msgs::Step& step = temp_step_plan_msg.steps[i];
 
-      if (step.step_index != next_index++ || i == temp_step_plan_msg.steps.size()-1)
+      if (step.step_index != static_cast<int>(next_index++) || i == temp_step_plan_msg.steps.size()-1)
       {
         result.push_back(sub_step_plan);
         sub_step_plan.steps.clear();
