@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   vigir_footstep_planning_msgs
   vigir_footstep_planning_lib
   vigir_footstep_planning_basic_plugins
+  vigir_footstep_planning_default_plugins
   vigir_foot_pose_transformer
   vigir_feet_pose_generator
   vigir_footstep_planner
@@ -95,6 +96,7 @@ catkin_package(
     vigir_footstep_planning_msgs
     vigir_footstep_planning_lib
     vigir_footstep_planning_basic_plugins
+    vigir_footstep_planning_default_plugins
     vigir_foot_pose_transformer
     vigir_feet_pose_generator
     vigir_footstep_planner

@@ -1,0 +1,113 @@
+<library path="lib/libvigir_footstep_planning_default_plugins">
+  <!-- ReachabilityPlugin -->
+  <class type="vigir_footstep_planning::ReachabilityPolygon" base_class_type="vigir_footstep_planning::ReachabilityPlugin">
+    <description>
+      ReachabilityPlugin: Checking reachability of step based on reachability polygon
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::DynamicsReachability" base_class_type="vigir_footstep_planning::ReachabilityPlugin">
+    <description>
+      ReachabilityPlugin: Checking step limits based on dynamical behavior (e.g. upper body acceleration and velocity)
+    </description>
+  </class>
+
+  <!-- StepCostEstimatorPlugin -->
+  <class type="vigir_footstep_planning::ConstStepCostEstimator" base_class_type="vigir_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      StepCostEstimator: Adds a constant value to each step
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::EuclideanStepCostEstimator" base_class_type="vigir_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      StepCostEstimator: Adds travel distance of upper body
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::BoundaryStepCostEstimator" base_class_type="vigir_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      StepCostEstimator: Adds risk if step is has exceeded "special" constraints
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::DynamicsStepCostEstimator" base_class_type="vigir_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      StepCostEstimator: Adds risk for high dynamic steps (e.g. high acceleration)
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::GroundContactStepCostEstimator" base_class_type="vigir_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      StepCostEstimator: Scales costs for steps which are not hitting the ground perfectly (overhang, needs 3D terrain model) 
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::MapStepCostEstimator" base_class_type="vigir_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      StepCostEstimator: Uses a pre computed map for estimating step cost
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::TravelTimeStepCostEstimator" base_class_type="vigir_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      StepCostEstimator: Estimates travel time for given step
+    </description>
+  </class>
+
+  <!-- HeuristicPlugin -->
+  <class type="vigir_footstep_planning::EuclideanHeuristic" base_class_type="vigir_footstep_planning::HeuristicPlugin">
+    <description>
+      StepCostHeuristic: Estimates remaining travel distance to goals state
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::StepCostHeuristic" base_class_type="vigir_footstep_planning::HeuristicPlugin">
+    <description>
+      StepCostHeuristic: Estimates remaining step cost with respect to estimated number of steps needed
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::DynamicsHeuristic" base_class_type="vigir_footstep_planning::HeuristicPlugin">
+    <description>
+      StepCostHeuristic: Checking reachability of goal state based on dynamic walking capabilites (e.g. upper body acceleration and velocity)
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::HotMapHeuristic" base_class_type="vigir_footstep_planning::HeuristicPlugin">
+    <description>
+      StepCostHeuristic: Punishing states which has been visited too often (anti-stuck)
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::OccupancyGridMapHeuristic" base_class_type="vigir_footstep_planning::HeuristicPlugin">
+    <description>
+      StepCostHeuristic: Punishing states which are near to obstacles
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::TravelTimeHeuristic" base_class_type="vigir_footstep_planning::HeuristicPlugin">
+    <description>
+      StepCostHeuristic: Estimates remaining travel time to goal state
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::PathCostHeuristic" base_class_type="vigir_footstep_planning::HeuristicPlugin">
+    <description>
+      (Obsolete) StepCostHeuristic: Estimates remaining cost with respect to estimated number of steps needed and distance to reach the goal
+    </description>
+  </class>
+
+  <!-- PostProcessPlugin -->
+  <class type="vigir_footstep_planning::StepDynamicsPostProcessPlugin" base_class_type="vigir_footstep_planning::PostProcessPlugin">
+    <description>
+      PostProcessPlugin: Determining step dynamics and timings (e.g. upper body accerlation and velocity)
+    </description>
+  </class>
+
+  <!-- CollisionCheckPlugin -->
+  <class type="vigir_footstep_planning::FootGridMapModel" base_class_type="vigir_footstep_planning::CollisionCheckPlugin">
+    <description>
+      FootGridMapModel: Performs collision checking for rectangular shaped feet using occupance grid maps
+    </description>
+  </class>
+  <class type="vigir_footstep_planning::UpperBodyGridMapModel" base_class_type="vigir_footstep_planning::CollisionCheckPlugin">
+    <description>
+      UpperBodyGridMapModel: Performs collision checking for rectangular shaped upper body geometry using occupance grid maps
+    </description>
+  </class>
+
+  <!-- TerrainModelPlugin -->
+  <class type="vigir_footstep_planning::TerrainModel" base_class_type="vigir_footstep_planning::TerrainModelPlugin">
+    <description>
+      TerrainModel: Provides terrain model plugin based on vigir_terrain_classifier
+    </description>
+  </class>
+</library>

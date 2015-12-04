@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>vigir_footstep_planning</name>
+  <name>vigir_footstep_planning_default_plugins</name>
   <version>0.0.0</version>
-  <description>The vigir_footstep_planning package is a stack for the whole footstep planning system. It contains the top-level launch files and may be used to include all dependencies.</description>
+  <description>The vigir_footstep_planning_default_plugins package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/vigir_footstep_planning</url> -->
+  <!-- <url type="website">http://wiki.ros.org/vigir_footstep_planning_default_plugins</url> -->
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
@@ -42,29 +42,35 @@
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
+  <build_depend>roscpp</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>libpcl-all-dev</build_depend>
+  <build_depend>pcl_conversions</build_depend>
+  <build_depend>vigir_generic_params</build_depend>
+  <build_depend>vigir_pluginlib</build_depend>
   <build_depend>vigir_footstep_planning_msgs</build_depend>
   <build_depend>vigir_footstep_planning_lib</build_depend>
   <build_depend>vigir_footstep_planning_basic_plugins</build_depend>
-  <build_depend>vigir_footstep_planning_default_plugins</build_depend>
-  <build_depend>vigir_foot_pose_transformer</build_depend>
-  <build_depend>vigir_feet_pose_generator</build_depend>
-  <build_depend>vigir_footstep_planner</build_depend>
-  <build_depend>vigir_global_footstep_planner</build_depend>
-  <build_depend>vigir_pattern_generator</build_depend>
   <build_depend>vigir_terrain_classifier</build_depend>
-  <build_depend>vigir_walk_monitor</build_depend>
 
+  <run_depend>roscpp</run_depend>
+  <run_depend>actionlib</run_depend>
+  <run_depend>actionlib_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>libpcl-all</run_depend>
+  <run_depend>pcl_conversions</run_depend>
+  <run_depend>vigir_generic_params</run_depend>
+  <run_depend>vigir_pluginlib</run_depend>
   <run_depend>vigir_footstep_planning_msgs</run_depend>
   <run_depend>vigir_footstep_planning_lib</run_depend>
   <run_depend>vigir_footstep_planning_basic_plugins</run_depend>
-  <run_depend>vigir_footstep_planning_default_plugins</run_depend>
-  <run_depend>vigir_foot_pose_transformer</run_depend>
-  <run_depend>vigir_feet_pose_generator</run_depend>
-  <run_depend>vigir_footstep_planner</run_depend>
-  <run_depend>vigir_global_footstep_planner</run_depend>
-  <run_depend>vigir_pattern_generator</run_depend>
   <run_depend>vigir_terrain_classifier</run_depend>
-  <run_depend>vigir_walk_monitor</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
@@ -73,6 +79,9 @@
     <!-- <metapackage/> -->
 
     <!-- Other tools can request additional information be placed here -->
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -Wl,-rpath,${prefix}/lib -lvigir_footstep_planning_default_plugins" />
+
+    <vigir_footstep_planning_basic_plugins plugin="${prefix}/default_plugins.xml" />
 
   </export>
 </package>

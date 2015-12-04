@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(vigir_footstep_planner)
-
-if(CMAKE_VERSION VERSION_GREATER "2.8.12")
-  cmake_policy(SET CMP0022 OLD)
-endif()
+project(vigir_footstep_planning_default_plugins)
 
 #set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE RelWithDebInfo)
@@ -13,21 +9,12 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs nav_msgs cv_bridge pcl_conversions vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_basic_plugins vigir_foot_pose_transformer
-             angles tf)
+find_package(catkin REQUIRED COMPONENTS roscpp actionlib_msgs actionlib std_msgs nav_msgs cv_bridge pcl_conversions vigir_generic_params vigir_pluginlib vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_basic_plugins vigir_terrain_classifier)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
 find_package(PCL REQUIRED)
-
-#find_package(sbpl REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(SBPL REQUIRED sbpl)
-link_directories(${SBPL_LIBRARY_DIRS})
-
-find_package(OpenCV REQUIRED)
-
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -96,9 +83,8 @@ find_package(OpenCV REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES vigir_footstep_planner
-  CATKIN_DEPENDS roscpp rospy std_msgs nav_msgs cv_bridge pcl_conversions vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_basic_plugins vigir_foot_pose_transformer
-                 angles tf
+  LIBRARIES vigir_footstep_planning_default_plugins
+  CATKIN_DEPENDS roscpp actionlib_msgs actionlib std_msgs nav_msgs cv_bridge pcl_conversions vigir_generic_params vigir_pluginlib vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_basic_plugins vigir_terrain_classifier
 #  DEPENDS system_lib
 )
 
@@ -108,55 +94,72 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS} ${SBPL_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${boost_INCLUDE_DIRS})
 
 ## Specify additional locations of header files
 set(HEADERS
-  include/${PROJECT_NAME}/state_space/footstep.h
-  include/${PROJECT_NAME}/state_space/planning_state.h
-  include/${PROJECT_NAME}/state_space/state_space.h
-  include/${PROJECT_NAME}/threading/expand_state_job.h
-  include/${PROJECT_NAME}/environment_parameters.h
-  include/${PROJECT_NAME}/footstep_planner_environment.h
-  include/${PROJECT_NAME}/footstep_planner_node.h
-  include/${PROJECT_NAME}/footstep_planner.h
-  include/${PROJECT_NAME}/heuristic.h
-  include/${PROJECT_NAME}/post_processor.h
-  include/${PROJECT_NAME}/robot_model.h
-  include/${PROJECT_NAME}/step_cost_estimator.h
-  include/${PROJECT_NAME}/world_model.h
+  include/${PROJECT_NAME}/heuristics/dynamics_heuristic.h
+  include/${PROJECT_NAME}/heuristics/euclidean_heuristic.h
+  include/${PROJECT_NAME}/heuristics/hot_map_heuristic.h
+  include/${PROJECT_NAME}/heuristics/occupancy_grid_map_heuristic.h
+  include/${PROJECT_NAME}/heuristics/path_cost_heuristic.h
+  include/${PROJECT_NAME}/heuristics/step_cost_heuristic.h
+  include/${PROJECT_NAME}/heuristics/travel_time_heuristic.h
+  include/${PROJECT_NAME}/post_processor/step_dynamics_post_process.h
+  include/${PROJECT_NAME}/robot_model/dynamics_reachability.h
+  include/${PROJECT_NAME}/robot_model/reachability_polygon.h
+  include/${PROJECT_NAME}/step_cost_estimators/boundary_step_cost_estimator.h
+  include/${PROJECT_NAME}/step_cost_estimators/const_step_cost_estimator.h
+  include/${PROJECT_NAME}/step_cost_estimators/euclidean_step_cost_estimator.h
+  include/${PROJECT_NAME}/step_cost_estimators/ground_contact_step_cost_estimator.h
+  include/${PROJECT_NAME}/step_cost_estimators/map_step_cost_estimator.h
+  include/${PROJECT_NAME}/step_cost_estimators/step_cost_key.h
+  include/${PROJECT_NAME}/step_cost_estimators/travel_time_step_cost_estimator.h
+  include/${PROJECT_NAME}/world_model/foot_grid_map_model.h
+  include/${PROJECT_NAME}/world_model/grid_map_2d.h
+  include/${PROJECT_NAME}/world_model/grid_map_model.h
+  include/${PROJECT_NAME}/world_model/terrain_model.h
+  include/${PROJECT_NAME}/world_model/upper_body_grid_map_model.h
 )
 
 set(SOURCES
-  src/state_space/footstep.cpp
-  src/state_space/planning_state.cpp
-  src/state_space/state_space.cpp
-  src/threading/expand_state_job.cpp
-  src/environment_parameters.cpp
-  src/footstep_planner_environment.cpp
-  src/footstep_planner_node.cpp
-  src/footstep_planner.cpp
-  src/heuristic.cpp
-  src/post_processor.cpp
-  src/robot_model.cpp
-  src/step_cost_estimator.cpp
-  src/world_model.cpp
+  src/heuristics/dynamics_heuristic.cpp
+  src/heuristics/euclidean_heuristic.cpp
+  src/heuristics/hot_map_heuristic.cpp
+  src/heuristics/occupancy_grid_map_heuristic.cpp
+  src/heuristics/path_cost_heuristic.cpp
+  src/heuristics/step_cost_heuristic.cpp
+  src/heuristics/travel_time_heuristic.cpp
+  src/post_processor/step_dynamics_post_process.cpp
+  src/robot_model/dynamics_reachability.cpp
+  src/robot_model/reachability_polygon.cpp
+  src/step_cost_estimators/boundary_step_cost_estimator.cpp
+  src/step_cost_estimators/const_step_cost_estimator.cpp
+  src/step_cost_estimators/euclidean_step_cost_estimator.cpp
+  src/step_cost_estimators/ground_contact_step_cost_estimator.cpp
+  src/step_cost_estimators/map_step_cost_estimator.cpp
+  src/step_cost_estimators/step_cost_key.cpp
+  src/step_cost_estimators/travel_time_step_cost_estimator.cpp
+  src/world_model/foot_grid_map_model.cpp
+  src/world_model/grid_map_2d.cpp
+  src/world_model/grid_map_model.cpp
+  src/world_model/terrain_model.cpp
+  src/world_model/upper_body_grid_map_model.cpp
 )
 
 ## Declare a cpp library
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 ## Declare a cpp executable
-add_executable(footstep_planner_node src/footstep_planner_node.cpp)
+# add_executable(footstep_planning_basic_plugins_node src/visualization/footstep_planning_basic_plugins_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME} PUBLIC ${catkin_LIBRARIES} ${boost_LIBRARIES} ${PCL_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${SBPL_LIBRARIES})
-target_link_libraries(footstep_planner_node ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${boost_LIBRARIES})
 
 #############
 ## Install ##
@@ -165,15 +168,8 @@ target_link_libraries(footstep_planner_node ${PROJECT_NAME})
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
 ## Mark executables and/or libraries for installation
-install(TARGETS ${PROJECT_NAME} footstep_planner_node
+install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -190,10 +186,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   FILES_MATCHING PATTERN "*.launch"
-)
-
-install(FILES basic_plugins.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  PATTERN "*~" EXCLUDE
 )
 
 #############
@@ -201,7 +194,7 @@ install(FILES basic_plugins.xml
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_vigir_footstep_planner.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_vigir_footstep_planner_plugin.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

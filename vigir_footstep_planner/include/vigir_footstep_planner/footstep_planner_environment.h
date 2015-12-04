@@ -50,9 +50,9 @@
 
 #include <vigir_footstep_planning_lib/helper.h>
 
-#include <vigir_footstep_planner/step_cost_estimators/step_cost_estimator.h>
+#include <vigir_footstep_planner/step_cost_estimator.h>
 
-#include <vigir_footstep_planner/heuristics/heuristic.h>
+#include <vigir_footstep_planner/heuristic.h>
 
 
 

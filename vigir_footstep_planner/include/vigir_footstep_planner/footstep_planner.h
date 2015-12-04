@@ -74,13 +74,11 @@
 #include <vigir_footstep_planner/environment_parameters.h>
 #include <vigir_footstep_planner/footstep_planner_environment.h>
 #include <vigir_footstep_planner/state_space/footstep.h>
-#include <vigir_footstep_planner/step_cost_estimators/step_cost_estimator.h>
-#include <vigir_footstep_planner/heuristics/heuristic.h>
-
-#include <vigir_footstep_planner/post_processor/post_processor.h>
-
-#include <vigir_footstep_planner/robot_model/robot_model.h>
-#include <vigir_footstep_planner/world_model/world_model.h>
+#include <vigir_footstep_planner/step_cost_estimator.h>
+#include <vigir_footstep_planner/heuristic.h>
+#include <vigir_footstep_planner/post_processor.h>
+#include <vigir_footstep_planner/robot_model.h>
+#include <vigir_footstep_planner/world_model.h>
 
 
 
@@ -231,9 +229,6 @@ protected:
 
   /// @brief Sets the planning algorithm used by SBPL.
   void setPlanner();
-
-  /// @brief Updates the environment in case of a changed map.
-  void updateEnvironment(const vigir_gridmap_2d::GridMap2DPtr old_map);
 
   // publisher
   ros::Publisher ivCheckedFootContactSupportPub;

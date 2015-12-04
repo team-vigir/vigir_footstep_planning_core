@@ -29,8 +29,8 @@
 
 #include <vigir_footstep_planner/state_space/planning_state.h>
 
-#include <vigir_footstep_planner/post_processor/post_processor.h>
-#include <vigir_footstep_planner/world_model/world_model.h>
+#include <vigir_footstep_planner/post_processor.h>
+#include <vigir_footstep_planner/world_model.h>
 
 
 
