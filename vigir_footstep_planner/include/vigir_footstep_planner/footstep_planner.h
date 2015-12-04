@@ -66,7 +66,8 @@
 
 #include <vigir_footstep_planning_lib/math.h>
 #include <vigir_footstep_planning_lib/modeling/state.h>
-#include <vigir_footstep_planning_lib/plugins/step_plan_msg_plugin.h>
+
+#include <vigir_footstep_planning_basic_plugins/step_plan_msg_plugin.h>
 
 #include <vigir_foot_pose_transformer/foot_pose_transformer.h>
 

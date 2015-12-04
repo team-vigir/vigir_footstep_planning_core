@@ -33,7 +33,7 @@
 
 #include <vigir_footstep_planner/step_cost_estimators/step_cost_key.h>
 
-#include <vigir_footstep_planning_lib/plugins/step_cost_estimator_plugin.h>
+#include <vigir_footstep_planning_basic_plugins/step_cost_estimator_plugin.h>
 
 
 

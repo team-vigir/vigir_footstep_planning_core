@@ -42,10 +42,11 @@
 
 #include <vigir_footstep_planning_lib/helper.h>
 #include <vigir_footstep_planning_lib/visualization/footstep_planning_vis.h>
-#include <vigir_footstep_planning_lib/plugins/robot_model_plugin.h>
-#include <vigir_footstep_planning_lib/plugins/step_plan_msg_plugin.h>
-#include <vigir_footstep_planning_lib/plugins/collision_check_plugin.h>
-#include <vigir_footstep_planning_lib/plugins/terrain_model_plugin.h>
+
+#include <vigir_footstep_planning_basic_plugins/robot_model_plugin.h>
+#include <vigir_footstep_planning_basic_plugins/step_plan_msg_plugin.h>
+#include <vigir_footstep_planning_basic_plugins/collision_check_plugin.h>
+#include <vigir_footstep_planning_basic_plugins/terrain_model_plugin.h>
 
 #include <vigir_footstep_planner/footstep_planner.h>
 

@@ -53,6 +53,7 @@
   <build_depend>pcl_conversions</build_depend>
   <build_depend>vigir_footstep_planning_msgs</build_depend>
   <build_depend>vigir_footstep_planning_lib</build_depend>
+  <build_depend>vigir_footstep_planning_basic_plugins</build_depend>
   <build_depend>vigir_foot_pose_transformer</build_depend>
   <build_depend>vigir_terrain_classifier</build_depend>
 
@@ -71,6 +72,7 @@
   <run_depend>pcl_conversions</run_depend>
   <run_depend>vigir_footstep_planning_msgs</run_depend>
   <run_depend>vigir_footstep_planning_lib</run_depend>
+  <run_depend>vigir_footstep_planning_basic_plugins</run_depend>
   <run_depend>vigir_foot_pose_transformer</run_depend>
   <run_depend>vigir_terrain_classifier</run_depend>
 
@@ -86,7 +88,7 @@
     <!-- Other tools can request additional information be placed here -->
     <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -Wl,-rpath,${prefix}/lib -lvigir_footstep_planner" />
 
-    <vigir_footstep_planning_lib plugin="${prefix}/basic_plugins.xml" />
+    <vigir_footstep_planning_basic_plugins plugin="${prefix}/basic_plugins.xml" />
 
   </export>
 </package>

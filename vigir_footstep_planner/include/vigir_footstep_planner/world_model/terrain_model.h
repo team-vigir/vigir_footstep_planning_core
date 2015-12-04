@@ -40,7 +40,7 @@
 #include <pcl/kdtree/kdtree_flann.h>
 
 #include <vigir_footstep_planning_lib/modeling/state.h>
-#include <vigir_footstep_planning_lib/plugins/terrain_model_plugin.h>
+#include <vigir_footstep_planning_basic_plugins/terrain_model_plugin.h>
 #include <vigir_footstep_planning_lib/helper.h>
 #include <vigir_footstep_planning_lib/math.h>
 

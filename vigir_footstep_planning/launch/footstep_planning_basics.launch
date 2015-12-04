@@ -13,7 +13,7 @@
     <include file="$(find vigir_footstep_planning_lib)/launch/footstep_planning_vis.launch" />
 
     <!-- Load plugin configurations from YAML file to parameter server -->
-    <rosparam file="$(find vigir_footstep_planning_lib)/config/basic_plugins.yaml" command="load" />
+    <rosparam file="$(find vigir_footstep_planning_basic_plugins)/config/basic_plugins.yaml" command="load" />
     <rosparam file="$(find vigir_footstep_planner)/config/basic_plugins.yaml" command="load" />
   </group>
 </launch>
