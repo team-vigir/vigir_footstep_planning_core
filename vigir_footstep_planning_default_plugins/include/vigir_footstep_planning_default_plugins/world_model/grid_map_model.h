@@ -46,7 +46,6 @@ class GridMapModel
   : public CollisionCheckGridMapPlugin
 {
 public:
-  GridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params);
   GridMapModel(const std::string& name);
 
   void loadParams(const vigir_generic_params::ParameterSet& params) override;

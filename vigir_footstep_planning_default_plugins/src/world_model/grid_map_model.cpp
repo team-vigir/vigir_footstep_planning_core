@@ -2,11 +2,6 @@
 
 namespace vigir_footstep_planning
 {
-GridMapModel::GridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params)
-  : CollisionCheckGridMapPlugin(name, params)
-{
-}
-
 GridMapModel::GridMapModel(const std::string& name)
   : CollisionCheckGridMapPlugin(name)
 {

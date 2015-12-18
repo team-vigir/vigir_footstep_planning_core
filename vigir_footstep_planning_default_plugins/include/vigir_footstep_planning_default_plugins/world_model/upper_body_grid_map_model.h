@@ -41,9 +41,7 @@ class UpperBodyGridMapModel
   : public GridMapModel
 {
 public:
-  UpperBodyGridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params);
-  UpperBodyGridMapModel(const std::string& name);
-  UpperBodyGridMapModel();
+  UpperBodyGridMapModel(const std::string& name = "upper_body_grid_map_model");
 
   bool initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params) override;
 

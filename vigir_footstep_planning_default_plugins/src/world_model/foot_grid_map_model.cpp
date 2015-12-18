@@ -6,18 +6,8 @@
 
 namespace vigir_footstep_planning
 {
-FootGridMapModel::FootGridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params)
-  : GridMapModel(name, params)
-{
-}
-
 FootGridMapModel::FootGridMapModel(const std::string& name)
   : GridMapModel(name)
-{
-}
-
-FootGridMapModel::FootGridMapModel()
-  : GridMapModel("foot_grid_map_model")
 {
 }
 

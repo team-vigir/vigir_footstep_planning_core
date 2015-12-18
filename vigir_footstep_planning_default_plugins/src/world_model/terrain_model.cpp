@@ -6,18 +6,8 @@
 
 namespace vigir_footstep_planning
 {
-TerrainModel::TerrainModel(const std::string& name, const vigir_generic_params::ParameterSet& params)
-  : TerrainModelPlugin(name, params)
-{
-}
-
 TerrainModel::TerrainModel(const std::string& name)
   : TerrainModelPlugin(name)
-{
-}
-
-TerrainModel::TerrainModel()
-  : TerrainModelPlugin("terrain_model")
 {
 }
 

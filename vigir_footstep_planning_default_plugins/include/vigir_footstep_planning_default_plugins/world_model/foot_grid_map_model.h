@@ -41,9 +41,7 @@ class FootGridMapModel
   : public GridMapModel
 {
 public:
-  FootGridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params);
-  FootGridMapModel(const std::string& name);
-  FootGridMapModel();
+  FootGridMapModel(const std::string& name = "foot_grid_map_model");
 
   bool initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params) override;
 

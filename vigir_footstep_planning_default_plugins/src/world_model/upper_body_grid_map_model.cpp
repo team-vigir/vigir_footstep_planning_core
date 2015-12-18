@@ -6,18 +6,8 @@
 
 namespace vigir_footstep_planning
 {
-UpperBodyGridMapModel::UpperBodyGridMapModel(const std::string& name, const vigir_generic_params::ParameterSet& params)
-  : GridMapModel(name, params)
-{
-}
-
 UpperBodyGridMapModel::UpperBodyGridMapModel(const std::string& name)
   : GridMapModel(name)
-{
-}
-
-UpperBodyGridMapModel::UpperBodyGridMapModel()
-  : GridMapModel("upper_body_grid_map_model")
 {
 }
 

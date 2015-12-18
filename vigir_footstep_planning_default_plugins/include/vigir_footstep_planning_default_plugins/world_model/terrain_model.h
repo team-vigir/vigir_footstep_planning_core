@@ -56,9 +56,7 @@ class TerrainModel
   : public TerrainModelPlugin
 {
 public:
-  TerrainModel(const std::string& name, const vigir_generic_params::ParameterSet& params);
-  TerrainModel(const std::string& name);
-  TerrainModel();
+  TerrainModel(const std::string& name = "terrain_model");
 
   bool initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params) override;
 
