@@ -41,7 +41,7 @@ void FootstepPlannerNode::initPlugins(ros::NodeHandle& nh)
   vigir_pluginlib::PluginManager::addPluginClassLoader<CollisionCheckPlugin>("vigir_footstep_planning_basic_plugins", "vigir_footstep_planning::CollisionCheckPlugin");
   vigir_pluginlib::PluginManager::addPluginClassLoader<TerrainModelPlugin>("vigir_footstep_planning_basic_plugins", "vigir_footstep_planning::TerrainModelPlugin");
 
-  /** No need to load plugin set here as it will be down in the constructor of FootstepPlanner */
+  /** No need to load plugin set here as it will be done in the constructor of FootstepPlanner */
   //vigir_pluginlib::PluginManager::addPlugin(new RobotModelPlugin(nh));
 }
 
@@ -309,7 +309,7 @@ bool FootstepPlannerNode::updateStepPlanService(msgs::UpdateStepPlanService::Req
 
 void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)
 {
-  // preempt any previous goal if active
+  // preempt any previous goal if active due to given callback
   footstep_planner->preemptPlanning();
 
   boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex);
@@ -419,6 +419,10 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "vigir_footstep_planner");
 
   ros::NodeHandle nh;
+
+  // ensure that node's services are set up in proper namespace
+  if (nh.getNamespace().size() <= 1)
+    nh = ros::NodeHandle("~");
 
   // init parameter and plugin manager
   vigir_generic_params::ParameterManager::initialize(nh);

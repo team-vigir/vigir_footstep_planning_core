@@ -204,6 +204,10 @@ int main(int argc, char **argv)
 
   ros::NodeHandle nh;
 
+  // ensure that node's services are set up in proper namespace
+  if (nh.getNamespace().size() <= 1)
+    nh = ros::NodeHandle("~");
+
   // init parameter and plugin manager
   vigir_generic_params::ParameterManager::initialize(nh);
   vigir_pluginlib::PluginManager::initialize(nh);

@@ -948,8 +948,7 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
 msgs::ErrorStatus FootstepPlanner::stepPlanRequest(msgs::StepPlanRequestService::Request& req, ResultCB result_cb, FeedbackCB feedback_cb, PreemptCB preempt_cb)
 {
   // preempt any planning
-  if (isPlanning())
-    preemptPlanning();
+  preemptPlanning();
 
   this->result_cb = result_cb;
   this->feedback_cb = feedback_cb;
