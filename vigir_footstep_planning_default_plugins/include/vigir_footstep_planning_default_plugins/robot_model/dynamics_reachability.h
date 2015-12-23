@@ -31,7 +31,7 @@
 
 #include <ros/ros.h>
 
-#include <vigir_footstep_planning_basic_plugins/reachability_plugin.h>
+#include <vigir_footstep_planning_plugins/reachability_plugin.h>
 
 
 

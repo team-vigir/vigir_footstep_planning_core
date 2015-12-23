@@ -1,5 +1,15 @@
 #include <vigir_footstep_planner/footstep_planner_node.h>
 
+#include <vigir_footstep_planning_lib/helper.h>
+#include <vigir_footstep_planning_lib/visualization/footstep_planning_vis.h>
+
+#include <vigir_footstep_planning_plugins/robot_model_plugin.h>
+#include <vigir_footstep_planning_plugins/step_plan_msg_plugin.h>
+#include <vigir_footstep_planning_plugins/collision_check_plugin.h>
+#include <vigir_footstep_planning_plugins/terrain_model_plugin.h>
+
+
+
 namespace vigir_footstep_planning
 {
 FootstepPlannerNode::FootstepPlannerNode(ros::NodeHandle& nh)
@@ -33,13 +43,13 @@ void FootstepPlannerNode::loadPlannerConfigs(ros::NodeHandle& nh) const
 
 void FootstepPlannerNode::initPlugins(ros::NodeHandle& nh)
 {
-  vigir_pluginlib::PluginManager::addPluginClassLoader<StepPlanMsgPlugin>("vigir_footstep_planning_basic_plugins", "vigir_footstep_planning::StepPlanMsgPlugin");
-  vigir_pluginlib::PluginManager::addPluginClassLoader<ReachabilityPlugin>("vigir_footstep_planning_basic_plugins", "vigir_footstep_planning::ReachabilityPlugin");
-  vigir_pluginlib::PluginManager::addPluginClassLoader<StepCostEstimatorPlugin>("vigir_footstep_planning_basic_plugins", "vigir_footstep_planning::StepCostEstimatorPlugin");
-  vigir_pluginlib::PluginManager::addPluginClassLoader<HeuristicPlugin>("vigir_footstep_planning_basic_plugins", "vigir_footstep_planning::HeuristicPlugin");
-  vigir_pluginlib::PluginManager::addPluginClassLoader<PostProcessPlugin>("vigir_footstep_planning_basic_plugins", "vigir_footstep_planning::PostProcessPlugin");
-  vigir_pluginlib::PluginManager::addPluginClassLoader<CollisionCheckPlugin>("vigir_footstep_planning_basic_plugins", "vigir_footstep_planning::CollisionCheckPlugin");
-  vigir_pluginlib::PluginManager::addPluginClassLoader<TerrainModelPlugin>("vigir_footstep_planning_basic_plugins", "vigir_footstep_planning::TerrainModelPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<StepPlanMsgPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::StepPlanMsgPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<ReachabilityPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::ReachabilityPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<StepCostEstimatorPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::StepCostEstimatorPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<HeuristicPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::HeuristicPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<PostProcessPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::PostProcessPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<CollisionCheckPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::CollisionCheckPlugin");
+  vigir_pluginlib::PluginManager::addPluginClassLoader<TerrainModelPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::TerrainModelPlugin");
 
   /** No need to load plugin set here as it will be done in the constructor of FootstepPlanner */
   //vigir_pluginlib::PluginManager::addPlugin(new RobotModelPlugin(nh));

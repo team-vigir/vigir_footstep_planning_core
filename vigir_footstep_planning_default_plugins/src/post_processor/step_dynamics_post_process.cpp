@@ -1,5 +1,7 @@
 #include <vigir_footstep_planning_default_plugins/post_processor/step_dynamics_post_process.h>
 
+#include <tf/tf.h>
+
 #include <pluginlib/class_list_macros.h>
 
 

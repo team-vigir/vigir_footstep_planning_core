@@ -30,9 +30,8 @@
 #define VIGIR_FOOTSTEP_PLANNING_LIB_STEP_DYNAMICS_POST_PROCESS_PLUGIN_H__
 
 #include <ros/ros.h>
-#include <tf/tf.h>
 
-#include <vigir_footstep_planning_basic_plugins/post_process_plugin.h>
+#include <vigir_footstep_planning_plugins/post_process_plugin.h>
 
 
 

@@ -44,7 +44,7 @@
 
   <build_depend>vigir_footstep_planning_msgs</build_depend>
   <build_depend>vigir_footstep_planning_lib</build_depend>
-  <build_depend>vigir_footstep_planning_basic_plugins</build_depend>
+  <build_depend>vigir_footstep_planning_plugins</build_depend>
   <build_depend>vigir_footstep_planning_default_plugins</build_depend>
   <build_depend>vigir_foot_pose_transformer</build_depend>
   <build_depend>vigir_feet_pose_generator</build_depend>
@@ -56,7 +56,7 @@
 
   <run_depend>vigir_footstep_planning_msgs</run_depend>
   <run_depend>vigir_footstep_planning_lib</run_depend>
-  <run_depend>vigir_footstep_planning_basic_plugins</run_depend>
+  <run_depend>vigir_footstep_planning_plugins</run_depend>
   <run_depend>vigir_footstep_planning_default_plugins</run_depend>
   <run_depend>vigir_foot_pose_transformer</run_depend>
   <run_depend>vigir_feet_pose_generator</run_depend>

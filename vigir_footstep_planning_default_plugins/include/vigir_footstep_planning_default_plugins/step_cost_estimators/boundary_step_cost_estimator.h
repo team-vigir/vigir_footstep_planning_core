@@ -29,9 +29,7 @@
 #ifndef VIGIR_FOOTSTEP_PLANNING_BOUNDARY_STEP_COST_ESTIMATOR_H
 #define VIGIR_FOOTSTEP_PLANNING_BOUNDARY_STEP_COST_ESTIMATOR_H
 
-#include <angles/angles.h>
-
-#include <vigir_footstep_planning_basic_plugins/step_cost_estimator_plugin.h>
+#include <vigir_footstep_planning_plugins/step_cost_estimator_plugin.h>
 
 
 

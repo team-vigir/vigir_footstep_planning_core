@@ -1,5 +1,12 @@
 #include <vigir_footstep_planning_default_plugins/step_cost_estimators/step_cost_key.h>
 
+#include <boost/unordered_set.hpp>
+#include <boost/functional/hash.hpp>
+
+#include <tf/tf.h>
+
+
+
 namespace vigir_footstep_planning
 {
 StepCostKey::StepCostKey(const std::vector<double> &state, double cell_size, double angle_bin_size)

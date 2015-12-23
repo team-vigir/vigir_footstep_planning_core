@@ -35,8 +35,8 @@
 
 #include <vigir_pluginlib/plugin_manager.h>
 
-#include <vigir_footstep_planning_basic_plugins/collision_check_plugin.h>
-#include <vigir_footstep_planning_basic_plugins/terrain_model_plugin.h>
+#include <vigir_footstep_planning_plugins/collision_check_plugin.h>
+#include <vigir_footstep_planning_plugins/terrain_model_plugin.h>
 
 
 

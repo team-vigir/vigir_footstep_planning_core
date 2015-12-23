@@ -2,6 +2,16 @@
 
 #include <pluginlib/class_list_macros.h>
 
+#include <pcl_conversions/pcl_conversions.h>
+
+#include <pcl/io/pcd_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
+
+#include <vigir_footstep_planning_lib/helper.h>
+#include <vigir_footstep_planning_lib/math.h>
+
+#include <vigir_terrain_classifier/terrain_model.h>
+
 
 
 namespace vigir_footstep_planning

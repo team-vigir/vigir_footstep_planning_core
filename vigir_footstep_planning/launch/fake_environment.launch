@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-
-<launch>
-  <include file="$(find atlas_description)/launch/xacrodisplay_vigir_atlas.launch" />
-
-  <!-- Start fake stuff -->
-  <node name="fake_static_transform_publisher" pkg="tf" type="static_transform_publisher" respawn="true" args="1 0 0.9 0 0 0 world pelvis 100" />
-</launch>
-

@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp actionlib_msgs actionlib std_msgs nav_msgs cv_bridge pcl_conversions vigir_generic_params vigir_pluginlib vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_basic_plugins vigir_terrain_classifier)
+find_package(catkin REQUIRED COMPONENTS roscpp actionlib_msgs actionlib std_msgs nav_msgs cv_bridge pcl_conversions vigir_generic_params vigir_pluginlib vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_plugins vigir_terrain_classifier)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -84,7 +84,7 @@ find_package(PCL REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES vigir_footstep_planning_default_plugins
-  CATKIN_DEPENDS roscpp actionlib_msgs actionlib std_msgs nav_msgs cv_bridge pcl_conversions vigir_generic_params vigir_pluginlib vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_basic_plugins vigir_terrain_classifier
+  CATKIN_DEPENDS roscpp actionlib_msgs actionlib std_msgs nav_msgs cv_bridge pcl_conversions vigir_generic_params vigir_pluginlib vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_plugins vigir_terrain_classifier
 #  DEPENDS system_lib
 )
 
@@ -152,7 +152,7 @@ add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 ## Declare a cpp executable
-# add_executable(footstep_planning_basic_plugins_node src/visualization/footstep_planning_basic_plugins_node.cpp)
+# add_executable(footstep_planning_plugins_node src/visualization/footstep_planning_plugins_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -187,6 +187,10 @@ install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   FILES_MATCHING PATTERN "*.launch"
   PATTERN "*~" EXCLUDE
+)
+
+install(FILES default_plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 #############

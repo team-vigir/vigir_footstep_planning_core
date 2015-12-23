@@ -35,7 +35,8 @@
 #include <nav_msgs/OccupancyGrid.h>
 
 #include <vigir_footstep_planning_lib/math.h>
-#include <vigir_footstep_planning_basic_plugins/heuristic_plugin.h>
+
+#include <vigir_footstep_planning_plugins/heuristic_plugin.h>
 
 
 

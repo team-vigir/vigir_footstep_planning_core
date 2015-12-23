@@ -31,7 +31,7 @@
 
 #include <ros/ros.h>
 
-#include <vigir_footstep_planning_default_plugins//world_model/grid_map_model.h>
+#include <vigir_footstep_planning_default_plugins/world_model/grid_map_model.h>
 
 
 

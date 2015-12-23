@@ -13,7 +13,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs nav_msgs cv_bridge pcl_conversions vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_basic_plugins vigir_foot_pose_transformer
+find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs nav_msgs cv_bridge pcl_conversions vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_plugins vigir_foot_pose_transformer
              angles tf)
 
 ## System dependencies are found with CMake's conventions
@@ -97,7 +97,7 @@ find_package(OpenCV REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES vigir_footstep_planner
-  CATKIN_DEPENDS roscpp rospy std_msgs nav_msgs cv_bridge pcl_conversions vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_basic_plugins vigir_foot_pose_transformer
+  CATKIN_DEPENDS roscpp rospy std_msgs nav_msgs cv_bridge pcl_conversions vigir_footstep_planning_msgs vigir_footstep_planning_lib vigir_footstep_planning_plugins vigir_foot_pose_transformer
                  angles tf
 #  DEPENDS system_lib
 )
@@ -190,10 +190,6 @@ install(DIRECTORY include/${PROJECT_NAME}/
 install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   FILES_MATCHING PATTERN "*.launch"
-)
-
-install(FILES basic_plugins.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 #############

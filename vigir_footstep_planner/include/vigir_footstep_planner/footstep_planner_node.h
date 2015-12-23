@@ -40,14 +40,6 @@
 #include <vigir_footstep_planning_msgs/footstep_planning_msgs.h>
 #include <vigir_footstep_planning_msgs/visualization.h>
 
-#include <vigir_footstep_planning_lib/helper.h>
-#include <vigir_footstep_planning_lib/visualization/footstep_planning_vis.h>
-
-#include <vigir_footstep_planning_basic_plugins/robot_model_plugin.h>
-#include <vigir_footstep_planning_basic_plugins/step_plan_msg_plugin.h>
-#include <vigir_footstep_planning_basic_plugins/collision_check_plugin.h>
-#include <vigir_footstep_planning_basic_plugins/terrain_model_plugin.h>
-
 #include <vigir_footstep_planner/footstep_planner.h>
 
 

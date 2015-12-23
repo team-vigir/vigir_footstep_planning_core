@@ -29,11 +29,6 @@
 #ifndef VIGIR_FOOTSTEP_PLANNING_STEP_COST_KEY_H
 #define VIGIR_FOOTSTEP_PLANNING_STEP_COST_KEY_H
 
-#include <boost/unordered_set.hpp>
-#include <boost/functional/hash.hpp>
-
-#include <tf/tf.h>
-
 #include <vigir_footstep_planning_lib/modeling/state.h>
 
 #define STATE_DIM 6

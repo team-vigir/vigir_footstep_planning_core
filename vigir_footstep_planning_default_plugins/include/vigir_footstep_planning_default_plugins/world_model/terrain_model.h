@@ -33,18 +33,11 @@
 
 #include <boost/thread/mutex.hpp>
 
-#include <pcl_conversions/pcl_conversions.h>
-
-#include <pcl/io/pcd_io.h>
 #include <pcl/point_cloud.h>
-#include <pcl/kdtree/kdtree_flann.h>
 
 #include <vigir_footstep_planning_lib/modeling/state.h>
-#include <vigir_footstep_planning_basic_plugins/terrain_model_plugin.h>
-#include <vigir_footstep_planning_lib/helper.h>
-#include <vigir_footstep_planning_lib/math.h>
 
-#include <vigir_terrain_classifier/grid_map/height_grid_map.h>
+#include <vigir_footstep_planning_plugins/terrain_model_plugin.h>
 
 #include <vigir_terrain_classifier/terrain_model.h>
 

@@ -34,7 +34,7 @@
 
 #include <nav_msgs/OccupancyGrid.h>
 
-#include <vigir_footstep_planning_basic_plugins/collision_check_grid_map_plugin.h>
+#include <vigir_footstep_planning_plugins/collision_check_grid_map_plugin.h>
 
 #include <vigir_footstep_planning_default_plugins/world_model/grid_map_2d.h>
 

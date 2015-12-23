@@ -32,7 +32,7 @@
 
 #include <sbpl/headers.h>
 
-#include <vigir_footstep_planning_basic_plugins/heuristic_plugin.h>
+#include <vigir_footstep_planning_plugins/heuristic_plugin.h>
 
 #include <vigir_footstep_planning_default_plugins/world_model/grid_map_2d.h>
 
