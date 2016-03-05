@@ -17,7 +17,7 @@ void GridMapModel::mapCallback(const nav_msgs::OccupancyGridConstPtr& occupancy_
 {
   CollisionCheckGridMapPlugin::mapCallback(occupancy_grid_map);
 
-  boost::unique_lock<boost::shared_mutex> lock(grid_map_shared_mutex);
+  boost::unique_lock<boost::shared_mutex> lock(grid_map_shared_mutex_);
   distance_map.setMap(occupancy_grid_map);
 }
 

@@ -24,9 +24,9 @@ bool FootGridMapModel::initialize(ros::NodeHandle& nh, const vigir_generic_param
 
 bool FootGridMapModel::isAccessible(const State& s) const
 {
-  boost::shared_lock<boost::shared_mutex> lock(grid_map_shared_mutex);
+  boost::shared_lock<boost::shared_mutex> lock(grid_map_shared_mutex_);
 
-  if (!occupancy_grid_map)
+  if (!occupancy_grid_map_)
   {
     ROS_ERROR_THROTTLE(10, "[FootGridMapModel] No ground level grid map available yet.");
     return true;

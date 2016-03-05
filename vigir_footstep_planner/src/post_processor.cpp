@@ -17,7 +17,7 @@ PostProcessor::Ptr& PostProcessor::Instance()
 
 void PostProcessor::loadPlugins()
 {
-  // get collision check plugins
+  // get post process plugins
   vigir_pluginlib::PluginManager::getPluginsByType(Instance()->post_process_plugins);
 
   ROS_INFO("[PostProcessor] Plugins loaded:");

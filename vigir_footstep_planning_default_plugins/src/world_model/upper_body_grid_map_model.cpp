@@ -31,9 +31,9 @@ bool UpperBodyGridMapModel::isAccessible(const State& /*s*/) const
 
 bool UpperBodyGridMapModel::isAccessible(const State& next, const State& current) const
 {
-  boost::shared_lock<boost::shared_mutex> lock(grid_map_shared_mutex);
+  boost::shared_lock<boost::shared_mutex> lock(grid_map_shared_mutex_);
 
-  if (!occupancy_grid_map)
+  if (!occupancy_grid_map_)
   {
     ROS_ERROR_THROTTLE(10, "[UpperBodyGridMapModel] No body level grid map available yet.");
     return true;

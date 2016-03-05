@@ -49,11 +49,11 @@ public:
 
 protected:
   /// longest step width
-  double max_step_dist_x_inv;
-  double max_step_dist_y_inv;
+  double max_step_dist_x_inv_;
+  double max_step_dist_y_inv_;
 
-  double a_sway_inv, b_sway_inv, const_sway_time;
-  double a_swing_inv, b_swing_inv, const_swing_time;
+  double a_sway_inv_, b_sway_inv_, const_sway_time_;
+  double a_swing_inv_, b_swing_inv_, const_swing_time_;
 };
 }
 

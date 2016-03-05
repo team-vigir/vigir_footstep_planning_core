@@ -46,9 +46,9 @@ class OccupancyGridMapHeuristic
 public:
   OccupancyGridMapHeuristic();
 
-  void loadParams(const vigir_generic_params::ParameterSet& params) override;
-
   bool initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params) override;
+
+  void loadParams(const vigir_generic_params::ParameterSet& params) override;
 
   double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;
 
@@ -56,14 +56,14 @@ protected:
   void mapCallback(const nav_msgs::OccupancyGridConstPtr& occupancy_grid_map);
 
   // subscribers
-  ros::Subscriber occupancy_grid_map_sub;
+  ros::Subscriber occupancy_grid_map_sub_;
 
   // mutex
-  mutable boost::shared_mutex grid_map_shared_mutex;
+  mutable boost::shared_mutex grid_map_shared_mutex_;
 
   // grid map data
-  std::string grid_map_topic;
-  vigir_gridmap_2d::GridMap2D distance_map;
+  std::string grid_map_topic_;
+  vigir_gridmap_2d::GridMap2D distance_map_;
 };
 }
 

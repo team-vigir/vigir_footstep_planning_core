@@ -49,7 +49,7 @@ public:
   double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;
 
 protected:
-  double max_body_acc;
+  double max_body_acc_;
 };
 }
 

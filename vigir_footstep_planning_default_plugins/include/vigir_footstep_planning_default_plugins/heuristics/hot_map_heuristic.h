@@ -88,18 +88,18 @@ protected:
   void publishHotMap(const ros::TimerEvent& publish_timer) const;
 
   // publisher
-  ros::Publisher hot_map_pub;
+  ros::Publisher hot_map_pub_;
 
-  ros::Timer publish_timer;
+  ros::Timer publish_timer_;
 
   // mutex
-  mutable boost::shared_mutex hot_map_shared_mutex;
+  mutable boost::shared_mutex hot_map_shared_mutex_;
 
-  mutable HotMap hot_map;
-  mutable unsigned int total_hit_counter;
+  mutable HotMap hot_map_;
+  mutable unsigned int total_hit_counter_;
 
-  double cell_size;
-  double angle_bin_size;
+  double cell_size_;
+  double angle_bin_size_;
 };
 }
 

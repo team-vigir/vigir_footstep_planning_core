@@ -25,7 +25,7 @@
       <remap from="body_level_grid_map" to="ground_level_grid_map" />
     </node>
 
-    <!-- load plugin configurations from YAML file to parameter server -->
+    <!-- load plugin sets from YAML file to parameter server -->
     <rosparam file="$(find vigir_footstep_planner)/config/default_plugin_sets.yaml" command="load" />
 
     <!-- specify where to load robot specific parameters -->
