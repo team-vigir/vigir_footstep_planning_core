@@ -11,11 +11,13 @@ DynamicsHeuristic::DynamicsHeuristic()
 {
 }
 
-void DynamicsHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
+bool DynamicsHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  HeuristicPlugin::loadParams(params);
+  if (!HeuristicPlugin::loadParams(params))
+    return false;
 
   params.getParam("dynamics/body/max_acc", max_body_acc_, 0.0);
+  return true;
 }
 
 double DynamicsHeuristic::getHeuristicValue(const State& from, const State& to, const State& /*start*/, const State& /*goal*/) const

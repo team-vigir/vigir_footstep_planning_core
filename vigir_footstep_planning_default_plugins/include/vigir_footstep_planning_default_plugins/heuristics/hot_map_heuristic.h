@@ -73,7 +73,7 @@ struct StateKey
 public:
   HotMapHeuristic();
 
-  void loadParams(const vigir_generic_params::ParameterSet& params) override;
+  bool loadParams(const vigir_generic_params::ParameterSet& params) override;
 
   bool initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params) override;
 

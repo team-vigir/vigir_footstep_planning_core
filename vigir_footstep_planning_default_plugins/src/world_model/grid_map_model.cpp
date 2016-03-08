@@ -7,10 +7,13 @@ GridMapModel::GridMapModel(const std::string& name)
 {
 }
 
-void GridMapModel::loadParams(const vigir_generic_params::ParameterSet& params)
+bool GridMapModel::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  CollisionCheckGridMapPlugin::loadParams(params);
+  if (!CollisionCheckGridMapPlugin::loadParams(params))
+    return false;
+
   params.getParam("collision_check/collision_check_accuracy", (int&)collision_check_accuracy);
+  return true;
 }
 
 void GridMapModel::mapCallback(const nav_msgs::OccupancyGridConstPtr& occupancy_grid_map)

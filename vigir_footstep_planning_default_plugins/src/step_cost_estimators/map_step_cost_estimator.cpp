@@ -11,12 +11,17 @@ MapStepCostEstimator::MapStepCostEstimator()
 {
 }
 
-void MapStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
+bool MapStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
+  if (!StepCostEstimatorPlugin::loadParams(params))
+    return false;
+
   std::string filename;
   params.getParam("map_step_cost_estimator/file", filename);
 
   loadFromFile(filename);
+
+  return true;
 }
 
 bool MapStepCostEstimator::getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const

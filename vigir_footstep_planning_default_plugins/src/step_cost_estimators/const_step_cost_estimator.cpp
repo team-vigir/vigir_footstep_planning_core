@@ -11,9 +11,13 @@ ConstStepCostEstimator::ConstStepCostEstimator()
 {
 }
 
-void ConstStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
+bool ConstStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
+  if (!StepCostEstimatorPlugin::loadParams(params))
+    return false;
+
   params.getParam("const_step_cost_estimator/step_cost", const_step_cost, 0.1);
+  return true;
 }
 
 bool ConstStepCostEstimator::getCost(const State& /*left_foot*/, const State& /*right_foot*/, const State& /*swing_foot*/, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const

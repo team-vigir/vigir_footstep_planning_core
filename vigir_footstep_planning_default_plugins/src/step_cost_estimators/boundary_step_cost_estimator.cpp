@@ -13,8 +13,11 @@ BoundaryStepCostEstimator::BoundaryStepCostEstimator()
 {
 }
 
-void BoundaryStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
+bool BoundaryStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
+  if (!StepCostEstimatorPlugin::loadParams(params))
+    return false;
+
   params.getParam("boundary_step_cost_estimator/max_diff_z", max_diff_z);
   params.getParam("boundary_step_cost_estimator/long_step_dist", long_step_dist);
   params.getParam("boundary_step_cost_estimator/min_yaw_seperation_enlargement", min_yaw_seperation_enlargement);
@@ -23,6 +26,8 @@ void BoundaryStepCostEstimator::loadParams(const vigir_generic_params::Parameter
   params.getParam("boundary_step_cost_estimator/cost_pitch_abs", cost_pitch_abs);
   params.getParam("boundary_step_cost_estimator/cost_yaw_rel", cost_yaw_rel);
   params.getParam("boundary_step_cost_estimator/cost_height_diff_rel", cost_height_diff_rel);
+
+  return true;
 }
 
 bool BoundaryStepCostEstimator::getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const

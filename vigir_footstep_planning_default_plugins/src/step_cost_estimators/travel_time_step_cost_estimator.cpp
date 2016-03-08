@@ -11,8 +11,11 @@ TravelTimeStepCostEstimator::TravelTimeStepCostEstimator()
 {
 }
 
-void TravelTimeStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
+bool TravelTimeStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
+  if (!StepCostEstimatorPlugin::loadParams(params))
+    return false;
+
   params.getParam("travel_time_cost_estimator/sway/parabol_a", a_sway_inv, 0.0);
   a_sway_inv = 1.0/a_sway_inv;
   params.getParam("travel_time_cost_estimator/sway/parabol_b", b_sway_inv, 0.0);
@@ -24,6 +27,8 @@ void TravelTimeStepCostEstimator::loadParams(const vigir_generic_params::Paramet
   params.getParam("travel_time_cost_estimator/swing/parabol_b", b_swing_inv, 0.0);
   b_swing_inv = 1.0/b_swing_inv;
   params.getParam("travel_time_cost_estimator/swing/const_time", const_swing_time, 0.0);
+
+  return true;
 }
 
 bool TravelTimeStepCostEstimator::getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const

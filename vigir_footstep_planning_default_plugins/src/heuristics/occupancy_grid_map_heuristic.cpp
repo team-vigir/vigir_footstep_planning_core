@@ -22,11 +22,13 @@ bool OccupancyGridMapHeuristic::initialize(ros::NodeHandle& nh, const vigir_gene
   return true;
 }
 
-void OccupancyGridMapHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
+bool OccupancyGridMapHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  HeuristicPlugin::loadParams(params);
+  if (!HeuristicPlugin::loadParams(params))
+    return false;
 
   params.getParam("occupancy_grid_map_heuristic/grid_map_topic", grid_map_topic_);
+  return true;
 }
 
 void OccupancyGridMapHeuristic::mapCallback(const nav_msgs::OccupancyGridConstPtr& occupancy_grid_map)

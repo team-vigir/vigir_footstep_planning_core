@@ -13,11 +13,15 @@ StepDynamicsPostProcessPlugin::StepDynamicsPostProcessPlugin()
 {
 }
 
-void StepDynamicsPostProcessPlugin::loadParams(const vigir_generic_params::ParameterSet& params)
+bool StepDynamicsPostProcessPlugin::loadParams(const vigir_generic_params::ParameterSet& params)
 {
+  if (!PostProcessPlugin::loadParams(params))
+    return false;
+
   params.getParam("swing_height", default_swing_height);
   params.getParam("sway_duration", default_sway_duration);
   params.getParam("step_duration", default_step_duration);
+  return true;
 }
 
 void StepDynamicsPostProcessPlugin::postProcessStepForward(const State& left_foot, const State& right_foot, State& swing_foot) const

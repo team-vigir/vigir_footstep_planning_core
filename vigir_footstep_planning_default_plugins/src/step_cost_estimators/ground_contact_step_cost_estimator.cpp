@@ -13,9 +13,13 @@ GroundContactStepCostEstimator::GroundContactStepCostEstimator()
 {
 }
 
-void GroundContactStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
+bool GroundContactStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
+  if (!StepCostEstimatorPlugin::loadParams(params))
+    return false;
+
   params.getParam("foot_contact_support/minimal_support", min_contact_support);
+  return true;
 }
 
 bool GroundContactStepCostEstimator::getCost(const State& /*left_foot*/, const State& /*right_foot*/, const State& swing_foot, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const

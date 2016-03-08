@@ -20,9 +20,10 @@ PathCostHeuristic::~PathCostHeuristic()
     resetGrid();
 }
 
-void PathCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
+bool PathCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  HeuristicPlugin::loadParams(params);
+  if (!HeuristicPlugin::loadParams(params))
+    return false;
 
   params.getParam("collision_check/cell_size", ivCellSize);
   params.getParam("collision_check/num_angle_bins", ivNumAngleBins);
@@ -33,6 +34,7 @@ void PathCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& par
   params.getParam("max_step_dist/x", ivMaxStepWidth);
   /// TODO
   /// ivInflationRadius
+  return true;
 }
 
 double PathCostHeuristic::getHeuristicValue(const State& from, const State& to, const State& /*start*/, const State& /*goal*/) const

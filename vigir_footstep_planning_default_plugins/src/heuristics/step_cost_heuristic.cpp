@@ -11,9 +11,10 @@ StepCostHeuristic::StepCostHeuristic()
 {
 }
 
-void StepCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
+bool StepCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  HeuristicPlugin::loadParams(params);
+  if (!HeuristicPlugin::loadParams(params))
+    return false;
 
   params.getParam("const_step_cost_estimator/step_cost", step_cost_, 0.1);
   params.getParam("diff_angle_cost", diff_angle_cost_);
@@ -21,6 +22,7 @@ void StepCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& par
   max_step_dist_x_inv_ = 1.0/max_step_dist_x_inv_;
   params.getParam("max_step_dist/y", max_step_dist_y_inv_);
   max_step_dist_y_inv_ = 1.0/max_step_dist_y_inv_;
+  return true;
 }
 
 double StepCostHeuristic::getHeuristicValue(const State& from, const State& to, const State& /*start*/, const State& /*goal*/) const

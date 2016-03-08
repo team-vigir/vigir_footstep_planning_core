@@ -18,8 +18,11 @@ ReachabilityPolygon::~ReachabilityPolygon()
     delete[] ivpStepRange;
 }
 
-void ReachabilityPolygon::loadParams(const ParameterSet& params)
+bool ReachabilityPolygon::loadParams(const ParameterSet& params)
 {
+  if (!ReachabilityPlugin::loadParams(params))
+    return false;
+
   int num_angle_bins;
   params.getParam("collision_check/cell_size", cell_size);
   params.getParam("collision_check/num_angle_bins", num_angle_bins);
@@ -33,7 +36,7 @@ void ReachabilityPolygon::loadParams(const ParameterSet& params)
   if (!params.getParam("step_range/x", step_range_x) || !params.getParam("step_range/y", step_range_y))
   {
     ROS_ERROR("Can't initialize ReachabilityPolygon due to missing step_range in parameter set!");
-    return;
+    return false;
   }
 
   assert((step_range_x.size() == step_range_y.size()) && (step_range_x.size() > 0));
@@ -90,6 +93,8 @@ void ReachabilityPolygon::loadParams(const ParameterSet& params)
     ROS_INFO("%s", msg.c_str());
     msg.clear();
   }
+
+  return true;
 }
 
 bool ReachabilityPolygon::isReachable(const State& current, const State& next) const

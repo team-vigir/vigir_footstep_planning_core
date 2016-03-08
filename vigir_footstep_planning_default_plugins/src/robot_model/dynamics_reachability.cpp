@@ -11,12 +11,16 @@ DynamicsReachability::DynamicsReachability()
 {
 }
 
-void DynamicsReachability::loadParams(const ParameterSet& params)
+bool DynamicsReachability::loadParams(const ParameterSet& params)
 {
+  if (!ReachabilityPlugin::loadParams(params))
+    return false;
+
   params.getParam("dynamics/body/max_vel", max_body_vel_sq, 0.0);
   max_body_vel_sq *= max_body_vel_sq;
   params.getParam("dynamics/body/max_acc", max_body_acc_sq, 0.0);
   max_body_acc_sq *= max_body_acc_sq;
+  return true;
 }
 
 bool DynamicsReachability::isReachable(const State& current, const State& next) const

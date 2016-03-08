@@ -37,9 +37,10 @@ bool TerrainModel::initialize(ros::NodeHandle& nh, const vigir_generic_params::P
   return true;
 }
 
-void TerrainModel::loadParams(const vigir_generic_params::ParameterSet& params)
+bool TerrainModel::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  TerrainModelPlugin::loadParams(params);
+  if (!TerrainModelPlugin::loadParams(params))
+    return false;
 
   params.getParam("foot_contact_support/min_sampling_steps_x", min_sampling_steps_x);
   params.getParam("foot_contact_support/min_sampling_steps_y", min_sampling_steps_y);
@@ -48,6 +49,8 @@ void TerrainModel::loadParams(const vigir_generic_params::ParameterSet& params)
   params.getParam("foot_contact_support/max_intrusion_z", max_intrusion_z);
   params.getParam("foot_contact_support/max_ground_clearance", max_ground_clearance);
   params.getParam("foot_contact_support/minimal_support", minimal_support);
+
+  return true;
 }
 
 void TerrainModel::reset()

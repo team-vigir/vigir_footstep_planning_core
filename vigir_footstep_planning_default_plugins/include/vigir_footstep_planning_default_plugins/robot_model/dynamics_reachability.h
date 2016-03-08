@@ -43,7 +43,7 @@ class DynamicsReachability
 public:
   DynamicsReachability();
 
-  void loadParams(const ParameterSet& params) override;
+  bool loadParams(const ParameterSet& params) override;
 
   bool isReachable(const State& current, const State& next) const override;
 

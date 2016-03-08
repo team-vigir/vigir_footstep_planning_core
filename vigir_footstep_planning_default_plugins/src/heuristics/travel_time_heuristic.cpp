@@ -11,9 +11,10 @@ TravelTimeHeuristic::TravelTimeHeuristic()
 {
 }
 
-void TravelTimeHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
+bool TravelTimeHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  HeuristicPlugin::loadParams(params);
+  if (!HeuristicPlugin::loadParams(params))
+    return false;
 
   params.getParam("max_step_dist/x", max_step_dist_x_inv_);
   max_step_dist_x_inv_ = 1.0/max_step_dist_x_inv_;
@@ -31,6 +32,8 @@ void TravelTimeHeuristic::loadParams(const vigir_generic_params::ParameterSet& p
   params.getParam("travel_time_cost_estimator/swing/parabol_b", b_swing_inv_, 0.0);
   b_swing_inv_ = 1.0/b_swing_inv_;
   params.getParam("travel_time_cost_estimator/swing/const_time", const_swing_time_, 0.0);
+
+  return true;
 }
 
 double TravelTimeHeuristic::getHeuristicValue(const State& from, const State& to, const State& /*start*/, const State& /*goal*/) const
