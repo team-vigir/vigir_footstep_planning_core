@@ -30,6 +30,7 @@
 
     <!-- specify where to load robot specific parameters -->
     <rosparam file="$(find vigir_footstep_planner)/config/robot_params.yaml" command="load" />
-    <param name="planner_configs_path" value="$(find vigir_footstep_planner)/config/planner/" />
+    <param name="params_path" value="$(find vigir_footstep_planner)/config/planner/" />
+    <param name="default_params" value="default" />
   </group>
 </launch>

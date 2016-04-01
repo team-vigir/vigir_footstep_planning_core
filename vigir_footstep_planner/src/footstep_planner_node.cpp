@@ -14,31 +14,8 @@ namespace vigir_footstep_planning
 {
 FootstepPlannerNode::FootstepPlannerNode(ros::NodeHandle& nh)
 {
-  loadPlannerConfigs(nh);
   initPlugins(nh);
   init(nh);
-}
-
-void FootstepPlannerNode::loadPlannerConfigs(ros::NodeHandle& nh) const
-{
-  // load parameters
-  if (nh.hasParam("planner_configs_path"))
-  {
-    std::string path;
-    nh.getParam("planner_configs_path", path);
-    ParameterManager::loadParameterSets(path);
-
-    std::vector<std::string> names;
-    ParameterManager::getParameterSetNames(names);
-
-    if (names.empty())
-    {
-      ROS_ERROR("[FootstepPlannerNode] Couldn't load any parameter files!");
-      exit(1);
-    }
-
-    ParameterManager::setActive(names.front());
-  }
 }
 
 void FootstepPlannerNode::initPlugins(ros::NodeHandle& nh)

@@ -56,8 +56,6 @@ public:
   FootstepPlannerNode(ros::NodeHandle& nh);
   virtual ~FootstepPlannerNode();
 
-  void loadPlannerConfigs(ros::NodeHandle& nh) const;
-
   virtual void initPlugins(ros::NodeHandle& nh);
   virtual void init(ros::NodeHandle& nh);
 
