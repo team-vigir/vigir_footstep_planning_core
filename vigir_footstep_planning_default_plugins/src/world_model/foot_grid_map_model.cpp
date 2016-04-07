@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/world_model/foot_grid_map_model.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -11,13 +9,13 @@ FootGridMapModel::FootGridMapModel(const std::string& name)
 {
 }
 
-bool FootGridMapModel::initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params)
+bool FootGridMapModel::initialize(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!GridMapModel::initialize(nh, params))
+  if (!GridMapModel::initialize(global_params))
     return false;
 
   // get foot dimensions
-  getFootSize(nh, foot_size);
+  getFootSize(nh_, foot_size);
 
   return true;
 }
@@ -42,4 +40,5 @@ bool FootGridMapModel::isAccessible(const State& s) const
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::FootGridMapModel, vigir_footstep_planning::CollisionCheckPlugin)

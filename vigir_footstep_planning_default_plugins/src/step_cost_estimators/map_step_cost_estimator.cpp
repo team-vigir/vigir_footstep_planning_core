@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/step_cost_estimators/map_step_cost_estimator.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -11,13 +9,13 @@ MapStepCostEstimator::MapStepCostEstimator()
 {
 }
 
-bool MapStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
+bool MapStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!StepCostEstimatorPlugin::loadParams(params))
+  if (!StepCostEstimatorPlugin::loadParams(global_params))
     return false;
 
   std::string filename;
-  params.getParam("map_step_cost_estimator/file", filename);
+  global_params.getParam("map_step_cost_estimator/file", filename);
 
   loadFromFile(filename);
 
@@ -144,4 +142,5 @@ void MapStepCostEstimator::loadFromFile(const std::string &filename)
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::MapStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

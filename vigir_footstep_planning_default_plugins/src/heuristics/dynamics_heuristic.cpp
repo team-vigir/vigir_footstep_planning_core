@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/heuristics/dynamics_heuristic.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -11,12 +9,12 @@ DynamicsHeuristic::DynamicsHeuristic()
 {
 }
 
-bool DynamicsHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
+bool DynamicsHeuristic::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!HeuristicPlugin::loadParams(params))
+  if (!HeuristicPlugin::loadParams(global_params))
     return false;
 
-  params.getParam("dynamics/body/max_acc", max_body_acc_, 0.0);
+  global_params.getParam("dynamics/body/max_acc", max_body_acc_, 0.0);
   return true;
 }
 
@@ -40,4 +38,5 @@ double DynamicsHeuristic::getHeuristicValue(const State& from, const State& to, 
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::DynamicsHeuristic, vigir_footstep_planning::HeuristicPlugin)

@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/step_cost_estimators/travel_time_step_cost_estimator.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -11,22 +9,22 @@ TravelTimeStepCostEstimator::TravelTimeStepCostEstimator()
 {
 }
 
-bool TravelTimeStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
+bool TravelTimeStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!StepCostEstimatorPlugin::loadParams(params))
+  if (!StepCostEstimatorPlugin::loadParams(global_params))
     return false;
 
-  params.getParam("travel_time_cost_estimator/sway/parabol_a", a_sway_inv, 0.0);
+  global_params.getParam("travel_time_cost_estimator/sway/parabol_a", a_sway_inv, 0.0);
   a_sway_inv = 1.0/a_sway_inv;
-  params.getParam("travel_time_cost_estimator/sway/parabol_b", b_sway_inv, 0.0);
+  global_params.getParam("travel_time_cost_estimator/sway/parabol_b", b_sway_inv, 0.0);
   b_sway_inv = 1.0/b_sway_inv;
-  params.getParam("travel_time_cost_estimator/sway/const_time", const_sway_time, 0.0);
+  global_params.getParam("travel_time_cost_estimator/sway/const_time", const_sway_time, 0.0);
 
-  params.getParam("travel_time_cost_estimator/swing/parabol_a", a_swing_inv, 0.0);
+  global_params.getParam("travel_time_cost_estimator/swing/parabol_a", a_swing_inv, 0.0);
   a_swing_inv = 1.0/a_swing_inv;
-  params.getParam("travel_time_cost_estimator/swing/parabol_b", b_swing_inv, 0.0);
+  global_params.getParam("travel_time_cost_estimator/swing/parabol_b", b_swing_inv, 0.0);
   b_swing_inv = 1.0/b_swing_inv;
-  params.getParam("travel_time_cost_estimator/swing/const_time", const_swing_time, 0.0);
+  global_params.getParam("travel_time_cost_estimator/swing/const_time", const_swing_time, 0.0);
 
   return true;
 }
@@ -52,4 +50,5 @@ bool TravelTimeStepCostEstimator::getCost(const State& left_foot, const State& r
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::TravelTimeStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

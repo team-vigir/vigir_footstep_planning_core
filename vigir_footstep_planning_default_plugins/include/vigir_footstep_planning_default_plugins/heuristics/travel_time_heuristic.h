@@ -43,7 +43,7 @@ class TravelTimeHeuristic
 public:
   TravelTimeHeuristic();
 
-  bool loadParams(const vigir_generic_params::ParameterSet& params) override;
+  bool loadParams(const vigir_generic_params::ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
 
   double getHeuristicValue(const State& from, const State& to, const State& start, const State& goal) const override;
 

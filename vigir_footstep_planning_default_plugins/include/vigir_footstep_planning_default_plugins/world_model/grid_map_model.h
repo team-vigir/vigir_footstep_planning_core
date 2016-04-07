@@ -48,7 +48,7 @@ class GridMapModel
 public:
   GridMapModel(const std::string& name);
 
-  bool loadParams(const vigir_generic_params::ParameterSet& params) override;
+  bool loadParams(const vigir_generic_params::ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
 
 protected:
   void mapCallback(const nav_msgs::OccupancyGridConstPtr& occupancy_grid_map_);

@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/world_model/upper_body_grid_map_model.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -11,14 +9,14 @@ UpperBodyGridMapModel::UpperBodyGridMapModel(const std::string& name)
 {
 }
 
-bool UpperBodyGridMapModel::initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params)
+bool UpperBodyGridMapModel::initialize(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!GridMapModel::initialize(nh, params))
+  if (!GridMapModel::initialize(global_params))
     return false;
 
   // get upper body dimensions
-  getUpperBodySize(nh, upper_body_size);
-  getUpperBodyOriginShift(nh, upper_body_origin_shift);
+  getUpperBodySize(nh_, upper_body_size);
+  getUpperBodyOriginShift(nh_, upper_body_origin_shift);
 
   return true;
 }
@@ -68,4 +66,5 @@ bool UpperBodyGridMapModel::isAccessible(const State& next, const State& current
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::UpperBodyGridMapModel, vigir_footstep_planning::CollisionCheckPlugin)

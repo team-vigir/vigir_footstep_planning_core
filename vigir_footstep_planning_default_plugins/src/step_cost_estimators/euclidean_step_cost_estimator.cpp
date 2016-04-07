@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/step_cost_estimators/euclidean_step_cost_estimator.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -28,4 +26,5 @@ bool EuclideanStepCostEstimator::getCost(const State& left_foot, const State& ri
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::EuclideanStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

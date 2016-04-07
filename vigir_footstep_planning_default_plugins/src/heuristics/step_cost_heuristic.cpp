@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/heuristics/step_cost_heuristic.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -11,16 +9,16 @@ StepCostHeuristic::StepCostHeuristic()
 {
 }
 
-bool StepCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
+bool StepCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!HeuristicPlugin::loadParams(params))
+  if (!HeuristicPlugin::loadParams(global_params))
     return false;
 
-  params.getParam("const_step_cost_estimator/step_cost", step_cost_, 0.1);
-  params.getParam("diff_angle_cost", diff_angle_cost_);
-  params.getParam("max_step_dist/x", max_step_dist_x_inv_);
+  global_params.getParam("const_step_cost_estimator/step_cost", step_cost_, 0.1);
+  global_params.getParam("diff_angle_cost", diff_angle_cost_);
+  global_params.getParam("max_step_dist/x", max_step_dist_x_inv_);
   max_step_dist_x_inv_ = 1.0/max_step_dist_x_inv_;
-  params.getParam("max_step_dist/y", max_step_dist_y_inv_);
+  global_params.getParam("max_step_dist/y", max_step_dist_y_inv_);
   max_step_dist_y_inv_ = 1.0/max_step_dist_y_inv_;
   return true;
 }
@@ -50,4 +48,5 @@ double StepCostHeuristic::getHeuristicValue(const State& from, const State& to, 
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::StepCostHeuristic, vigir_footstep_planning::HeuristicPlugin)

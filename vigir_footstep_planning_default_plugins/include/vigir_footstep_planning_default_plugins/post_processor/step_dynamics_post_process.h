@@ -43,7 +43,7 @@ class StepDynamicsPostProcessPlugin
 public:
   StepDynamicsPostProcessPlugin();
 
-  bool loadParams(const vigir_generic_params::ParameterSet& params) override;
+  bool loadParams(const vigir_generic_params::ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
 
   void postProcessStepForward(const State& left_foot, const State& right_foot, State& swing_foot) const override;
   void postProcessStepBackward(const State& left_foot, const State& right_foot, State& swing_foot) const override;

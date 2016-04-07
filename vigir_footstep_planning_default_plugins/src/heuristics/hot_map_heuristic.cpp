@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/heuristics/hot_map_heuristic.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -11,26 +9,26 @@ HotMapHeuristic::HotMapHeuristic()
 {
 }
 
-bool HotMapHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
+bool HotMapHeuristic::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!HeuristicPlugin::loadParams(params))
+  if (!HeuristicPlugin::loadParams(global_params))
     return false;
 
-  params.getParam("collision_check/cell_size", cell_size_);
+  global_params.getParam("collision_check/cell_size", cell_size_);
   int num_angle_bins;
-  params.getParam("collision_check/num_angle_bins", num_angle_bins);
+  global_params.getParam("collision_check/num_angle_bins", num_angle_bins);
   angle_bin_size_ = 2.0*M_PI / static_cast<double>(num_angle_bins);
   return true;
 }
 
-bool HotMapHeuristic::initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params)
+bool HotMapHeuristic::initialize(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!HeuristicPlugin::initialize(nh, params))
+  if (!HeuristicPlugin::initialize(global_params))
     return false;
 
   // publish topics
-  hot_map_pub_ = nh.advertise<nav_msgs::OccupancyGrid>("hot_map", 1);
-  publish_timer_ = nh.createTimer(ros::Duration(1.0), &HotMapHeuristic::publishHotMap, this);
+  hot_map_pub_ = nh_.advertise<nav_msgs::OccupancyGrid>("hot_map", 1);
+  publish_timer_ = nh_.createTimer(ros::Duration(1.0), &HotMapHeuristic::publishHotMap, this);
 
   return true;
 }
@@ -75,4 +73,5 @@ void HotMapHeuristic::publishHotMap(const ros::TimerEvent& /*publish_timer*/) co
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::HotMapHeuristic, vigir_footstep_planning::HeuristicPlugin)

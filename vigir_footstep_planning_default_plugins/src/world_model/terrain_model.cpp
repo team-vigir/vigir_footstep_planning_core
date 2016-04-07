@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/world_model/terrain_model.h>
 
-#include <pluginlib/class_list_macros.h>
-
 #include <pcl_conversions/pcl_conversions.h>
 
 #include <pcl/io/pcd_io.h>
@@ -21,18 +19,18 @@ TerrainModel::TerrainModel(const std::string& name)
 {
 }
 
-bool TerrainModel::initialize(ros::NodeHandle& nh, const vigir_generic_params::ParameterSet& params)
+bool TerrainModel::initialize(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!TerrainModelPlugin::initialize(nh, params))
+  if (!TerrainModelPlugin::initialize(global_params))
     return false;
 
   // get foot dimensions
-  getFootSize(nh, foot_size);
+  getFootSize(nh_, foot_size);
 
   // subscribe
   std::string topic;
-  getPluginParam("terrain_model_topic", topic, std::string("/terrain_model"));
-  terrain_model_sub = nh.subscribe(topic, 1, &TerrainModel::setTerrainModel, this);
+  getParam("terrain_model_topic", topic, std::string("/terrain_model"));
+  terrain_model_sub = nh_.subscribe(topic, 1, &TerrainModel::setTerrainModel, this);
 
   return true;
 }
@@ -264,4 +262,5 @@ bool TerrainModel::update3DData(State& s) const
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::TerrainModel, vigir_footstep_planning::TerrainModelPlugin)

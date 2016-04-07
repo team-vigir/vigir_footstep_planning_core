@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/step_cost_estimators/const_step_cost_estimator.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -11,12 +9,12 @@ ConstStepCostEstimator::ConstStepCostEstimator()
 {
 }
 
-bool ConstStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
+bool ConstStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!StepCostEstimatorPlugin::loadParams(params))
+  if (!StepCostEstimatorPlugin::loadParams(global_params))
     return false;
 
-  params.getParam("const_step_cost_estimator/step_cost", const_step_cost, 0.1);
+  global_params.getParam("const_step_cost_estimator/step_cost", const_step_cost, 0.1);
   return true;
 }
 
@@ -30,4 +28,5 @@ bool ConstStepCostEstimator::getCost(const State& /*left_foot*/, const State& /*
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::ConstStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)

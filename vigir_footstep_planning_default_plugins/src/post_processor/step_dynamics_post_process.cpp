@@ -2,8 +2,6 @@
 
 #include <tf/tf.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -13,14 +11,14 @@ StepDynamicsPostProcessPlugin::StepDynamicsPostProcessPlugin()
 {
 }
 
-bool StepDynamicsPostProcessPlugin::loadParams(const vigir_generic_params::ParameterSet& params)
+bool StepDynamicsPostProcessPlugin::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!PostProcessPlugin::loadParams(params))
+  if (!PostProcessPlugin::loadParams(global_params))
     return false;
 
-  params.getParam("swing_height", default_swing_height);
-  params.getParam("sway_duration", default_sway_duration);
-  params.getParam("step_duration", default_step_duration);
+  global_params.getParam("swing_height", default_swing_height);
+  global_params.getParam("sway_duration", default_sway_duration);
+  global_params.getParam("step_duration", default_step_duration);
   return true;
 }
 
@@ -84,4 +82,5 @@ void StepDynamicsPostProcessPlugin::determineDynamics(const State& swing_foot_be
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::StepDynamicsPostProcessPlugin, vigir_footstep_planning::PostProcessPlugin)

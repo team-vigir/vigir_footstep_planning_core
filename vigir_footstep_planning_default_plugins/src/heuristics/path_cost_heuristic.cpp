@@ -20,18 +20,18 @@ PathCostHeuristic::~PathCostHeuristic()
     resetGrid();
 }
 
-bool PathCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
+bool PathCostHeuristic::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!HeuristicPlugin::loadParams(params))
+  if (!HeuristicPlugin::loadParams(global_params))
     return false;
 
-  params.getParam("collision_check/cell_size", ivCellSize);
-  params.getParam("collision_check/num_angle_bins", ivNumAngleBins);
+  global_params.getParam("collision_check/cell_size", ivCellSize);
+  global_params.getParam("collision_check/num_angle_bins", ivNumAngleBins);
   ivAngleBinSize = 2.0*M_PI / static_cast<double>(ivNumAngleBins);
 
-  params.getParam("const_step_cost_estimator/step_cost", ivStepCost, 0.1);
-  params.getParam("diff_angle_cost", ivDiffAngleCost);
-  params.getParam("max_step_dist/x", ivMaxStepWidth);
+  global_params.getParam("const_step_cost_estimator/step_cost", ivStepCost, 0.1);
+  global_params.getParam("diff_angle_cost", ivDiffAngleCost);
+  global_params.getParam("max_step_dist/x", ivMaxStepWidth);
   /// TODO
   /// ivInflationRadius
   return true;

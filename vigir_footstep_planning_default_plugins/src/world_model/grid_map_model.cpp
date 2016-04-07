@@ -1,5 +1,7 @@
 #include <vigir_footstep_planning_default_plugins/world_model/grid_map_model.h>
 
+
+
 namespace vigir_footstep_planning
 {
 GridMapModel::GridMapModel(const std::string& name)
@@ -7,12 +9,12 @@ GridMapModel::GridMapModel(const std::string& name)
 {
 }
 
-bool GridMapModel::loadParams(const vigir_generic_params::ParameterSet& params)
+bool GridMapModel::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!CollisionCheckGridMapPlugin::loadParams(params))
+  if (!CollisionCheckGridMapPlugin::loadParams(global_params))
     return false;
 
-  params.getParam("collision_check/collision_check_accuracy", (int&)collision_check_accuracy);
+  global_params.getParam("collision_check/collision_check_accuracy", (int&)collision_check_accuracy);
   return true;
 }
 

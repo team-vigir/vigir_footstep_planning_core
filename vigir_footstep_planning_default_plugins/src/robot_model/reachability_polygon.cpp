@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/robot_model/reachability_polygon.h>
 
-#include <pluginlib/class_list_macros.h>
-
 
 
 namespace vigir_footstep_planning
@@ -18,14 +16,14 @@ ReachabilityPolygon::~ReachabilityPolygon()
     delete[] ivpStepRange;
 }
 
-bool ReachabilityPolygon::loadParams(const ParameterSet& params)
+bool ReachabilityPolygon::loadParams(const ParameterSet& global_params)
 {
-  if (!ReachabilityPlugin::loadParams(params))
+  if (!ReachabilityPlugin::loadParams(global_params))
     return false;
 
   int num_angle_bins;
-  params.getParam("collision_check/cell_size", cell_size);
-  params.getParam("collision_check/num_angle_bins", num_angle_bins);
+  global_params.getParam("collision_check/cell_size", cell_size);
+  global_params.getParam("collision_check/num_angle_bins", num_angle_bins);
   angle_bin_size = 2.0*M_PI / static_cast<double>(num_angle_bins);
 
   // step range
@@ -33,7 +31,7 @@ bool ReachabilityPolygon::loadParams(const ParameterSet& params)
   XmlRpc::XmlRpcValue step_range_x;
   XmlRpc::XmlRpcValue step_range_y;
 
-  if (!params.getParam("step_range/x", step_range_x) || !params.getParam("step_range/y", step_range_y))
+  if (!global_params.getParam("step_range/x", step_range_x) || !global_params.getParam("step_range/y", step_range_y))
   {
     ROS_ERROR("Can't initialize ReachabilityPolygon due to missing step_range in parameter set!");
     return false;
@@ -54,15 +52,15 @@ bool ReachabilityPolygon::loadParams(const ParameterSet& params)
   }
 
   // get step range limits
-  params.getParam("max_step_range/x", max_step_range_x);
-  params.getParam("max_step_range/y", max_step_range_y);
-  params.getParam("max_step_range/yaw", max_step_range_yaw);
+  global_params.getParam("max_step_range/x", max_step_range_x);
+  global_params.getParam("max_step_range/y", max_step_range_y);
+  global_params.getParam("max_step_range/yaw", max_step_range_yaw);
 
-  params.getParam("max_step_range/inv_x", max_step_range_inv_x);
-  params.getParam("max_step_range/inv_y", max_step_range_inv_y);
-  params.getParam("max_step_range/inv_yaw", max_step_range_inv_yaw);
+  global_params.getParam("max_step_range/inv_x", max_step_range_inv_x);
+  global_params.getParam("max_step_range/inv_y", max_step_range_inv_y);
+  global_params.getParam("max_step_range/inv_yaw", max_step_range_inv_yaw);
 
-  params.getParam("max_step_range/width", max_step_range_width_sq);
+  global_params.getParam("max_step_range/width", max_step_range_width_sq);
   max_step_range_width_sq = max_step_range_width_sq*max_step_range_width_sq;
 
   int max_step_range_x_disc = disc_val(max_step_range_x, cell_size);
@@ -146,4 +144,5 @@ bool ReachabilityPolygon::isReachable(const State& current, const State& next) c
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::ReachabilityPolygon, vigir_footstep_planning::ReachabilityPlugin)

@@ -62,7 +62,7 @@ public:
 
   ~PathCostHeuristic();
 
-  bool loadParams(const vigir_generic_params::ParameterSet& params) override;
+  bool loadParams(const vigir_generic_params::ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
 
   /**
    * @return The estimated costs needed to reach the state 'to' from within the

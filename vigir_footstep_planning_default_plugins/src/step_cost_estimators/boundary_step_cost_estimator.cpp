@@ -1,7 +1,5 @@
 #include <vigir_footstep_planning_default_plugins/step_cost_estimators/boundary_step_cost_estimator.h>
 
-#include <pluginlib/class_list_macros.h>
-
 #include <angles/angles.h>
 
 
@@ -13,19 +11,19 @@ BoundaryStepCostEstimator::BoundaryStepCostEstimator()
 {
 }
 
-bool BoundaryStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
+bool BoundaryStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
-  if (!StepCostEstimatorPlugin::loadParams(params))
+  if (!StepCostEstimatorPlugin::loadParams(global_params))
     return false;
 
-  params.getParam("boundary_step_cost_estimator/max_diff_z", max_diff_z);
-  params.getParam("boundary_step_cost_estimator/long_step_dist", long_step_dist);
-  params.getParam("boundary_step_cost_estimator/min_yaw_seperation_enlargement", min_yaw_seperation_enlargement);
-  params.getParam("boundary_step_cost_estimator/yaw_enlarged_min_seperation", yaw_enlarged_min_seperation);
-  params.getParam("boundary_step_cost_estimator/cost_roll_abs", cost_roll_abs);
-  params.getParam("boundary_step_cost_estimator/cost_pitch_abs", cost_pitch_abs);
-  params.getParam("boundary_step_cost_estimator/cost_yaw_rel", cost_yaw_rel);
-  params.getParam("boundary_step_cost_estimator/cost_height_diff_rel", cost_height_diff_rel);
+  global_params.getParam("boundary_step_cost_estimator/max_diff_z", max_diff_z);
+  global_params.getParam("boundary_step_cost_estimator/long_step_dist", long_step_dist);
+  global_params.getParam("boundary_step_cost_estimator/min_yaw_seperation_enlargement", min_yaw_seperation_enlargement);
+  global_params.getParam("boundary_step_cost_estimator/yaw_enlarged_min_seperation", yaw_enlarged_min_seperation);
+  global_params.getParam("boundary_step_cost_estimator/cost_roll_abs", cost_roll_abs);
+  global_params.getParam("boundary_step_cost_estimator/cost_pitch_abs", cost_pitch_abs);
+  global_params.getParam("boundary_step_cost_estimator/cost_yaw_rel", cost_yaw_rel);
+  global_params.getParam("boundary_step_cost_estimator/cost_height_diff_rel", cost_height_diff_rel);
 
   return true;
 }
@@ -82,4 +80,5 @@ bool BoundaryStepCostEstimator::getCost(const State& left_foot, const State& rig
 }
 }
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::BoundaryStepCostEstimator, vigir_footstep_planning::StepCostEstimatorPlugin)
