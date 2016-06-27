@@ -62,8 +62,6 @@
 
 #include <vigir_footstep_planning_msgs/footstep_planning_msgs.h>
 
-#include <vigir_terrain_classifier/TerrainModelService.h>
-
 #include <vigir_footstep_planning_lib/math.h>
 #include <vigir_footstep_planning_lib/modeling/state.h>
 
