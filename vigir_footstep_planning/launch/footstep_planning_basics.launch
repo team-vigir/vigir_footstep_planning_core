@@ -1,19 +1,16 @@
 <?xml version="1.0"?>
 
 <launch>
-  <arg name="namespace" default="/vigir/footstep_planning"/>
-  <group ns="$(arg namespace)">
-    <!-- run feet pose generator -->
-    <include file="$(find vigir_feet_pose_generator)/launch/feet_pose_generator.launch" />
+  <!-- run feet pose generator -->
+  <include file="$(find vigir_feet_pose_generator)/launch/feet_pose_generator.launch" />
 
-    <!-- run foot pose transformer -->
-    <include file="$(find vigir_foot_pose_transformer)/launch/foot_pose_transformer.launch" />
+  <!-- run foot pose transformer -->
+  <include file="$(find vigir_foot_pose_transformer)/launch/foot_pose_transformer.launch" />
 
-    <!-- run vis node -->
-    <include file="$(find vigir_footstep_planning_lib)/launch/footstep_planning_vis.launch" />
+  <!-- run vis node -->
+  <include file="$(find vigir_footstep_planning_lib)/launch/footstep_planning_vis.launch" />
 
-    <!-- Load plugin descriptions from YAML file to parameter server -->
-    <rosparam file="$(find vigir_footstep_planning_plugins)/config/plugin_descriptions.yaml" command="load" />
-    <rosparam file="$(find vigir_footstep_planning_default_plugins)/config/default_plugin_descriptions.yaml" command="load" />
-  </group>
+  <!-- Load plugin descriptions from YAML file to parameter server -->
+  <rosparam file="$(find vigir_footstep_planning_plugins)/config/plugin_descriptions.yaml" command="load" />
+  <rosparam file="$(find vigir_footstep_planning_default_plugins)/config/default_plugin_descriptions.yaml" command="load" />
 </launch>
