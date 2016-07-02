@@ -131,8 +131,8 @@ bool ReachabilityPolygon::isReachable(const State& current, const State& next) c
   if (dyaw > max_step_range_yaw || dyaw < max_step_range_inv_yaw)
     return false;
 
-  int footstep_x = disc_val(dx-max_step_range_inv_x, cell_size);
-  int footstep_y = disc_val(dy-max_step_range_inv_y, cell_size);
+  int footstep_x = floor((dx-max_step_range_inv_x) / cell_size);
+  int footstep_y = floor((dy-max_step_range_inv_y) / cell_size);
 
   assert((footstep_x + footstep_y * step_range_size_x) < step_range_size);
 

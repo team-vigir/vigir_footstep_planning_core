@@ -74,7 +74,7 @@ foot_contact_support:
   minimal_support: 0.85
 
 collision_check:
-  # collision check mask (binary decoded)
+  # collision check mask (binary encoded)
   # - 1 feet
   # - 2 upper body
   # - 4 foot contact support
