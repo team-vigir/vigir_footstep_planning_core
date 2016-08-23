@@ -13,7 +13,6 @@ ExpandStateJob::ExpandStateJob(const Footstep& footstep, const PlanningState& st
   , state_space(state_space)
   , cost(0)
   , risk(0)
-  , new_state(NULL)
   , successful(false)
 {
 }
@@ -59,6 +58,7 @@ void ExpandStateJob::run()
   if (!WorldModel::isAccessible(next->getState(), state.getState()))
     return;
 
+  /// TODO
   //new_state = state_space.createHashEntryIfNotExists(*next);
   successful = true;
 }

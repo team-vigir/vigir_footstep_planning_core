@@ -113,7 +113,6 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${PCL_I
 ## Specify additional locations of header files
 set(HEADERS
   include/${PROJECT_NAME}/state_space/footstep.h
-  include/${PROJECT_NAME}/state_space/planning_state.h
   include/${PROJECT_NAME}/state_space/state_space.h
   include/${PROJECT_NAME}/threading/expand_state_job.h
   include/${PROJECT_NAME}/environment_parameters.h
@@ -129,7 +128,6 @@ set(HEADERS
 
 set(SOURCES
   src/state_space/footstep.cpp
-  src/state_space/planning_state.cpp
   src/state_space/state_space.cpp
   src/threading/expand_state_job.cpp
   src/environment_parameters.cpp

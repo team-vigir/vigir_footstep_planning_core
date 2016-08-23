@@ -27,7 +27,7 @@
 #ifndef FOOTSTEP_PLANNER_FOOTSTEP_H_
 #define FOOTSTEP_PLANNER_FOOTSTEP_H_
 
-#include <vigir_footstep_planner/state_space/planning_state.h>
+#include <vigir_footstep_planning_lib/modeling/planning_state.h>
 
 #include <vigir_footstep_planner/post_processor.h>
 #include <vigir_footstep_planner/world_model.h>
