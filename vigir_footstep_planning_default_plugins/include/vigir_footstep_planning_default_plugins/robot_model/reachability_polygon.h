@@ -33,7 +33,7 @@
 
 #include <vigir_footstep_planning_lib/math.h>
 
-#include <vigir_footstep_planning_plugins/reachability_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/reachability_plugin.h>
 
 
 

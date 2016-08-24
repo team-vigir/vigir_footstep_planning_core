@@ -33,9 +33,9 @@
 
 #include <vigir_generic_params/parameter_manager.h>
 
+#include <vigir_footstep_planning_lib/modeling/footstep.h>
 #include <vigir_footstep_planning_lib/math.h>
 
-#include <vigir_footstep_planner/state_space/footstep.h>
 
 
 

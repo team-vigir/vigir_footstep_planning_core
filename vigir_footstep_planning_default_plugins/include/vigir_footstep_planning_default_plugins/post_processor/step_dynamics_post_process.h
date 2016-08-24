@@ -26,22 +26,22 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef VIGIR_FOOTSTEP_PLANNING_LIB_STEP_DYNAMICS_POST_PROCESS_PLUGIN_H__
-#define VIGIR_FOOTSTEP_PLANNING_LIB_STEP_DYNAMICS_POST_PROCESS_PLUGIN_H__
+#ifndef VIGIR_FOOTSTEP_PLANNING_LIB_STEP_DYNAMICS_POST_PROCESS_H__
+#define VIGIR_FOOTSTEP_PLANNING_LIB_STEP_DYNAMICS_POST_PROCESS_H__
 
 #include <ros/ros.h>
 
-#include <vigir_footstep_planning_plugins/post_process_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/post_process_plugin.h>
 
 
 
 namespace vigir_footstep_planning
 {
-class StepDynamicsPostProcessPlugin
+class StepDynamicsPostProcess
   : public PostProcessPlugin
 {
 public:
-  StepDynamicsPostProcessPlugin();
+  StepDynamicsPostProcess();
 
   bool loadParams(const vigir_generic_params::ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
 
@@ -49,8 +49,8 @@ public:
   void postProcessStepBackward(const State& left_foot, const State& right_foot, State& swing_foot) const override;
 
   // typedefs
-  typedef boost::shared_ptr<StepDynamicsPostProcessPlugin> Ptr;
-  typedef boost::shared_ptr<const StepDynamicsPostProcessPlugin> ConstPtr;
+  typedef boost::shared_ptr<StepDynamicsPostProcess> Ptr;
+  typedef boost::shared_ptr<const StepDynamicsPostProcess> ConstPtr;
 
 protected:
   // following methods represents single processing steps which will be execute in the given order

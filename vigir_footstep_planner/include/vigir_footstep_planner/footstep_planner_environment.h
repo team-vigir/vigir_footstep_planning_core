@@ -38,21 +38,22 @@
 
 #include <sbpl/headers.h>
 
+#include <vigir_pluginlib/plugin_manager.h>
+
 #include <vigir_foot_pose_transformer/foot_pose_transformer.h>
 
 #include <vigir_footstep_planning_lib/threading/threading_manager.h>
+
+#include <vigir_footstep_planning_lib/helper.h>
+
+#include <vigir_footstep_planning_plugins/plugin_aggregators/world_model.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/step_cost_estimator.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/heuristic.h>
+
 #include <vigir_footstep_planner/threading/expand_state_job.h>
 
 #include <vigir_footstep_planner/environment_parameters.h>
 #include <vigir_footstep_planner/state_space/state_space.h>
-
-#include <vigir_pluginlib/plugin_manager.h>
-
-#include <vigir_footstep_planning_lib/helper.h>
-
-#include <vigir_footstep_planner/step_cost_estimator.h>
-
-#include <vigir_footstep_planner/heuristic.h>
 
 
 

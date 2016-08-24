@@ -216,20 +216,23 @@ bool FootstepPlanner::setParams(const vigir_generic_params::ParameterSet& params
 
   vigir_pluginlib::PluginManager::loadParams(params);
 
+  // reinitialize state generator
+  StateGenerator::mutableInstance().loadPlugins();
+
   // reinitialize robot model
-  RobotModel::loadPlugins();
+  RobotModel::mutableInstance().loadPlugins();
 
   // reinitialize post processor
-  PostProcessor::loadPlugins();
+  PostProcessor::mutableInstance().loadPlugins();
 
   // reinitialize world model
-  WorldModel::loadPlugins();
+  WorldModel::mutableInstance().loadPlugins();
 
   // reinitialize step cost estimators
-  StepCostEstimator::loadPlugins();
+  StepCostEstimator::mutableInstance().loadPlugins();
 
   // reinitialize heuristics
-  Heuristic::loadPlugins();
+  Heuristic::mutableInstance().loadPlugins();
 
   resetTotally();
 
@@ -254,12 +257,12 @@ msgs::ErrorStatus FootstepPlanner::updateFoot(msgs::Foot& foot, uint8_t mode, bo
   }
   else if (mode & msgs::UpdateMode::UPDATE_MODE_3D)
   {
-    if (!WorldModel::isTerrainModelAvailable() || !WorldModel::getTerrainModel()->update3DData(foot.pose))
+    if (!WorldModel::instance().isTerrainModelAvailable() || !WorldModel::instance().getTerrainModel()->update3DData(foot.pose))
       status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlanner", "updateFoot: Couldn't update 3D data.", false);
   }
   else if (mode & msgs::UpdateMode::UPDATE_MODE_Z)
   {
-    if (!WorldModel::isTerrainModelAvailable() || !WorldModel::getTerrainModel()->getHeight(foot.pose.position.x, foot.pose.position.y, foot.pose.position.z))
+    if (!WorldModel::instance().isTerrainModelAvailable() || !WorldModel::instance().getTerrainModel()->getHeight(foot.pose.position.x, foot.pose.position.y, foot.pose.position.z))
       status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlanner", "updateFoot: Couldn't update z.", false);
   }
 
@@ -280,7 +283,7 @@ msgs::ErrorStatus FootstepPlanner::updateFeet(msgs::Feet& feet, uint8_t mode, bo
   {
     State left(feet.left);
     State right(feet.right);
-    if (findNearestValidState(left) && findNearestValidState(right) && RobotModel::isReachable(left, right))
+    if (findNearestValidState(left) && findNearestValidState(right) && RobotModel::instance().isReachable(left, right))
     {
       left.getFoot(feet.left);
       right.getFoot(feet.right);
@@ -337,20 +340,20 @@ msgs::ErrorStatus FootstepPlanner::updateStepPlan(msgs::StepPlan& step_plan, uin
       // check reachability
       if (mode & msgs::UpdateMode::UPDATE_MODE_CHECK_VALIDITY)
       {
-        cur_step.valid = RobotModel::isReachable(left_state, right_state, cur_state);
+        cur_step.valid = RobotModel::instance().isReachable(left_state, right_state, cur_state);
       }
 
       // check collision
       if (mode & msgs::UpdateMode::UPDATE_MODE_CHECK_COLLISION)
       {
-        cur_step.colliding = !WorldModel::isAccessible(cur_state, prev_state);
+        cur_step.colliding = !WorldModel::instance().isAccessible(cur_state, prev_state);
       }
 
       // recompute cost
       if (mode & msgs::UpdateMode::UPDATE_MODE_COST)
       {
         double c, r;
-        if (StepCostEstimator::getCost(left_state, right_state, cur_state, c, r))
+        if (StepCostEstimator::instance().getCost(left_state, right_state, cur_state, c, r))
         {
           cur_step.cost = c;
           cur_step.risk = r;
@@ -380,7 +383,7 @@ void FootstepPlanner::reset()
 {
   boost::recursive_mutex::scoped_lock lock(planner_mutex);
 
-  Heuristic::resetPlugins();
+  Heuristic::mutableInstance().resetPlugins();
 
   // reset the previously calculated paths
   ivPath.clear();
@@ -400,7 +403,7 @@ void FootstepPlanner::resetTotally()
 {
   boost::recursive_mutex::scoped_lock lock(planner_mutex);
 
-  Heuristic::resetPlugins();
+  Heuristic::mutableInstance().resetPlugins();
 
   // reset the previously calculated paths
   ivPath.clear();
@@ -826,9 +829,9 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
         (path_iter != getPathBegin() && req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_PATTERN))
     {
       if (env_params->forward_search)
-        PostProcessor::postProcessForward(left_foot, right_foot, swing_foot);
+        PostProcessor::instance().postProcessForward(left_foot, right_foot, swing_foot);
       else
-        PostProcessor::postProcessBackward(left_foot, right_foot, swing_foot);
+        PostProcessor::instance().postProcessBackward(left_foot, right_foot, swing_foot);
     }
 
     // convert footstep
@@ -866,7 +869,7 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
   }
 
   // perform post processing on entire plan
-  PostProcessor::postProcess(resp.step_plan);
+  PostProcessor::instance().postProcess(resp.step_plan);
 
   // add start and goal configuration
   resp.step_plan.start.header = resp.step_plan.header;
@@ -919,10 +922,10 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
     total_cost += step.cost;
     last_cost = step.cost;
 
-    if (WorldModel::isTerrainModelAvailable())
+    if (WorldModel::instance().isTerrainModelAvailable())
     {
       double support = 0.0;
-      WorldModel::getTerrainModel()->getFootContactSupport(step.foot.pose, support, ivCheckedFootContactSupport);
+      WorldModel::instance().getTerrainModel()->getFootContactSupport(step.foot.pose, support, ivCheckedFootContactSupport);
       ROS_INFO("[%i] Ground contact support: %.3f", step.step_index, support);
     }
 
@@ -1030,11 +1033,11 @@ void FootstepPlanner::doPlanning(msgs::StepPlanRequestService::Request& req)
 
   // set world model mode
   if (req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_3D)
-    WorldModel::useTerrainModel(true);
+    WorldModel::mutableInstance().useTerrainModel(true);
   else if (req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_PATTERN)
-    WorldModel::useTerrainModel(req.plan_request.pattern_parameters.use_terrain_model);
+    WorldModel::mutableInstance().useTerrainModel(req.plan_request.pattern_parameters.use_terrain_model);
   else
-    WorldModel::useTerrainModel(false);
+    WorldModel::mutableInstance().useTerrainModel(false);
 
   // dispatch planning mode and plan
   switch (req.plan_request.planning_mode)
@@ -1079,7 +1082,7 @@ void FootstepPlanner::preemptPlanning()
 
 bool FootstepPlanner::findNearestValidState(State& s) const
 {
-  if (WorldModel::isAccessible(s))
+  if (WorldModel::instance().isAccessible(s))
     return true;
 
   State current_state = s;
@@ -1113,10 +1116,10 @@ bool FootstepPlanner::findNearestValidState(State& s) const
         current_state.setX(trans_pos.getX());
         current_state.setY(trans_pos.getY());
 
-        if (!WorldModel::update3DData(current_state))
+        if (!WorldModel::instance().update3DData(current_state))
           continue;
 
-        if (!WorldModel::isAccessible(current_state))
+        if (!WorldModel::instance().isAccessible(current_state))
           continue;
 
         double dist = std::sqrt(x*x + y*y);
@@ -1139,10 +1142,10 @@ bool FootstepPlanner::findNearestValidState(State& s) const
 
 bool FootstepPlanner::checkRobotCollision(const State& left_foot, const State& right_foot, bool& left, bool& right) const
 {
-  left = !WorldModel::isAccessible(left_foot);
-  right = !WorldModel::isAccessible(right_foot);
+  left = !WorldModel::instance().isAccessible(left_foot);
+  right = !WorldModel::instance().isAccessible(right_foot);
 
-  if (!left && !right && !WorldModel::isAccessible(left_foot, right_foot))
+  if (!left && !right && !WorldModel::instance().isAccessible(left_foot, right_foot))
   {
     left = true;
     right = true;
@@ -1269,7 +1272,7 @@ State FootstepPlanner::getFootPose(const State& robot, Leg leg, double dx, doubl
              robot.getYaw() + sign * dyaw,
              leg);
 
-  WorldModel::update3DData(foot);
+  WorldModel::instance().update3DData(foot);
 
   return foot;
 }

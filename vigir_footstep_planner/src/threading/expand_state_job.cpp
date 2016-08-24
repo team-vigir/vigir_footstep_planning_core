@@ -1,7 +1,9 @@
 #include <vigir_footstep_planner/threading/expand_state_job.h>
 
-#include <vigir_footstep_planner/robot_model.h>
-#include <vigir_footstep_planner/world_model.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/robot_model.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/world_model.h>
+
+
 
 namespace vigir_footstep_planning
 {
@@ -39,7 +41,7 @@ void ExpandStateJob::run()
   // check reachability due to discretization
   const State& left_foot = state.getLeg() == LEFT ? state.getState() : state.getPredState()->getState();
   const State& right_foot = state.getLeg() == RIGHT ? state.getState() : state.getPredState()->getState();
-  if (!RobotModel::isReachable(left_foot, right_foot, next_state))
+  if (!RobotModel::instance().isReachable(left_foot, right_foot, next_state))
     return;
 
   // lookup costs
@@ -55,7 +57,7 @@ void ExpandStateJob::run()
   risk = static_cast<int>(cvMmScale * risk_d);
 
   // collision check
-  if (!WorldModel::isAccessible(next->getState(), state.getState()))
+  if (!WorldModel::instance().isAccessible(next->getState(), state.getState()))
     return;
 
   /// TODO

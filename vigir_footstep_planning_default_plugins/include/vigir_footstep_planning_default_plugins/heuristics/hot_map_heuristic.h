@@ -36,7 +36,7 @@
 
 #include <vigir_footstep_planning_lib/math.h>
 
-#include <vigir_footstep_planning_plugins/heuristic_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/heuristic_plugin.h>
 
 
 

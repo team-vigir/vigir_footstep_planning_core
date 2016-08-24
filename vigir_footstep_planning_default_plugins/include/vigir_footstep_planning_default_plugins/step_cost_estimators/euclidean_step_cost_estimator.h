@@ -29,7 +29,7 @@
 #ifndef VIGIR_FOOTSTEP_PLANNING_EUCLIDEAN_STEP_COST_ESTIMATOR_H
 #define VIGIR_FOOTSTEP_PLANNING_EUCLIDEAN_STEP_COST_ESTIMATOR_H
 
-#include <vigir_footstep_planning_plugins/step_cost_estimator_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/step_cost_estimator_plugin.h>
 
 
 

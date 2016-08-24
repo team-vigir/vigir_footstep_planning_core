@@ -1,3 +1,10 @@
+# StateGeneratorPlugin
+reachability_state_generator:
+  type_class_package: vigir_footstep_planning_default_plugins
+  type_class: vigir_footstep_planning::ReachabilityStateGenerator
+  base_class_package: vigir_footstep_planning_plugins
+  base_class: vigir_footstep_planning::StateGeneratorPlugin
+
 # ReachabilityPlugin
 dynamics_reachability:
   type_class_package: vigir_footstep_planning_default_plugins
@@ -101,9 +108,9 @@ travel_time_heuristic:
 
 
 # PostProcessPlugin
-step_dynamics_post_process_plugin:
+step_dynamics_post_process:
   type_class_package: vigir_footstep_planning_default_plugins
-  type_class: vigir_footstep_planning::StepDynamicsPostProcessPlugin
+  type_class: vigir_footstep_planning::StepDynamicsPostProcess
   base_class_package: vigir_footstep_planning_plugins
   base_class: vigir_footstep_planning::PostProcessPlugin
 

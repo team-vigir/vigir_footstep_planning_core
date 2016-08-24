@@ -3,10 +3,11 @@
 #include <vigir_footstep_planning_lib/helper.h>
 #include <vigir_footstep_planning_lib/visualization/footstep_planning_vis.h>
 
-#include <vigir_footstep_planning_plugins/robot_model_plugin.h>
-#include <vigir_footstep_planning_plugins/step_plan_msg_plugin.h>
-#include <vigir_footstep_planning_plugins/collision_check_plugin.h>
-#include <vigir_footstep_planning_plugins/terrain_model_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/state_generator_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/robot_model_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/step_plan_msg_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/collision_check_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/terrain_model_plugin.h>
 
 
 
@@ -20,6 +21,7 @@ FootstepPlannerNode::FootstepPlannerNode(ros::NodeHandle& nh)
 
 void FootstepPlannerNode::initPlugins(ros::NodeHandle& nh)
 {
+  vigir_pluginlib::PluginManager::addPluginClassLoader<StateGeneratorPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::StateGeneratorPlugin");
   vigir_pluginlib::PluginManager::addPluginClassLoader<StepPlanMsgPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::StepPlanMsgPlugin");
   vigir_pluginlib::PluginManager::addPluginClassLoader<ReachabilityPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::ReachabilityPlugin");
   vigir_pluginlib::PluginManager::addPluginClassLoader<StepCostEstimatorPlugin>("vigir_footstep_planning_plugins", "vigir_footstep_planning::StepCostEstimatorPlugin");
@@ -228,7 +230,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
   step_plan_request.plan_request.goal = goal_feet_pose;
   step_plan_request.plan_request.start_step_index = 0;
   step_plan_request.plan_request.start_foot_selection = msgs::StepPlanRequest::AUTO;
-  step_plan_request.plan_request.planning_mode = WorldModel::isTerrainModelAvailable() ? static_cast<uint8_t>(msgs::StepPlanRequest::PLANNING_MODE_3D)
+  step_plan_request.plan_request.planning_mode = WorldModel::instance().isTerrainModelAvailable() ? static_cast<uint8_t>(msgs::StepPlanRequest::PLANNING_MODE_3D)
                                                                                        : static_cast<uint8_t>(msgs::StepPlanRequest::PLANNING_MODE_2D);
   step_plan_request.plan_request.max_planning_time = 0.0;
   step_plan_request.plan_request.max_number_steps = 0.0;

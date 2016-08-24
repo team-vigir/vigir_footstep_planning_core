@@ -157,7 +157,7 @@ int FootstepPlannerEnvironment::GetFromToHeuristic(int FromStateID, int ToStateI
 
 int FootstepPlannerEnvironment::GetFromToHeuristic(const PlanningState& from, const PlanningState& to, const PlanningState& start, const PlanningState& goal)
 {
-  return cvMmScale * params.heuristic_scale * Heuristic::getHeuristicValue(from.getState(), to.getState(), start.getState(), goal.getState());
+  return cvMmScale * params.heuristic_scale * Heuristic::instance().getHeuristicValue(from.getState(), to.getState(), start.getState(), goal.getState());
 }
 
 int FootstepPlannerEnvironment::GetGoalHeuristic(int stateID)
@@ -231,7 +231,7 @@ void FootstepPlannerEnvironment::GetPreds(int TargetStateID, std::vector<int> *P
     if (*(current->getSuccState()) == *start)
       return;
 
-    if (WorldModel::isAccessible(start->getState(), current->getState()))
+    if (WorldModel::instance().isAccessible(start->getState(), current->getState()))
     {
       int cost;
       if (state_space->getStepCost(current->getState(), start->getState(), current->getSuccState()->getState(), cost))
@@ -262,7 +262,7 @@ void FootstepPlannerEnvironment::GetPreds(int TargetStateID, std::vector<int> *P
     cost += static_cast<int>(cvMmScale * footstep_set_iter->getStepCost());
 
     // collision check
-    if (!WorldModel::isAccessible(predecessor.getState(), current->getState()))
+    if (!WorldModel::instance().isAccessible(predecessor.getState(), current->getState()))
       continue;
 
     const PlanningState* predecessor_hash = state_space->createHashEntryIfNotExists(predecessor);
@@ -344,7 +344,7 @@ void FootstepPlannerEnvironment::GetSuccs(int SourceStateID, std::vector<int> *S
     if (*(current->getPredState()) == *goal)
       return;
 
-    if (WorldModel::isAccessible(goal->getState(), current->getState()))
+    if (WorldModel::instance().isAccessible(goal->getState(), current->getState()))
     {
       int cost;
       if (state_space->getStepCost(current->getState(), current->getPredState()->getState(), goal->getState(), cost))

@@ -108,6 +108,7 @@ set(HEADERS
   include/${PROJECT_NAME}/post_processor/step_dynamics_post_process.h
   include/${PROJECT_NAME}/robot_model/dynamics_reachability.h
   include/${PROJECT_NAME}/robot_model/reachability_polygon.h
+  include/${PROJECT_NAME}/state_generator/reachability_state_generator.h
   include/${PROJECT_NAME}/step_cost_estimators/boundary_step_cost_estimator.h
   include/${PROJECT_NAME}/step_cost_estimators/const_step_cost_estimator.h
   include/${PROJECT_NAME}/step_cost_estimators/euclidean_step_cost_estimator.h
@@ -133,6 +134,7 @@ set(SOURCES
   src/post_processor/step_dynamics_post_process.cpp
   src/robot_model/dynamics_reachability.cpp
   src/robot_model/reachability_polygon.cpp
+  src/state_generator/reachability_state_generator.cpp
   src/step_cost_estimators/boundary_step_cost_estimator.cpp
   src/step_cost_estimators/const_step_cost_estimator.cpp
   src/step_cost_estimators/euclidean_step_cost_estimator.cpp

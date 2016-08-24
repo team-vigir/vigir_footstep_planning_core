@@ -1,4 +1,11 @@
 <library path="lib/libvigir_footstep_planning_default_plugins">
+  <!-- StateGeneratorPlugin -->
+  <class type="vigir_footstep_planning::ReachabilityStateGenerator" base_class_type="vigir_footstep_planning::StateGeneratorPlugin">
+    <description>
+      StateGeneratorPlugin: Generates states based on reachability polygon
+    </description>
+  </class>
+
   <!-- ReachabilityPlugin -->
   <class type="vigir_footstep_planning::ReachabilityPolygon" base_class_type="vigir_footstep_planning::ReachabilityPlugin">
     <description>
@@ -86,9 +93,9 @@
   </class>
 
   <!-- PostProcessPlugin -->
-  <class type="vigir_footstep_planning::StepDynamicsPostProcessPlugin" base_class_type="vigir_footstep_planning::PostProcessPlugin">
+  <class type="vigir_footstep_planning::StepDynamicsPostProcess" base_class_type="vigir_footstep_planning::PostProcessPlugin">
     <description>
-      PostProcessPlugin: Determining step dynamics and timings (e.g. upper body accerlation and velocity)
+      StepDynamicsPostProcess: Determining step dynamics and timings (e.g. upper body accerlation and velocity)
     </description>
   </class>
 

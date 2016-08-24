@@ -400,8 +400,8 @@ bool StateSpace::closeToStart(const PlanningState& from) const
   State right_foot = (from.getLeg() == RIGHT) ? from.getState() : from.getSuccState()->getState();
   State start_foot = ivStateId2State[ivIdPlanningStart]->getState();
 
-  PostProcessor::postProcessBackward(left_foot, right_foot, start_foot);
-  if (!RobotModel::isReachable(left_foot, right_foot, start_foot))
+  PostProcessor::instance().postProcessBackward(left_foot, right_foot, start_foot);
+  if (!RobotModel::instance().isReachable(left_foot, right_foot, start_foot))
     return false;
 
   // check if second (final) goal can be reached
@@ -416,9 +416,9 @@ bool StateSpace::closeToStart(const PlanningState& from) const
     start_foot = start_foot_left->getState();
   }
 
-  PostProcessor::postProcessBackward(left_foot, right_foot, start_foot);
+  PostProcessor::instance().postProcessBackward(left_foot, right_foot, start_foot);
   start_foot.setBodyVelocity(geometry_msgs::Vector3()); // set velocity to zero
-  if (!RobotModel::isReachable(left_foot, right_foot, start_foot))
+  if (!RobotModel::instance().isReachable(left_foot, right_foot, start_foot))
     return false;
 
   return true;
@@ -436,8 +436,8 @@ bool StateSpace::closeToGoal(const PlanningState& from) const
   State right_foot = (from.getLeg() == RIGHT) ? from.getState() : from.getPredState()->getState();
   State goal_foot = ivStateId2State[ivIdPlanningGoal]->getState();
 
-  PostProcessor::postProcessForward(left_foot, right_foot, goal_foot);
-  if (!RobotModel::isReachable(left_foot, right_foot, goal_foot))
+  PostProcessor::instance().postProcessForward(left_foot, right_foot, goal_foot);
+  if (!RobotModel::instance().isReachable(left_foot, right_foot, goal_foot))
     return false;
 
   // check if second (final) goal can be reached
@@ -452,9 +452,9 @@ bool StateSpace::closeToGoal(const PlanningState& from) const
     goal_foot = goal_foot_left->getState();
   }
 
-  PostProcessor::postProcessForward(left_foot, right_foot, goal_foot);
+  PostProcessor::instance().postProcessForward(left_foot, right_foot, goal_foot);
   goal_foot.setBodyVelocity(geometry_msgs::Vector3()); // set velocity to zero
-  if (!RobotModel::isReachable(left_foot, right_foot, goal_foot))
+  if (!RobotModel::instance().isReachable(left_foot, right_foot, goal_foot))
     return false;
 
   return true;
@@ -480,7 +480,7 @@ bool StateSpace::getStepCost(const State& stand_foot, const State& swing_foot_be
   const State& left_foot  = stand_foot.getLeg() == LEFT  ? stand_foot : swing_foot_before;
   const State& right_foot = stand_foot.getLeg() == RIGHT ? stand_foot : swing_foot_before;
 
-  if (!StepCostEstimator::getCost(left_foot, right_foot, swing_foot_after, cost, risk))
+  if (!StepCostEstimator::instance().getCost(left_foot, right_foot, swing_foot_after, cost, risk))
     return false;
 
   if (risk >= params.max_risk)

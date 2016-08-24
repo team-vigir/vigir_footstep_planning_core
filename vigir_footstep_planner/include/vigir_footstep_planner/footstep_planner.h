@@ -63,20 +63,21 @@
 #include <vigir_footstep_planning_msgs/footstep_planning_msgs.h>
 
 #include <vigir_footstep_planning_lib/math.h>
+#include <vigir_footstep_planning_lib/modeling/footstep.h>
 #include <vigir_footstep_planning_lib/modeling/state.h>
 
-#include <vigir_footstep_planning_plugins/step_plan_msg_plugin.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/step_cost_estimator.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/heuristic.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/post_processor.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/robot_model.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/state_generator.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/world_model.h>
+#include <vigir_footstep_planning_plugins/plugins/step_plan_msg_plugin.h>
 
 #include <vigir_foot_pose_transformer/foot_pose_transformer.h>
 
 #include <vigir_footstep_planner/environment_parameters.h>
 #include <vigir_footstep_planner/footstep_planner_environment.h>
-#include <vigir_footstep_planner/state_space/footstep.h>
-#include <vigir_footstep_planner/step_cost_estimator.h>
-#include <vigir_footstep_planner/heuristic.h>
-#include <vigir_footstep_planner/post_processor.h>
-#include <vigir_footstep_planner/robot_model.h>
-#include <vigir_footstep_planner/world_model.h>
 
 
 

@@ -26,43 +26,33 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef VIGIR_FOOTSTEP_PLANNING_STEP_COST_ESTIMATOR_H__
-#define VIGIR_FOOTSTEP_PLANNING_STEP_COST_ESTIMATOR_H__
+#ifndef VIGIR_FOOTSTEP_PLANNING_LIB_REACHABILITY_STATE_GENERATOR_H__
+#define VIGIR_FOOTSTEP_PLANNING_LIB_REACHABILITY_STATE_GENERATOR_H__
 
 #include <ros/ros.h>
 
-#include <boost/noncopyable.hpp>
-
-#include <vigir_pluginlib/plugin_manager.h>
-
-#include <vigir_footstep_planning_plugins/step_cost_estimator_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/state_generator_plugin.h>
 
 
 
 namespace vigir_footstep_planning
 {
-class StepCostEstimator
-  : boost::noncopyable
+class ReachabilityStateGenerator
+  : public StateGeneratorPlugin
 {
 public:
-  static void loadPlugins();
-  static void loadParams(const vigir_generic_params::ParameterSet& params);
-
-  static bool getCost(const State& left_foot, const State& right_foot, const State& swing_foot, double& cost, double& risk);
-  static bool getCost(const State& left_foot, const State& right_foot, const State& swing_foot, float& cost, float& risk);
-
   // typedefs
-  typedef boost::shared_ptr<StepCostEstimator> Ptr;
-  typedef boost::shared_ptr<const StepCostEstimator> ConstPtr;
+  typedef boost::shared_ptr<ReachabilityStateGenerator> Ptr;
+  typedef boost::shared_ptr<const ReachabilityStateGenerator> ConstPtr;
+
+  ReachabilityStateGenerator();
+
+  bool loadParams(const vigir_generic_params::ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
+
+  std::list<PlanningState::Ptr> generatePredecessor(const PlanningState& state) const override;
+  std::list<PlanningState::Ptr> generateSuccessor(const PlanningState& state) const override;
 
 protected:
-  StepCostEstimator();
-
-  static StepCostEstimator::Ptr& Instance();
-
-  static StepCostEstimator::Ptr singelton;
-
-  std::vector<StepCostEstimatorPlugin::Ptr> step_cost_estimators;
 };
 }
 

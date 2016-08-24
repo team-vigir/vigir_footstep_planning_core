@@ -1,5 +1,8 @@
 plugin_sets:
   default:
+    # StateGeneratorPlugin
+    reachability_state_generator: none
+
     # StepPlanMsgPlugin
     step_plan_msg_plugin: none
 
@@ -17,7 +20,7 @@ plugin_sets:
     step_cost_heuristic: none
 
     # PostProcessPlugins
-    step_dynamics_post_process_plugin: none
+    step_dynamics_post_process: none
 
     # CollisionCheckPlugins
     2_upper_body_grid_map_model:

@@ -31,10 +31,10 @@
 
 #include <ros/ros.h>
 
+#include <vigir_footstep_planning_lib/modeling/footstep.h>
 #include <vigir_footstep_planning_lib/modeling/planning_state.h>
 #include <vigir_footstep_planning_lib/threading/job.h>
 
-#include <vigir_footstep_planner/state_space/footstep.h>
 #include <vigir_footstep_planner/state_space/state_space.h>
 
 

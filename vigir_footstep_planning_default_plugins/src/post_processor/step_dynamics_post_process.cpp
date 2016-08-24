@@ -6,12 +6,12 @@
 
 namespace vigir_footstep_planning
 {
-StepDynamicsPostProcessPlugin::StepDynamicsPostProcessPlugin()
+StepDynamicsPostProcess::StepDynamicsPostProcess()
   : PostProcessPlugin("step_dynamics_post_processor")
 {
 }
 
-bool StepDynamicsPostProcessPlugin::loadParams(const vigir_generic_params::ParameterSet& global_params)
+bool StepDynamicsPostProcess::loadParams(const vigir_generic_params::ParameterSet& global_params)
 {
   if (!PostProcessPlugin::loadParams(global_params))
     return false;
@@ -22,7 +22,7 @@ bool StepDynamicsPostProcessPlugin::loadParams(const vigir_generic_params::Param
   return true;
 }
 
-void StepDynamicsPostProcessPlugin::postProcessStepForward(const State& left_foot, const State& right_foot, State& swing_foot) const
+void StepDynamicsPostProcess::postProcessStepForward(const State& left_foot, const State& right_foot, State& swing_foot) const
 {
   const State& swing_foot_before = swing_foot.getLeg() == LEFT ? left_foot : right_foot;
   const State& stand_foot = swing_foot.getLeg() == LEFT ? right_foot : left_foot;
@@ -33,17 +33,17 @@ void StepDynamicsPostProcessPlugin::postProcessStepForward(const State& left_foo
   determineDynamics(swing_foot_before, stand_foot, swing_foot);
 }
 
-void StepDynamicsPostProcessPlugin::postProcessStepBackward(const State& /*left_foot*/, const State& /*right_foot*/, State& /*swing_foot*/) const
+void StepDynamicsPostProcess::postProcessStepBackward(const State& /*left_foot*/, const State& /*right_foot*/, State& /*swing_foot*/) const
 {
   ROS_WARN_ONCE("[StepDynamicsPostProcessPlugin] postProcessStepBackward not implemented yet!");
 }
 
-void StepDynamicsPostProcessPlugin::determineStepAttributes(const State& /*swing_foot_before*/, const State& /*stand_foot*/, State& swing_foot_after) const
+void StepDynamicsPostProcess::determineStepAttributes(const State& /*swing_foot_before*/, const State& /*stand_foot*/, State& swing_foot_after) const
 {
   swing_foot_after.setSwingHeight(default_swing_height);
 }
 
-void StepDynamicsPostProcessPlugin::determineTravelDistance(const State& swing_foot_before, const State& stand_foot, State& swing_foot_after) const
+void StepDynamicsPostProcess::determineTravelDistance(const State& swing_foot_before, const State& stand_foot, State& swing_foot_after) const
 {
   // determine sway distance
   tf::Transform dsway;
@@ -56,13 +56,13 @@ void StepDynamicsPostProcessPlugin::determineTravelDistance(const State& swing_f
   swing_foot_after.setSwingDistance(sqrt(dswing.getOrigin().x()*dswing.getOrigin().x() + dswing.getOrigin().y()*dswing.getOrigin().y() + dswing.getOrigin().z()*dswing.getOrigin().z()));
 }
 
-void StepDynamicsPostProcessPlugin::determineTimings(const State& /*swing_foot_before*/, const State& /*stand_foot*/, State& swing_foot_after) const
+void StepDynamicsPostProcess::determineTimings(const State& /*swing_foot_before*/, const State& /*stand_foot*/, State& swing_foot_after) const
 {
   swing_foot_after.setSwayDuration(default_sway_duration);
   swing_foot_after.setStepDuration(default_step_duration);
 }
 
-void StepDynamicsPostProcessPlugin::determineDynamics(const State& swing_foot_before, const State& /*stand_foot*/, State& swing_foot_after) const
+void StepDynamicsPostProcess::determineDynamics(const State& swing_foot_before, const State& /*stand_foot*/, State& swing_foot_after) const
 {
   if (swing_foot_after.getSwingDistance() > 0.0)
   {
@@ -83,4 +83,4 @@ void StepDynamicsPostProcessPlugin::determineDynamics(const State& swing_foot_be
 }
 
 #include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::StepDynamicsPostProcessPlugin, vigir_footstep_planning::PostProcessPlugin)
+PLUGINLIB_EXPORT_CLASS(vigir_footstep_planning::StepDynamicsPostProcess, vigir_footstep_planning::PostProcessPlugin)

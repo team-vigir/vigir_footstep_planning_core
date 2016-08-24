@@ -112,33 +112,21 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${PCL_I
 
 ## Specify additional locations of header files
 set(HEADERS
-  include/${PROJECT_NAME}/state_space/footstep.h
   include/${PROJECT_NAME}/state_space/state_space.h
   include/${PROJECT_NAME}/threading/expand_state_job.h
   include/${PROJECT_NAME}/environment_parameters.h
   include/${PROJECT_NAME}/footstep_planner_environment.h
   include/${PROJECT_NAME}/footstep_planner_node.h
   include/${PROJECT_NAME}/footstep_planner.h
-  include/${PROJECT_NAME}/heuristic.h
-  include/${PROJECT_NAME}/post_processor.h
-  include/${PROJECT_NAME}/robot_model.h
-  include/${PROJECT_NAME}/step_cost_estimator.h
-  include/${PROJECT_NAME}/world_model.h
 )
 
 set(SOURCES
-  src/state_space/footstep.cpp
   src/state_space/state_space.cpp
   src/threading/expand_state_job.cpp
   src/environment_parameters.cpp
   src/footstep_planner_environment.cpp
   src/footstep_planner_node.cpp
   src/footstep_planner.cpp
-  src/heuristic.cpp
-  src/post_processor.cpp
-  src/robot_model.cpp
-  src/step_cost_estimator.cpp
-  src/world_model.cpp
 )
 
 ## Declare a cpp library

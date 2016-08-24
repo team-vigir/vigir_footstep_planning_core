@@ -40,15 +40,15 @@
 #include <sbpl/headers.h>
 
 #include <vigir_footstep_planning_lib/math.h>
+#include <vigir_footstep_planning_lib/modeling/footstep.h>
 #include <vigir_footstep_planning_lib/modeling/planning_state.h>
 
-#include <vigir_footstep_planner/environment_parameters.h>
-#include <vigir_footstep_planner/state_space/footstep.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/robot_model.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/post_processor.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/step_cost_estimator.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/heuristic.h>
 
-#include <vigir_footstep_planner/robot_model.h>
-#include <vigir_footstep_planner/post_processor.h>
-#include <vigir_footstep_planner/step_cost_estimator.h>
-#include <vigir_footstep_planner/heuristic.h>
+#include <vigir_footstep_planner/environment_parameters.h>
 
 
 

@@ -37,7 +37,7 @@
 
 #include <vigir_footstep_planning_lib/modeling/state.h>
 
-#include <vigir_footstep_planning_plugins/terrain_model_plugin.h>
+#include <vigir_footstep_planning_plugins/plugins/terrain_model_plugin.h>
 
 #include <vigir_terrain_classifier/terrain_model.h>
 
