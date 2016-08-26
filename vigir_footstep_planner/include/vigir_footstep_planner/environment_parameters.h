@@ -43,31 +43,19 @@ namespace vigir_footstep_planning
 {
 struct EnvironmentParameters
 {
-  EnvironmentParameters(const vigir_generic_params::ParameterSet& params);
-  virtual ~EnvironmentParameters();
-
   // typedefs
   typedef boost::shared_ptr<EnvironmentParameters> Ptr;
   typedef boost::shared_ptr<EnvironmentParameters> ConstPtr;
 
-  // parameters
-  std::vector<Footstep> footstep_set;
-
-  /// Defines the area of performable (discrete) steps.
-  std::vector<std::pair<int, int> > step_range;
+  EnvironmentParameters(const vigir_generic_params::ParameterSet& params);
+  virtual ~EnvironmentParameters();
 
   // foot paramaters
   geometry_msgs::Vector3 foot_size;
   double foot_seperation;
 
-  // upper body parameters
-  geometry_msgs::Vector3 upper_body_size;
-  geometry_msgs::Vector3 upper_body_origin_shift;
-
   double max_risk;
 
-  double max_step_range_x, max_step_range_y, max_step_range_theta;
-  double max_inverse_step_range_x, max_inverse_step_range_y, max_inverse_step_range_theta;
   double max_step_range_width;        // maximal step distance based on step polygon
   double max_step_dist;               // maximal distance in footstep primitives
 
@@ -81,38 +69,12 @@ struct EnvironmentParameters
 
   double heuristic_scale;             // Scaling factor of heuristic, in case it underestimates by a constant factor.
 
-
-
-  /// The maximal translation in x, y direction (based on step range polygon and discretized in cell size).
-  int ivMaxStepRangeX;
-  int ivMaxStepRangeY;
-  /// The maximal rotation (discretized into bins).
-  int ivMaxStepRangeTheta;
-
-  /// The minimal translation in x, y direction (based on step range polygon and discretized in cell size).
-  int ivMaxInvStepRangeX;
-  int ivMaxInvStepRangeY;
-  /// The minimal rotation (discretized into bins).
-  int ivMaxInvStepRangeTheta;
-
-  /// The maximal step range based on given step range polygon
-  double ivMaxStepRangeWidth;
-
-  /// The global max step distance based on the step range polygon and footstep set
-  double ivMaxStepDist;
-
   bool   ivSearchUntilFirstSolution;
 
   /// default max planning time if not given by request
   double max_planning_time;
   double initial_eps;
   double decrease_eps;
-
-  /**
-   * @brief If limit of changed cells is reached the planner starts a new
-   * task from the scratch.
-   */
-  int ivChangedCellsLimit;
 
   std::string ivPlannerType;
 

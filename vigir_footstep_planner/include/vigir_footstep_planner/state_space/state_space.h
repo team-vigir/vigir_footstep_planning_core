@@ -198,9 +198,6 @@ public:
    */
   std::vector<PlanningState*>* ivpStateHash2State;
 
-  /// The set of footsteps used.
-  std::vector<Footstep> ivContFootstepSet;
-
   /// The heuristic function used by the planner.
   bool ivHeuristicExpired;
 

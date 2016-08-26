@@ -13,14 +13,6 @@ EnvironmentParameters::EnvironmentParameters(const vigir_generic_params::Paramet
   nh.getParam("foot/size/z", foot_size.z);
   nh.getParam("foot/separation", foot_seperation);
 
-  // get upper body dimensions
-  nh.getParam("upper_body/size/x", upper_body_size.x);
-  nh.getParam("upper_body/size/y", upper_body_size.y);
-  nh.getParam("upper_body/size/z", upper_body_size.z);
-  nh.getParam("upper_body/origin_shift/x", upper_body_origin_shift.x);
-  nh.getParam("upper_body/origin_shift/y", upper_body_origin_shift.y);
-  nh.getParam("upper_body/origin_shift/z", upper_body_origin_shift.z);
-
   params.getParam("max_risk", max_risk, 1.0);
 
   // load remaining parameters from parameter set
@@ -34,7 +26,6 @@ EnvironmentParameters::EnvironmentParameters(const vigir_generic_params::Paramet
   params.getParam("max_planning_time", max_planning_time);
   params.getParam("initial_epsilon", initial_eps);
   params.getParam("decrease_epsilon", decrease_eps);
-  params.getParam("changed_cells_limit", ivChangedCellsLimit);
   //params.getParam("num_random_nodes", num_random_nodes);
   //params.getParam("random_node_dist", random_node_distance);
 
@@ -45,14 +36,14 @@ EnvironmentParameters::EnvironmentParameters(const vigir_generic_params::Paramet
   params.getParam("collision_check/num_angle_bins", num_angle_bins);
   angle_bin_size = 2.0*M_PI / static_cast<double>(num_angle_bins);
 
+  double max_step_range_x, max_step_range_y, max_step_range_theta;
+  double max_inverse_step_range_x, max_inverse_step_range_y, max_inverse_step_range_theta;
+
   // step range
   XmlRpc::XmlRpcValue step_range_x;
   XmlRpc::XmlRpcValue step_range_y;
   if (params.getParam("step_range/x", step_range_x) && params.getParam("step_range/y", step_range_y))
   {
-    // create step range
-    step_range.clear();
-    step_range.reserve(step_range_x.size());
     max_step_dist = 0;
     double max_x = (double)step_range_x[0];
     double max_y = (double)step_range_y[0];
@@ -67,8 +58,6 @@ EnvironmentParameters::EnvironmentParameters(const vigir_generic_params::Paramet
       max_y = std::max(max_y, y);
       max_inv_x = std::min(max_inv_x, x);
       max_inv_y = std::min(max_inv_y, y);
-
-      step_range.push_back(std::pair<int, int>(disc_val(x, cell_size), disc_val(y, cell_size)));
 
       double cur_step_width = sqrt(x*x + y*y);
       if (cur_step_width > max_step_dist)
@@ -85,15 +74,6 @@ EnvironmentParameters::EnvironmentParameters(const vigir_generic_params::Paramet
     max_x = std::max(std::abs(max_x), std::abs(max_inv_x));
     max_y = std::max(std::abs(max_y), std::abs(max_inv_y));
     max_step_range_width = sqrt(max_x*max_x + max_y*max_y);
-
-    ivMaxStepRangeX = disc_val(max_step_range_x, cell_size);
-    ivMaxStepRangeY = disc_val(max_step_range_y, cell_size);
-    ivMaxStepRangeTheta = angle_state_2_cell(max_step_range_theta, angle_bin_size);
-    ivMaxInvStepRangeX = disc_val(max_inverse_step_range_x, cell_size);
-    ivMaxInvStepRangeY = disc_val(max_inverse_step_range_y, cell_size);
-    ivMaxInvStepRangeTheta = angle_state_2_cell(max_inverse_step_range_theta, angle_bin_size);
-    ivMaxStepRangeWidth = (double) disc_val(max_step_range_width, cell_size);
-    ivMaxStepDist = (double) disc_val(max_step_dist, cell_size);
   }
 
   // misc parameters
