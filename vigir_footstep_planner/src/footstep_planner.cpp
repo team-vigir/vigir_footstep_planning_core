@@ -214,25 +214,34 @@ bool FootstepPlanner::setParams(const vigir_generic_params::ParameterSet& params
   else
     ROS_WARN("[FootstepPlanner] setParams: No plugin set was given by parameter set '%s'", params.getName().c_str());
 
-  vigir_pluginlib::PluginManager::loadParams(params);
+  // reinitialize step plan msg plugin
+  StepPlanMsgPlugin::Ptr plugin;
+  if (vigir_pluginlib::PluginManager::getPlugin(plugin))
+    plugin->loadParams(params);
 
   // reinitialize state generator
   StateGenerator::mutableInstance().loadPlugins();
+  StateGenerator::mutableInstance().loadParams(params);
 
   // reinitialize robot model
   RobotModel::mutableInstance().loadPlugins();
+  RobotModel::mutableInstance().loadParams(params);
 
   // reinitialize post processor
   PostProcessor::mutableInstance().loadPlugins();
+  PostProcessor::mutableInstance().loadParams(params);
 
   // reinitialize world model
   WorldModel::mutableInstance().loadPlugins();
+  WorldModel::mutableInstance().loadParams(params);
 
   // reinitialize step cost estimators
   StepCostEstimator::mutableInstance().loadPlugins();
+  StepCostEstimator::mutableInstance().loadParams(params);
 
   // reinitialize heuristics
   Heuristic::mutableInstance().loadPlugins();
+  Heuristic::mutableInstance().loadParams(params);
 
   resetTotally();
 
@@ -403,6 +412,15 @@ void FootstepPlanner::resetTotally()
 {
   boost::recursive_mutex::scoped_lock lock(planner_mutex);
 
+  // reset plugins
+  StepPlanMsgPlugin::Ptr plugin;
+  if (vigir_pluginlib::PluginManager::getPlugin(plugin))
+    plugin->reset();
+
+  StateGenerator::mutableInstance().resetPlugins();
+  RobotModel::mutableInstance().resetPlugins();
+  PostProcessor::mutableInstance().resetPlugins();
+  StepCostEstimator::mutableInstance().resetPlugins();
   Heuristic::mutableInstance().resetPlugins();
 
   // reset the previously calculated paths
