@@ -1,5 +1,14 @@
 #include <vigir_footstep_planner/state_space/state_space.h>
 
+#include <vigir_footstep_planning_lib/math.h>
+
+#include <vigir_footstep_planning_plugins/plugin_aggregators/robot_model.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/post_processor.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/step_cost_estimator.h>
+#include <vigir_footstep_planning_plugins/plugin_aggregators/heuristic.h>
+
+
+
 namespace vigir_footstep_planning
 {
 StateSpace::StateSpace(const EnvironmentParameters& params, std::vector<int*>& state_ID2_index_mapping)

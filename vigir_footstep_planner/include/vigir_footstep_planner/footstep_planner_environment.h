@@ -42,15 +42,11 @@
 
 #include <vigir_foot_pose_transformer/foot_pose_transformer.h>
 
-#include <vigir_footstep_planning_lib/threading/threading_manager.h>
-
 #include <vigir_footstep_planning_lib/helper.h>
 
 #include <vigir_footstep_planning_plugins/plugin_aggregators/world_model.h>
 #include <vigir_footstep_planning_plugins/plugin_aggregators/step_cost_estimator.h>
 #include <vigir_footstep_planning_plugins/plugin_aggregators/heuristic.h>
-
-#include <vigir_footstep_planner/threading/expand_state_job.h>
 
 #include <vigir_footstep_planner/environment_parameters.h>
 #include <vigir_footstep_planner/state_space/state_space.h>
@@ -204,8 +200,6 @@ protected:
   std::string frame_id;
   std::vector<msgs::Step> visited_steps;
   ros::Time last_feedback_flush;
-
-  threading::ThreadingManager<threading::ExpandStateJob>::Ptr expand_states_manager;
 };
 }
 

@@ -1,5 +1,9 @@
 #include <vigir_footstep_planner/footstep_planner_environment.h>
 
+#include <vigir_footstep_planning_plugins/plugin_aggregators/state_generator.h>
+
+
+
 namespace vigir_footstep_planning
 {
 FootstepPlannerEnvironment::FootstepPlannerEnvironment(const EnvironmentParameters& params, const FootPoseTransformer& foot_pose_transformer, boost::function<void (msgs::PlanningFeedback)>& feedback_cb)
@@ -12,8 +16,6 @@ FootstepPlannerEnvironment::FootstepPlannerEnvironment(const EnvironmentParamete
   , last_feedback_flush(ros::Time::now())
 {
   state_space.reset(new StateSpace(params, StateID2IndexMapping));
-
-  expand_states_manager.reset(new threading::ThreadingManager<threading::ExpandStateJob>(params.threads, params.jobs_per_thread));
 }
 
 FootstepPlannerEnvironment::~FootstepPlannerEnvironment()
@@ -244,31 +246,19 @@ void FootstepPlannerEnvironment::GetPreds(int TargetStateID, std::vector<int> *P
     }
   }
 
-  PredIDV->reserve(state_space->ivContFootstepSet.size());
-  CostV->reserve(state_space->ivContFootstepSet.size());
+  // explorate all states
+  std::list<PlanningState::Ptr> visited_states = StateGenerator::instance().generatePredecessor(*current);
 
-  for(std::vector<Footstep>::const_iterator footstep_set_iter = state_space->ivContFootstepSet.begin(); footstep_set_iter != state_space->ivContFootstepSet.end(); footstep_set_iter++)
+  PredIDV->reserve(visited_states.size());
+  CostV->reserve(visited_states.size());
+
+  for (const PlanningState::Ptr& visited_state : visited_states)
   {
-    const PlanningState predecessor = footstep_set_iter->reverseMeOnThisState(*current);
+    const PlanningState* successor_hash = state_space->createHashEntryIfNotExists(*visited_state);
 
-    if (*(current->getSuccState()) == predecessor)
-      continue;
-
-    // lookup costs
-    int cost;
-    if (!state_space->getStepCost(current->getState(), predecessor.getState(), current->getSuccState()->getState(), cost))
-      continue;
-
-    cost += static_cast<int>(cvMmScale * footstep_set_iter->getStepCost());
-
-    // collision check
-    if (!WorldModel::instance().isAccessible(predecessor.getState(), current->getState()))
-      continue;
-
-    const PlanningState* predecessor_hash = state_space->createHashEntryIfNotExists(predecessor);
-    PredIDV->push_back(predecessor_hash->getId());
-    CostV->push_back(cost);
-    stateVisited(*predecessor_hash);
+    PredIDV->push_back(successor_hash->getId());
+    CostV->push_back(static_cast<int>(cvMmScale * visited_state->getState().getCost() + 0.5));
+    stateVisited(*successor_hash);
   }
 }
 
@@ -357,49 +347,18 @@ void FootstepPlannerEnvironment::GetSuccs(int SourceStateID, std::vector<int> *S
     }
   }
 
-  // explorate all state
-  SuccIDV->reserve(state_space->ivContFootstepSet.size());
-  CostV->reserve(state_space->ivContFootstepSet.size());
+  // explorate all states
+  std::list<PlanningState::Ptr> visited_states = StateGenerator::instance().generateSuccessor(*current);
 
-  std::list<threading::ExpandStateJob::Ptr> jobs;
-  for(std::vector<Footstep>::const_iterator footstep_set_iter = state_space->ivContFootstepSet.begin(); footstep_set_iter != state_space->ivContFootstepSet.end(); footstep_set_iter++)
+  SuccIDV->reserve(visited_states.size());
+  CostV->reserve(visited_states.size());
+
+  for (const PlanningState::Ptr& visited_state : visited_states)
   {
-    jobs.push_back(threading::ExpandStateJob::Ptr(new threading::ExpandStateJob(*footstep_set_iter, *current, *state_space)));
-//    const PlanningState successor = footstep_set_iter->performMeOnThisState(*current, params.use_terrain_model ? state_space->ivTerrainModel : TerrainModel::ConstPtr());
-
-//    if (*(current->getPredState()) == successor)
-//      continue;
-
-//    // lookup costs
-//    int cost;
-//    if (state_space->getStepCost(current->getState(), current->getPredState()->getState(), successor.getState(), cost))
-//      continue;
-
-//    cost += static_cast<int>(cvMmScale * footstep_set_iter->getStepCost());
-
-//    // collision check
-//    if (!WorldModel::isAccessible(predecessor.getState(), current->getState()))
-//      continue;
-
-//    const PlanningState* successor_hash = state_space->createHashEntryIfNotExists(successor);
-//    SuccIDV->push_back(successor_hash->getId());
-//    CostV->push_back(cost);
-//    stateVisited(*successor_hash, cost, risk_cost);
-  }
-
-  expand_states_manager->addJobs(jobs);
-  expand_states_manager->waitUntilJobsFinished();
-
-  for (std::list<threading::ExpandStateJob::Ptr>::iterator itr = jobs.begin(); itr != jobs.end(); itr++)
-  {
-    threading::ExpandStateJob::Ptr& job = *itr;
-    if (!job->successful)
-      continue;
-
-    const PlanningState* successor_hash = state_space->createHashEntryIfNotExists(*(job->next));
+    const PlanningState* successor_hash = state_space->createHashEntryIfNotExists(*visited_state);
 
     SuccIDV->push_back(successor_hash->getId());
-    CostV->push_back(job->cost);
+    CostV->push_back(static_cast<int>(cvMmScale * visited_state->getState().getCost() + 0.5));
     stateVisited(*successor_hash);
   }
 }
