@@ -26,7 +26,6 @@ bool ReachabilityStateGenerator::loadParams(const vigir_generic_params::Paramete
   result &= global_params.getParam("threads", threads);
   result &= global_params.getParam("jobs_per_thread", jobs_per_thread);
 
-
   int hash_table_size;
   double cell_size;
   int num_angle_bins;
@@ -34,11 +33,6 @@ bool ReachabilityStateGenerator::loadParams(const vigir_generic_params::Paramete
   result &= global_params.getParam("collision_check/cell_size", cell_size);
   result &= global_params.getParam("collision_check/num_angle_bins", num_angle_bins);
   double angle_bin_size = 2.0*M_PI / static_cast<double>(num_angle_bins);
-
-
-  global_params.getParam("max_risk", max_risk_, 1.0);
-
-
 
   int ivMaxStepRangeX, ivMaxStepRangeY, ivMaxStepRangeTheta;
   int ivMaxInvStepRangeX, ivMaxInvStepRangeY, ivMaxInvStepRangeTheta;
@@ -92,7 +86,6 @@ bool ReachabilityStateGenerator::loadParams(const vigir_generic_params::Paramete
   // setup state expansion manager
   expand_states_manager.reset(new threading::ThreadingManager<threading::ExpandStateJob>(threads, jobs_per_thread));
 
-
   // determine whether a (x,y) translation can be performed by the robot by
   // checking if it is within a certain area of performable steps
   for (int y = ivMaxInvStepRangeY; y <= ivMaxStepRangeY; y++)
@@ -132,7 +125,7 @@ std::list<PlanningState::Ptr> ReachabilityStateGenerator::generateSuccessor(cons
   // explorate all state
   std::list<threading::ExpandStateJob::Ptr> jobs;
   for (const Footstep& footstep : ivContFootstepSet)
-    jobs.push_back(threading::ExpandStateJob::Ptr(new threading::ExpandStateJob(footstep, state, max_risk_)));
+    jobs.push_back(threading::ExpandStateJob::Ptr(new threading::ExpandStateJob(footstep, state)));
 
   expand_states_manager->addJobs(jobs);
   expand_states_manager->waitUntilJobsFinished();

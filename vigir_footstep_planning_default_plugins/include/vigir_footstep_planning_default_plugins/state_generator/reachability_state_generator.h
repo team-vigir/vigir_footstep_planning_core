@@ -61,9 +61,6 @@ protected:
   // The set of footsteps used.
   std::vector<Footstep> ivContFootstepSet;
 
-  double max_risk_;
-
-
   threading::ThreadingManager<threading::ExpandStateJob>::Ptr expand_states_manager;
 };
 }

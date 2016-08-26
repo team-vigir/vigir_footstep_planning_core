@@ -12,5 +12,5 @@
 
   <!-- Load plugin descriptions from YAML file to parameter server -->
   <rosparam file="$(find vigir_footstep_planning_plugins)/config/plugin_descriptions.yaml" command="load" />
-  <rosparam file="$(find vigir_footstep_planning_default_plugins)/config/default_plugin_descriptions.yaml" command="load" />
+  <rosparam file="$(find vigir_footstep_planning_default_plugins)/config/plugin_descriptions.yaml" command="load" />
 </launch>

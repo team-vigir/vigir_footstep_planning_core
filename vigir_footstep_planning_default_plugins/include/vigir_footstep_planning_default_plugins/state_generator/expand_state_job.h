@@ -48,7 +48,7 @@ struct ExpandStateJob
   typedef boost::shared_ptr<ExpandStateJob> Ptr;
   typedef boost::shared_ptr<const ExpandStateJob> ConstPtr;
 
-  ExpandStateJob(const Footstep& footstep_, const PlanningState& state_, double max_risk_);
+  ExpandStateJob(const Footstep& footstep_, const PlanningState& state_);
   virtual ~ExpandStateJob();
 
   void run();
@@ -59,7 +59,6 @@ struct ExpandStateJob
 private:
   const Footstep& footstep_;
   const PlanningState& state_;
-  double max_risk_;
 };
 }
 }
