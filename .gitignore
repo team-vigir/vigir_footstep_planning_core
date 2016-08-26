@@ -9,3 +9,5 @@ qtcreator-build
 *.backup
 *.user
 *.autosave
+*.orig
+*.rej
