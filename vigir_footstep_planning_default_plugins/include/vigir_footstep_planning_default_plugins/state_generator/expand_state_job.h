@@ -26,46 +26,42 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef VIGIR_FOOTSTEP_PLANNING_LIB_REACHABILITY_STATE_GENERATOR_H__
-#define VIGIR_FOOTSTEP_PLANNING_LIB_REACHABILITY_STATE_GENERATOR_H__
+#ifndef VIGIR_FOOTSTEP_PLANNING_THREADING_EXPAND_STATE_JOB_H__
+#define VIGIR_FOOTSTEP_PLANNING_THREADING_EXPAND_STATE_JOB_H__
 
 #include <ros/ros.h>
 
 #include <vigir_footstep_planning_lib/modeling/footstep.h>
-#include <vigir_footstep_planning_lib/threading/threading_manager.h>
-
-#include <vigir_footstep_planning_plugins/plugins/state_generator_plugin.h>
-
-#include <vigir_footstep_planning_default_plugins/state_generator/expand_state_job.h>
+#include <vigir_footstep_planning_lib/modeling/planning_state.h>
+#include <vigir_footstep_planning_lib/threading/job.h>
 
 
 
 namespace vigir_footstep_planning
 {
-class ReachabilityStateGenerator
-  : public StateGeneratorPlugin
+namespace threading
 {
-public:
+struct ExpandStateJob
+  : public Job
+{
   // typedefs
-  typedef boost::shared_ptr<ReachabilityStateGenerator> Ptr;
-  typedef boost::shared_ptr<const ReachabilityStateGenerator> ConstPtr;
+  typedef boost::shared_ptr<ExpandStateJob> Ptr;
+  typedef boost::shared_ptr<const ExpandStateJob> ConstPtr;
 
-  ReachabilityStateGenerator();
+  ExpandStateJob(const Footstep& footstep_, const PlanningState& state_, double max_risk_);
+  virtual ~ExpandStateJob();
 
-  bool loadParams(const vigir_generic_params::ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
+  void run();
 
-  std::list<PlanningState::Ptr> generatePredecessor(const PlanningState& state) const override;
-  std::list<PlanningState::Ptr> generateSuccessor(const PlanningState& state) const override;
+  PlanningState::Ptr next;
+  bool successful;
 
-protected:
-  // The set of footsteps used.
-  std::vector<Footstep> ivContFootstepSet;
-
+private:
+  const Footstep& footstep_;
+  const PlanningState& state_;
   double max_risk_;
-
-
-  threading::ThreadingManager<threading::ExpandStateJob>::Ptr expand_states_manager;
 };
+}
 }
 
 #endif
