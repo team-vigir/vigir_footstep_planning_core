@@ -10,23 +10,6 @@ max_hash_size: 1048576
 const_step_cost_estimator:
   step_cost: 0.1
 
-# parameters for BoundaryStepCostEstimator (multipliers)
-boundary_step_cost_estimator:
-  max_diff_z: 0.25                      # [m]
-  long_step_dist: 0.30                  # [m]
-  min_yaw_seperation_enlargement: 0.2   # [rad]
-  yaw_enlarged_min_seperation: 0.23     # [m]
-  cost_roll_abs: 0.5                    # [1/rad]
-  cost_pitch_abs: 0.3                   # [1/rad]
-  cost_yaw_rel: 1.0                     # [1/rad]
-  cost_height_diff_rel: 0.5             # [1/m]
-
-# parameters for DynamicsStepCostEstimator
-dynamic_step_cost_estimator:
-  lower_step_limit: 0.1
-  upper_step_limit: 0.5
-  max_near_distance: 1.0
-
 # parameters for heuristics
 max_heuristic_value: 1000.0
 heuristic_scale: 1.0
@@ -116,4 +99,3 @@ dynamics:
 feedback_rate: 10.0 # [Hz]
 threads: 4
 jobs_per_thread: 50
-

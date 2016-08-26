@@ -167,14 +167,23 @@ install(TARGETS ${PROJECT_NAME} footstep_planner_node
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.h"
-  PATTERN ".svn" EXCLUDE
+  PATTERN "*~" EXCLUDE
 )
 
-## Mark other files for installation (e.g. launch and bag files, etc.)
+## install the launch files
 install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   FILES_MATCHING PATTERN "*.launch"
+  PATTERN "*~" EXCLUDE
 )
+
+## install the config files
+install(DIRECTORY config
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  FILES_MATCHING PATTERN "*"
+  PATTERN "*~" EXCLUDE
+)
+
 
 #############
 ## Testing ##
