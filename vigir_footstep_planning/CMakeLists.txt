@@ -17,8 +17,6 @@ find_package(catkin REQUIRED COMPONENTS
   vigir_footstep_planner
   vigir_global_footstep_planner
   vigir_pattern_generator
-  vigir_terrain_classifier
-  vigir_walk_monitor
 )
 
 ## System dependencies are found with CMake's conventions
@@ -102,8 +100,6 @@ catkin_package(
     vigir_footstep_planner
     vigir_global_footstep_planner
     vigir_pattern_generator
-    vigir_terrain_classifier
-    vigir_walk_monitor
 #  DEPENDS system_lib
 )
 
