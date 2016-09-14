@@ -25,7 +25,7 @@ bool OccupancyGridMapHeuristic::loadParams(const vigir_generic_params::Parameter
   if (!HeuristicPlugin::loadParams(global_params))
     return false;
 
-  getParam("grid_map_topic", grid_map_topic_);
+  getParam("grid_map_topic", grid_map_topic_, std::string());
   return true;
 }
 
