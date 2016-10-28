@@ -43,7 +43,7 @@ class DynamicsReachability
 public:
   DynamicsReachability();
 
-  bool loadParams(const ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
+  bool loadParams(const ParameterSet& params = vigir_generic_params::ParameterSet()) override;
 
   bool isReachable(const State& current, const State& next) const override;
 

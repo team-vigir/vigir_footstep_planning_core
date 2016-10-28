@@ -11,12 +11,12 @@ GroundContactStepCostEstimator::GroundContactStepCostEstimator()
 {
 }
 
-bool GroundContactStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& global_params)
+bool GroundContactStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  if (!StepCostEstimatorPlugin::loadParams(global_params))
+  if (!StepCostEstimatorPlugin::loadParams(params))
     return false;
 
-  global_params.getParam("foot_contact_support/minimal_support", min_contact_support);
+  params.getParam("foot_contact_support/minimal_support", min_contact_support);
   return true;
 }
 

@@ -9,9 +9,9 @@ UpperBodyGridMapModel::UpperBodyGridMapModel(const std::string& name)
 {
 }
 
-bool UpperBodyGridMapModel::initialize(const vigir_generic_params::ParameterSet& global_params)
+bool UpperBodyGridMapModel::initialize(const vigir_generic_params::ParameterSet& params)
 {
-  if (!GridMapModel::initialize(global_params))
+  if (!GridMapModel::initialize(params))
     return false;
 
   // get upper body dimensions

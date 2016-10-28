@@ -9,12 +9,12 @@ GridMapModel::GridMapModel(const std::string& name)
 {
 }
 
-bool GridMapModel::loadParams(const vigir_generic_params::ParameterSet& global_params)
+bool GridMapModel::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  if (!CollisionCheckGridMapPlugin::loadParams(global_params))
+  if (!CollisionCheckGridMapPlugin::loadParams(params))
     return false;
 
-  global_params.getParam("collision_check/collision_check_accuracy", (int&)collision_check_accuracy);
+  params.getParam("collision_check/collision_check_accuracy", (int&)collision_check_accuracy);
   return true;
 }
 

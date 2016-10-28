@@ -14,24 +14,24 @@ ReachabilityStateGenerator::ReachabilityStateGenerator()
 {
 }
 
-bool ReachabilityStateGenerator::loadParams(const vigir_generic_params::ParameterSet& global_params)
+bool ReachabilityStateGenerator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  if (!StateGeneratorPlugin::loadParams(global_params))
+  if (!StateGeneratorPlugin::loadParams(params))
     return false;
 
   bool result = true;
 
   int threads;
   unsigned int jobs_per_thread;
-  result &= global_params.getParam("threads", threads);
-  result &= global_params.getParam("jobs_per_thread", jobs_per_thread);
+  result &= params.getParam("threads", threads);
+  result &= params.getParam("jobs_per_thread", jobs_per_thread);
 
   int hash_table_size;
   double cell_size;
   int num_angle_bins;
-  result &= global_params.getParam("max_hash_size", hash_table_size);
-  result &= global_params.getParam("collision_check/cell_size", cell_size);
-  result &= global_params.getParam("collision_check/num_angle_bins", num_angle_bins);
+  result &= params.getParam("max_hash_size", hash_table_size);
+  result &= params.getParam("collision_check/cell_size", cell_size);
+  result &= params.getParam("collision_check/num_angle_bins", num_angle_bins);
   double angle_bin_size = 2.0*M_PI / static_cast<double>(num_angle_bins);
 
   int ivMaxStepRangeX, ivMaxStepRangeY, ivMaxStepRangeTheta;
@@ -43,7 +43,7 @@ bool ReachabilityStateGenerator::loadParams(const vigir_generic_params::Paramete
   // step range
   XmlRpc::XmlRpcValue step_range_x;
   XmlRpc::XmlRpcValue step_range_y;
-  if (global_params.getParam("step_range/x", step_range_x) && global_params.getParam("step_range/y", step_range_y))
+  if (params.getParam("step_range/x", step_range_x) && params.getParam("step_range/y", step_range_y))
   {
     // create step range
     step_range.clear();
@@ -67,8 +67,8 @@ bool ReachabilityStateGenerator::loadParams(const vigir_generic_params::Paramete
 
     double max_step_range_theta;
     double max_inverse_step_range_theta;
-    result &= global_params.getParam("foot/max/step/theta", max_step_range_theta);
-    result &= global_params.getParam("foot/max/inverse/step/theta", max_inverse_step_range_theta);
+    result &= params.getParam("foot/max/step/theta", max_step_range_theta);
+    result &= params.getParam("foot/max/inverse/step/theta", max_inverse_step_range_theta);
 
     ivMaxStepRangeX = disc_val(max_x, cell_size);
     ivMaxStepRangeY = disc_val(max_y, cell_size);

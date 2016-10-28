@@ -9,9 +9,9 @@ FootGridMapModel::FootGridMapModel(const std::string& name)
 {
 }
 
-bool FootGridMapModel::initialize(const vigir_generic_params::ParameterSet& global_params)
+bool FootGridMapModel::initialize(const vigir_generic_params::ParameterSet& params)
 {
-  if (!GridMapModel::initialize(global_params))
+  if (!GridMapModel::initialize(params))
     return false;
 
   // get foot dimensions

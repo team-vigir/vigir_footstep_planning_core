@@ -19,9 +19,9 @@ TerrainModel::TerrainModel(const std::string& name)
 {
 }
 
-bool TerrainModel::initialize(const vigir_generic_params::ParameterSet& global_params)
+bool TerrainModel::initialize(const vigir_generic_params::ParameterSet& params)
 {
-  if (!TerrainModelPlugin::initialize(global_params))
+  if (!TerrainModelPlugin::initialize(params))
     return false;
 
   // get foot dimensions

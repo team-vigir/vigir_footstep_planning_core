@@ -9,21 +9,21 @@ HotMapHeuristic::HotMapHeuristic()
 {
 }
 
-bool HotMapHeuristic::loadParams(const vigir_generic_params::ParameterSet& global_params)
+bool HotMapHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  if (!HeuristicPlugin::loadParams(global_params))
+  if (!HeuristicPlugin::loadParams(params))
     return false;
 
-  global_params.getParam("collision_check/cell_size", cell_size_);
+  params.getParam("collision_check/cell_size", cell_size_);
   int num_angle_bins;
-  global_params.getParam("collision_check/num_angle_bins", num_angle_bins);
+  params.getParam("collision_check/num_angle_bins", num_angle_bins);
   angle_bin_size_ = 2.0*M_PI / static_cast<double>(num_angle_bins);
   return true;
 }
 
-bool HotMapHeuristic::initialize(const vigir_generic_params::ParameterSet& global_params)
+bool HotMapHeuristic::initialize(const vigir_generic_params::ParameterSet& params)
 {
-  if (!HeuristicPlugin::initialize(global_params))
+  if (!HeuristicPlugin::initialize(params))
     return false;
 
   // publish topics

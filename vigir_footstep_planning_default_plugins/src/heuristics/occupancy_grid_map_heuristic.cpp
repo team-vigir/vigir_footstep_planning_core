@@ -9,23 +9,23 @@ OccupancyGridMapHeuristic::OccupancyGridMapHeuristic()
 {
 }
 
-bool OccupancyGridMapHeuristic::initialize(const vigir_generic_params::ParameterSet& global_params)
+bool OccupancyGridMapHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  if (!HeuristicPlugin::initialize(global_params))
+  if (!HeuristicPlugin::loadParams(params))
+    return false;
+
+  getParam("grid_map_topic", grid_map_topic_, std::string());
+  return true;
+}
+
+bool OccupancyGridMapHeuristic::initialize(const vigir_generic_params::ParameterSet& params)
+{
+  if (!HeuristicPlugin::initialize(params))
     return false;
 
   // subscribe topics
   occupancy_grid_map_sub_ = nh_.subscribe<nav_msgs::OccupancyGrid>(grid_map_topic_, 1, &OccupancyGridMapHeuristic::mapCallback, this);
 
-  return true;
-}
-
-bool OccupancyGridMapHeuristic::loadParams(const vigir_generic_params::ParameterSet& global_params)
-{
-  if (!HeuristicPlugin::loadParams(global_params))
-    return false;
-
-  getParam("grid_map_topic", grid_map_topic_, std::string());
   return true;
 }
 

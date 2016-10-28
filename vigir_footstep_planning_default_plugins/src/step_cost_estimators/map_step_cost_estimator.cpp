@@ -9,13 +9,13 @@ MapStepCostEstimator::MapStepCostEstimator()
 {
 }
 
-bool MapStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& global_params)
+bool MapStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  if (!StepCostEstimatorPlugin::loadParams(global_params))
+  if (!StepCostEstimatorPlugin::loadParams(params))
     return false;
 
   std::string filename;
-  global_params.getParam("map_step_cost_estimator/file", filename);
+  params.getParam("map_step_cost_estimator/file", filename);
 
   loadFromFile(filename);
 

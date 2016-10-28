@@ -9,14 +9,14 @@ DynamicsReachability::DynamicsReachability()
 {
 }
 
-bool DynamicsReachability::loadParams(const ParameterSet& global_params)
+bool DynamicsReachability::loadParams(const ParameterSet& params)
 {
-  if (!ReachabilityPlugin::loadParams(global_params))
+  if (!ReachabilityPlugin::loadParams(params))
     return false;
 
-  global_params.getParam("dynamics/body/max_vel", max_body_vel_sq, 0.0);
+  params.getParam("dynamics/body/max_vel", max_body_vel_sq, 0.0);
   max_body_vel_sq *= max_body_vel_sq;
-  global_params.getParam("dynamics/body/max_acc", max_body_acc_sq, 0.0);
+  params.getParam("dynamics/body/max_acc", max_body_acc_sq, 0.0);
   max_body_acc_sq *= max_body_acc_sq;
   return true;
 }

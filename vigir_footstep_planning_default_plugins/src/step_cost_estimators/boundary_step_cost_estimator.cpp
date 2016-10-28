@@ -11,19 +11,19 @@ BoundaryStepCostEstimator::BoundaryStepCostEstimator()
 {
 }
 
-bool BoundaryStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& global_params)
+bool BoundaryStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  if (!StepCostEstimatorPlugin::loadParams(global_params))
+  if (!StepCostEstimatorPlugin::loadParams(params))
     return false;
 
-  global_params.getParam("boundary_step_cost_estimator/max_diff_z", max_diff_z);
-  global_params.getParam("boundary_step_cost_estimator/long_step_dist", long_step_dist);
-  global_params.getParam("boundary_step_cost_estimator/min_yaw_seperation_enlargement", min_yaw_seperation_enlargement);
-  global_params.getParam("boundary_step_cost_estimator/yaw_enlarged_min_seperation", yaw_enlarged_min_seperation);
-  global_params.getParam("boundary_step_cost_estimator/cost_roll_abs", cost_roll_abs);
-  global_params.getParam("boundary_step_cost_estimator/cost_pitch_abs", cost_pitch_abs);
-  global_params.getParam("boundary_step_cost_estimator/cost_yaw_rel", cost_yaw_rel);
-  global_params.getParam("boundary_step_cost_estimator/cost_height_diff_rel", cost_height_diff_rel);
+  params.getParam("boundary_step_cost_estimator/max_diff_z", max_diff_z);
+  params.getParam("boundary_step_cost_estimator/long_step_dist", long_step_dist);
+  params.getParam("boundary_step_cost_estimator/min_yaw_seperation_enlargement", min_yaw_seperation_enlargement);
+  params.getParam("boundary_step_cost_estimator/yaw_enlarged_min_seperation", yaw_enlarged_min_seperation);
+  params.getParam("boundary_step_cost_estimator/cost_roll_abs", cost_roll_abs);
+  params.getParam("boundary_step_cost_estimator/cost_pitch_abs", cost_pitch_abs);
+  params.getParam("boundary_step_cost_estimator/cost_yaw_rel", cost_yaw_rel);
+  params.getParam("boundary_step_cost_estimator/cost_height_diff_rel", cost_height_diff_rel);
 
   return true;
 }

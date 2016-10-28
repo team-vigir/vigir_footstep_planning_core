@@ -51,9 +51,9 @@ class TerrainModel
 public:
   TerrainModel(const std::string& name = "terrain_model");
 
-  bool initialize(const vigir_generic_params::ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
+  bool initialize(const vigir_generic_params::ParameterSet& params = vigir_generic_params::ParameterSet()) override;
 
-  bool loadParams(const vigir_generic_params::ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
+  bool loadParams(const vigir_generic_params::ParameterSet& params = vigir_generic_params::ParameterSet()) override;
 
   void reset();
 

@@ -9,22 +9,22 @@ TravelTimeStepCostEstimator::TravelTimeStepCostEstimator()
 {
 }
 
-bool TravelTimeStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& global_params)
+bool TravelTimeStepCostEstimator::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  if (!StepCostEstimatorPlugin::loadParams(global_params))
+  if (!StepCostEstimatorPlugin::loadParams(params))
     return false;
 
-  global_params.getParam("travel_time_cost_estimator/sway/parabol_a", a_sway_inv, 0.0);
+  params.getParam("travel_time_cost_estimator/sway/parabol_a", a_sway_inv, 0.0);
   a_sway_inv = 1.0/a_sway_inv;
-  global_params.getParam("travel_time_cost_estimator/sway/parabol_b", b_sway_inv, 0.0);
+  params.getParam("travel_time_cost_estimator/sway/parabol_b", b_sway_inv, 0.0);
   b_sway_inv = 1.0/b_sway_inv;
-  global_params.getParam("travel_time_cost_estimator/sway/const_time", const_sway_time, 0.0);
+  params.getParam("travel_time_cost_estimator/sway/const_time", const_sway_time, 0.0);
 
-  global_params.getParam("travel_time_cost_estimator/swing/parabol_a", a_swing_inv, 0.0);
+  params.getParam("travel_time_cost_estimator/swing/parabol_a", a_swing_inv, 0.0);
   a_swing_inv = 1.0/a_swing_inv;
-  global_params.getParam("travel_time_cost_estimator/swing/parabol_b", b_swing_inv, 0.0);
+  params.getParam("travel_time_cost_estimator/swing/parabol_b", b_swing_inv, 0.0);
   b_swing_inv = 1.0/b_swing_inv;
-  global_params.getParam("travel_time_cost_estimator/swing/const_time", const_swing_time, 0.0);
+  params.getParam("travel_time_cost_estimator/swing/const_time", const_swing_time, 0.0);
 
   return true;
 }

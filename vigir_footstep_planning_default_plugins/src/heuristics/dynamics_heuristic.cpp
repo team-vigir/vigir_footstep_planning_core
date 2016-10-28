@@ -9,12 +9,12 @@ DynamicsHeuristic::DynamicsHeuristic()
 {
 }
 
-bool DynamicsHeuristic::loadParams(const vigir_generic_params::ParameterSet& global_params)
+bool DynamicsHeuristic::loadParams(const vigir_generic_params::ParameterSet& params)
 {
-  if (!HeuristicPlugin::loadParams(global_params))
+  if (!HeuristicPlugin::loadParams(params))
     return false;
 
-  global_params.getParam("dynamics/body/max_acc", max_body_acc_, 0.0);
+  params.getParam("dynamics/body/max_acc", max_body_acc_, 0.0);
   return true;
 }
 

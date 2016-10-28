@@ -52,7 +52,7 @@ public:
 
   ReachabilityStateGenerator();
 
-  bool loadParams(const vigir_generic_params::ParameterSet& global_params = vigir_generic_params::ParameterSet()) override;
+  bool loadParams(const vigir_generic_params::ParameterSet& params = vigir_generic_params::ParameterSet()) override;
 
   std::list<PlanningState::Ptr> generatePredecessor(const PlanningState& state) const override;
   std::list<PlanningState::Ptr> generateSuccessor(const PlanningState& state) const override;
