@@ -27,6 +27,7 @@ FootstepPlanner::FootstepPlanner(ros::NodeHandle &nh)
 
 FootstepPlanner::~FootstepPlanner()
 {
+  planning_thread.join();
 }
 
 void FootstepPlanner::setPlanner()
@@ -1027,8 +1028,7 @@ bool FootstepPlanner::stepPlanRequestService(msgs::StepPlanRequestService::Reque
     return true; // return always true so the message is returned
 
   // wait for thread to terminate
-  if (planning_thread.joinable())
-    planning_thread.join();
+  planning_thread.join();
 
   // finalize plan and generate response
   finalizeStepPlan(req, resp, true);
@@ -1088,11 +1088,8 @@ void FootstepPlanner::preemptPlanning()
     return;
 
   // interrupt main planning thread
-  if (planning_thread.joinable())
-  {
-    planning_thread.interrupt();
-    planning_thread.join();
-  }
+  planning_thread.interrupt();
+  planning_thread.join();
 
   if (!preempt_cb.empty())
     preempt_cb();
