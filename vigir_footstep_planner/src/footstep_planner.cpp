@@ -27,6 +27,9 @@ FootstepPlanner::FootstepPlanner(ros::NodeHandle &nh)
 
 FootstepPlanner::~FootstepPlanner()
 {
+  boost::recursive_mutex::scoped_lock lock(planner_mutex);
+
+  planning_thread.interrupt();
   planning_thread.join();
 }
 
@@ -40,7 +43,7 @@ void FootstepPlanner::setPlanner()
   }
   else
   {
-    ROS_ERROR_STREAM("Planner "<< env_params->ivPlannerType <<" not available / untested.");
+    ROS_ERROR_STREAM("Planner " << env_params->ivPlannerType << " not available / untested.");
     exit(1);
   }
   if (env_params->forward_search)
