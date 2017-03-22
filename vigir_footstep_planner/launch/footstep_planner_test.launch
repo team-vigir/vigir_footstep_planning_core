@@ -6,12 +6,12 @@
     <!-- run map servers -->
     <node name="map_server_1" pkg="map_server" type="map_server" args="$(find vigir_footstep_planner)/maps/RCGO2011_Hector_Mission4_2.yaml">
       <param name="frame_id" value="/world" />
-      <remap from="map" to="body_level_grid_map" />
+      <remap from="map" to="/body_level_grid_map" />
     </node>
 
     <node name="map_server_2" pkg="map_server" type="map_server" args="$(find vigir_footstep_planner)/maps/RCGO2011_Hector_Mission4_2.yaml">
       <param name="frame_id" value="/world" />
-      <remap from="map" to="ground_level_grid_map" />
+      <remap from="map" to="/ground_level_grid_map" />
     </node>
 
     <!-- start up footstep planning system -->
