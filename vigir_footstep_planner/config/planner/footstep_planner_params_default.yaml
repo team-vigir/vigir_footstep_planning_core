@@ -41,10 +41,6 @@ decrease_epsilon: 0.2
 
 forward_search: True
 
-# the limit of changed states that decides whether to replan or to start a hole
-# new planning task
-changed_cells_limit: 20000
-
 ### Planning parameterization for a large humanoid, similar to ASIMO or HRP-2 ##
 # used for foot contact support collision check
 foot_contact_support:
@@ -88,7 +84,7 @@ step_range:
 
 sway_duration: 0.10
 step_duration: 0.63
-swing_height:  0.10     # Ignored if it is less than 0.1
+swing_height:  0.10
 
 dynamics:
   body: # zero values will disable dynamic constraints
