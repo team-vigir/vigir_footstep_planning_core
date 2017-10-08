@@ -55,7 +55,7 @@ void JoystickHandler::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     enable_generator = false;
 }
 
-void JoystickHandler::updateJoystickCommands(double elapsed_time_sec, bool& enable, double& d_x, double& d_y, double& d_yaw) const
+void JoystickHandler::getJoystickCommand(double elapsed_time_sec, bool& enable, geometry_msgs::Twist& twist) const
 {
   if (!last_joy_msg)
   {
@@ -99,8 +99,7 @@ void JoystickHandler::updateJoystickCommand(double elapsed_time_sec, double joy_
   acc = std::min(max_acc, std::max(min_acc, acc));
 
   // update value
-  val += acc;
-  val = std::min(max_vel, std::max(min_vel, val));
+  val = std::min(max_vel, std::max(min_vel, val+acc));
 }
 
 double JoystickHandler::convertJoyAxisToAcc(double elapsed_time_sec, double joy_val, double val, double min_vel, double max_vel) const

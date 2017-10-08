@@ -39,6 +39,7 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <geometry_msgs/Twist.h>
 
 #include <vigir_footstep_planning_lib/helper.h>
 #include <vigir_footstep_planning_msgs/footstep_planning_msgs.h>
@@ -56,7 +57,7 @@ public:
   virtual ~PatternGenerator();
 
   void reset();
-  void setParams(const msgs::PatternGeneratorParameters& params);
+  void setParams(const msgs::PatternGeneratorParameters& params_);
   void setEnabled(bool enabled);
   bool isEnabled() const;
   bool isSimulationMode() const;
@@ -71,8 +72,8 @@ public:
   int getNextStartStepIndex() const;
 
   void update(const ros::TimerEvent& timer);
-  void updateLastPerformedStepIndex(int last_performed_step_index);
-  void updateFirstChangeableStepIndex(int first_changeable_step_index);
+  void updateLastPerformedStepIndex(int last_performed_step_index_);
+  void updateFirstChangeableStepIndex(int first_changeable_step_index_);
 
   // simple pattern generator
   msgs::ErrorStatus generatePattern(const msgs::StepPlanRequest& step_plan_request, msgs::StepPlan& step_plan);
@@ -93,38 +94,38 @@ private:
 
   void generateSteps(unsigned int n, bool close_step = false);
 
+  // handler for joystick input
+  JoystickHandler::Ptr joystick_handler_;
+  geometry_msgs::Twist cmd;
+
+  // generator params
+  std::string world_frame_id_;
+  unsigned int number_of_steps_needed_;
+  msgs::PatternGeneratorParameters params_;
+
+  // controller feedback
+  int last_performed_step_index_; // last executed step (executing step is current + 1)
+  int first_changeable_step_index_;
+  int next_step_index_needed_;
+
+  // state of pattern generator
+  msgs::Feet::Ptr start_feet_pose_;
+  unsigned int foot_start_step_index_left_;
+  unsigned int foot_start_step_index_right_;
+  mutable bool has_new_steps_;
+
+  // generated step plan
+  msgs::StepPlan complete_step_plan_;
+  msgs::StepPlan newest_step_plan_;
+  std::map<unsigned int, msgs::Step> step_map_;
+
   // service clients
-  ros::ServiceClient generate_feet_pose_client;
-  ros::ServiceClient step_plan_request_client;
+  ros::ServiceClient generate_feet_pose_client_;
+  ros::ServiceClient step_plan_request_client_;
   ros::ServiceClient stitch_step_plan_client;
 
   // action clients
-  boost::shared_ptr<actionlib::SimpleActionClient<msgs::ExecuteStepPlanAction> > execute_step_plan_ac;
-
-  // handler for joystick input
-  JoystickHandler::Ptr joystick_handler;
-  geometry_msgs::Pose joy_d_step;
-
-  // generator params
-  std::string world_frame_id;
-  unsigned int number_of_steps_needed;
-  msgs::PatternGeneratorParameters params;
-
-  // controller feedback
-  int last_performed_step_index; // last executed step (executing step is current + 1)
-  int first_changeable_step_index;
-  int next_step_index_needed;
-
-  // state of pattern generator
-  msgs::Feet::Ptr start_feet_pose;
-  unsigned int foot_start_step_index_left;
-  unsigned int foot_start_step_index_right;
-  mutable bool has_new_steps;
-
-  // generated step plan
-  msgs::StepPlan complete_step_plan;
-  msgs::StepPlan newest_step_plan;
-  std::map<unsigned int, msgs::Step> step_map;
+  boost::shared_ptr<actionlib::SimpleActionClient<msgs::ExecuteStepPlanAction>> execute_step_plan_ac_;
 };
 }
 
