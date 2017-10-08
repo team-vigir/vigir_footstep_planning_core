@@ -4,21 +4,7 @@ pattern_generator:
     republish_complete_step_plan: False
 
 joystick:
-    thresh_x:       0.15
-    thresh_y:       0.30
-    thresh_yaw:     0.20
-    sensivity_x:    1.00
-    sensivity_y:    1.00
-    sensivity_yaw:  1.00
-    min_vel_x:     -0.10 # [m/s] min delta x per step
-    max_vel_x:      0.20 # [m/s] max delta x per step
-    min_vel_y:     -0.10 # [m/s] min delta y per step
-    max_vel_y:      0.10 # [m/s] max delta y per step
-    min_vel_yaw:  -15.00 # [deg/s] min delta yaw per step
-    max_vel_yaw:   15.00 # [deg/s] max delta yaw per step
-    min_acc_x:     -0.02 # [m/s^2] min acceleration in x per step
-    max_acc_x:      0.05 # [m/s^2] max acceleration in x per step
-    min_acc_y:     -0.03 # [m/s^2] min acceleration in y per step
-    max_acc_y:      0.03 # [m/s^2] max acceleration in y per step
-    min_acc_yaw:   -5.00 # [deg/s^2] min acceleration in yaw per step
-    max_acc_yaw:    5.00 # [deg/s^2] max acceleration in yaw per step
+    x:      { axis: 1, thresh: 0.1, min: -1.0, max: 1.0, zero: 0.0, invert: False }
+    y:      { axis: 0, thresh: 0.1, min: -1.0, max: 1.0, zero: 0.0, invert: False }
+    yaw:    { axis: 3, thresh: 0.1, min: -1.0, max: 1.0, zero: 0.0, invert: False }
+    enable: { axis: 2, thresh: 0.5, min: -2.0, max: 0.0, zero: 1.0, invert: False }

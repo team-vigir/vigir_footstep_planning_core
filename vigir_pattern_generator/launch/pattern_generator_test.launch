@@ -13,7 +13,6 @@
 
     <!-- Start pattern generator node -->    
     <include file="$(find vigir_pattern_generator)/launch/pattern_generator.launch" />
-    <rosparam file="$(find vigir_pattern_generator)/config/pattern_generator_config.yaml" command="load" />
 
     <!-- start the pattern generator rqt gui interface-->
     <node name="pattern_generator_rqt_widget" pkg="vigir_footstep_planning_widgets" type="pattern_generator_rqt" respawn="true"/>

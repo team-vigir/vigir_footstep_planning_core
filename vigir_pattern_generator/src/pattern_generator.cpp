@@ -9,7 +9,7 @@ PatternGenerator::PatternGenerator(ros::NodeHandle& nh)
   nh.param("world_frame_id", world_frame_id_, std::string("/world"));
   nh.param("pattern_generator/number_of_steps", (int&)number_of_steps_needed_, 5);
 
-  ros::service::waitForService("step_plan_request");
+  //ros::service::waitForService("step_plan_request");
 
   // start service clients: TODO use global footstep planner
   generate_feet_pose_client_ = nh.serviceClient<msgs::GenerateFeetPoseService>("generate_feet_pose");
@@ -43,8 +43,7 @@ msgs::ErrorStatus PatternGenerator::generatePattern(const msgs::StepPlanRequest&
 
 void PatternGenerator::reset()
 {
-  joy_d_step = geometry_msgs::Pose();
-  joy_d_step.orientation = tf::createQuaternionMsgFromYaw(0.0);
+  joystick_cmd_ = geometry_msgs::Twist();
 
   last_performed_step_index_ = 0;
   first_changeable_step_index_ = 0;
@@ -165,13 +164,10 @@ void PatternGenerator::clearStepPlan()
 void PatternGenerator::update(const ros::TimerEvent& timer)
 {
   // handle joystick input
-  if (joystick_handler_ && params_.joystick_mode)
+  if (joystick_handler_ /*&& params_.joystick_mode*/)
   {
-    double yaw = tf::getYaw(joy_d_step.orientation);
-
     bool enable;
-    joystick_handler_->updateJoystickCommands((timer.current_real - timer.last_real).toSec(), enable, joy_d_step.position.x, joy_d_step.position.y, yaw);
-    joy_d_step.orientation = tf::createQuaternionMsgFromYaw(yaw);
+    joystick_handler_->getJoystickCommand((timer.current_real - timer.last_real).toSec(), enable, joystick_cmd_);
 
     setEnabled(enable);
   }
@@ -332,23 +328,15 @@ void PatternGenerator::generateSteps(unsigned int n, bool close_step)
   }
 
   // check command input
-  geometry_msgs::Pose d_step = params_.d_step;
-  if (params_.joystick_mode)
-    d_step = joy_d_step;
-
-  tf::Quaternion q_tf;
-  tf::quaternionMsgToTF(d_step.orientation, q_tf);
-
-  double roll, pitch, yaw;
-  tf::Matrix3x3(q_tf).getRPY(roll, pitch, yaw);
+  const geometry_msgs::Twist& cmd = params_.joystick_mode ? joystick_cmd_ : params_.cmd;
 
   // determine which foot has to move first
   unsigned int next_moving_foot_index = msgs::Foot::LEFT;
   if (getNextStartStepIndex() == 0)
   {
-    if (d_step.position.y < 0.0)
+    if (cmd.linear.y < 0.0)
       next_moving_foot_index = msgs::Foot::LEFT;
-    else if (d_step.position.y == 0.0 && yaw < 0.0)
+    else if (cmd.linear.y == 0.0 && cmd.angular.z < 0.0)
       next_moving_foot_index = msgs::Foot::RIGHT;
   }
   else
@@ -388,14 +376,14 @@ void PatternGenerator::generateSteps(unsigned int n, bool close_step)
   else
   {
     req.pattern_parameters.steps = n;
-    req.pattern_parameters.step_distance_forward = d_step.position.x;
-    req.pattern_parameters.step_distance_sideward = d_step.position.y;
-    req.pattern_parameters.turn_angle = yaw;
+    req.pattern_parameters.step_distance_forward = cmd.linear.x;
+    req.pattern_parameters.step_distance_sideward = cmd.linear.y;
+    req.pattern_parameters.turn_angle = cmd.angular.z;
     req.pattern_parameters.close_step = close_step;
     req.pattern_parameters.extra_seperation = false;
     req.pattern_parameters.override = false; // disable here, it will override too much by now
-    req.pattern_parameters.roll = roll;
-    req.pattern_parameters.pitch = pitch;
+    req.pattern_parameters.roll = 0.0;
+    req.pattern_parameters.pitch = 0.0;
     req.pattern_parameters.mode = msgs::PatternParameters::SAMPLING;
   }
 

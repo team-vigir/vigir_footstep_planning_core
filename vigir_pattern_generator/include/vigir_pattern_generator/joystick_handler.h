@@ -32,6 +32,7 @@
 #include <ros/ros.h>
 
 #include <geometry_msgs/Point.h>
+#include <geometry_msgs/Twist.h>
 
 #include <sensor_msgs/Joy.h>
 
@@ -39,6 +40,106 @@
 
 namespace vigir_footstep_planning
 {
+class JoystickInputHandle
+{
+public:
+  JoystickInputHandle(double thresh = 1.0)
+    : val_(0.0)
+    , thresh_(thresh)
+  {}
+
+  virtual void joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg) = 0;
+
+  virtual double getValue() const { return val_; }
+  virtual bool isPressed() const { return std::abs(val_) >= thresh_; }
+
+  typedef boost::shared_ptr<JoystickInputHandle> Ptr;
+  typedef boost::shared_ptr<JoystickInputHandle> ConstPtr;
+
+protected:
+  double val_;
+  double thresh_;
+};
+
+class JoystickButton
+  : public JoystickInputHandle
+{
+public:
+  JoystickButton(int button, double thresh = 1.0)
+    : JoystickInputHandle(thresh)
+    , button_id_(button)
+  {
+    ROS_INFO("[Button %i]", button_id_);
+  }
+
+  JoystickButton(XmlRpc::XmlRpcValue& params)
+    : JoystickButton(params["button"], params["thresh"])
+  {}
+
+  void joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg) override
+  {
+    if (joy_msg->buttons.size() <= button_id_)
+      ROS_ERROR_THROTTLE(1.0, "Couldn't read button %i as only %lu buttons exist. Maybe wrong controller connected?", button_id_, joy_msg->buttons.size());
+    else
+      val_ = joy_msg->buttons[button_id_];
+  }
+
+protected:
+  int button_id_;
+};
+
+class JoystickAxis
+  : public JoystickInputHandle
+{
+public:
+  JoystickAxis(int axis, double thresh = 1.0, double min_val = -1.0, double max_val = 1.0, double zero_offset = 0.0, bool invert = false)
+    : JoystickInputHandle(thresh)
+    , axis_id_(axis)
+    , min_(min_val)
+    , max_(max_val)
+    , zero_offset_(zero_offset)
+    , scale_factor_(2.0/(max_-min_))
+    , invert_(invert)
+  {
+    ROS_INFO("[Axis %i] %f - (%f, %f) - %f", axis, thresh, min_val, max_val, zero_offset);
+  }
+
+  JoystickAxis(XmlRpc::XmlRpcValue& params)
+    : JoystickAxis(params["axis"], params["thresh"], params["min"], params["max"], params["zero"], params["invert"])
+  {}
+
+  void joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg) override
+  {
+    if (joy_msg->axes.size() <= axis_id_)
+      ROS_ERROR_THROTTLE(1.0, "Couldn't read axis %i as only %lu axes exist. Maybe wrong controller connected?", axis_id_, joy_msg->axes.size());
+    else
+    {
+      // read value und remove offset
+      val_ = joy_msg->axes[axis_id_] - zero_offset_;
+
+      // invert if set
+      if (invert_)
+        val_ = -val_;
+
+      // rescale to [-1; 1] based on min max borders
+      val_ = std::min(std::max(val_, min_), max_); // clamping in [min; max]
+      val_ *= scale_factor_; // rescale
+      val_ += 0.5*(max_-min_);
+    }
+  }
+
+protected:
+  int axis_id_;
+
+  double min_;
+  double max_;
+  double zero_offset_;
+
+  double scale_factor_;
+
+  bool invert_;
+};
+
 class JoystickHandler
 {
 public:
@@ -48,12 +149,14 @@ public:
   // joystick input
   void joyCallback(const sensor_msgs::Joy::ConstPtr& last_joy_msg);
 
-  void updateJoystickCommands(double elapsed_time_sec, bool& enable, double& d_x, double& d_y, double& d_yaw) const;
+  void getJoystickCommand(double elapsed_time_sec, bool& enable, geometry_msgs::Twist& twist) const;
 
   typedef boost::shared_ptr<JoystickHandler> Ptr;
   typedef boost::shared_ptr<JoystickHandler> ConstPtr;
 
 protected:
+  void initJoystickInput(XmlRpc::XmlRpcValue& params, std::string name, JoystickInputHandle::Ptr& handle) const;
+
   void updateJoystickCommand(double elapsed_time_sec, double joy_val, double& val, double min_vel, double max_vel, double min_acc, double max_acc, double sensivity) const;
   double convertJoyAxisToAcc(double elapsed_time_sec, double joy_val, double val, double min_vel, double max_vel) const;
 
@@ -61,21 +164,13 @@ protected:
   ros::Subscriber joy_sub;
 
   // joystick settings
-  geometry_msgs::Point thresh_lin;
-  geometry_msgs::Point thresh_rot;
-  geometry_msgs::Point sensivity_lin;
-  geometry_msgs::Point sensivity_rot;
-  geometry_msgs::Point limits_min_lin_vel;
-  geometry_msgs::Point limits_max_lin_vel;
-  geometry_msgs::Point limits_min_lin_acc;
-  geometry_msgs::Point limits_max_lin_acc;
-  geometry_msgs::Point limits_min_rot_vel;
-  geometry_msgs::Point limits_max_rot_vel;
-  geometry_msgs::Point limits_min_rot_acc;
-  geometry_msgs::Point limits_max_rot_acc;
+  JoystickInputHandle::Ptr x_axis_;
+  JoystickInputHandle::Ptr y_axis_;
+  JoystickInputHandle::Ptr yaw_axis_;
+
+  JoystickInputHandle::Ptr enable_;
 
   // joystick input
-  sensor_msgs::Joy::ConstPtr last_joy_msg;
   bool enable_generator;
 };
 }

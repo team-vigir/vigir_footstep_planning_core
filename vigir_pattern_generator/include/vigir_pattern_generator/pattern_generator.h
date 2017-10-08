@@ -96,7 +96,7 @@ private:
 
   // handler for joystick input
   JoystickHandler::Ptr joystick_handler_;
-  geometry_msgs::Twist cmd;
+  geometry_msgs::Twist joystick_cmd_;
 
   // generator params
   std::string world_frame_id_;
