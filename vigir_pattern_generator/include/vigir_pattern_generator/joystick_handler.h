@@ -92,20 +92,22 @@ class JoystickAxis
   : public JoystickInputHandle
 {
 public:
-  JoystickAxis(int axis, double thresh = 1.0, double min_val = -1.0, double max_val = 1.0, double zero_offset = 0.0, bool invert = false)
+  JoystickAxis(int axis, double thresh = 1.0, double min_val = -1.0, double max_val = 1.0, double zero_val = 0.0, double calib_offset = 0.0, bool invert = false)
     : JoystickInputHandle(thresh)
     , axis_id_(axis)
     , min_(min_val)
     , max_(max_val)
-    , zero_offset_(zero_offset)
-    , scale_factor_(2.0/(max_-min_))
+    , zero_val_(zero_val)
+    , calib_offset_(calib_offset)
     , invert_(invert)
+    , scale_factor_(2.0/(max_-min_))
+    , scale_offset_(0.5*(max_+min_))
   {
-    ROS_INFO("[Axis %i] %f - (%f, %f) - %f", axis, thresh, min_val, max_val, zero_offset);
+    ROS_INFO("[Axis %i] %f - (%f, %f) - %f", axis, thresh, min_val, max_val, calib_offset);
   }
 
   JoystickAxis(XmlRpc::XmlRpcValue& params)
-    : JoystickAxis(params["axis"], params["thresh"], params["min"], params["max"], params["zero"], params["invert"])
+    : JoystickAxis(params["axis"], params["thresh"], params["min"], params["max"], params["zero"], params["calib"], params["invert"])
   {}
 
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg) override
@@ -115,7 +117,7 @@ public:
     else
     {
       // read value und remove offset
-      val_ = joy_msg->axes[axis_id_] - zero_offset_;
+      val_ = joy_msg->axes[axis_id_] - calib_offset_;
 
       // invert if set
       if (invert_)
@@ -123,21 +125,25 @@ public:
 
       // rescale to [-1; 1] based on min max borders
       val_ = std::min(std::max(val_, min_), max_); // clamping in [min; max]
-      val_ *= scale_factor_; // rescale
-      val_ += 0.5*(max_-min_);
+      val_ = val_ * scale_factor_ + scale_offset_; // rescale
     }
   }
+
+  bool isPressed() const override { return std::abs(val_-zero_val_) >= thresh_; }
 
 protected:
   int axis_id_;
 
   double min_;
   double max_;
-  double zero_offset_;
+  double zero_val_;
 
-  double scale_factor_;
+  double calib_offset_;
 
   bool invert_;
+
+  double scale_factor_;
+  double scale_offset_;
 };
 
 class JoystickHandler
