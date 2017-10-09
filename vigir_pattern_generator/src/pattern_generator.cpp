@@ -50,7 +50,6 @@ void PatternGenerator::reset()
 {
   joystick_cmd_ = geometry_msgs::Twist();
 
-  last_performed_step_index_ = 0;
   first_changeable_step_index_ = 0;
   next_step_index_needed_ = 0;
 
@@ -69,17 +68,11 @@ void PatternGenerator::setParams(const msgs::PatternGeneratorParameters& params)
   if (isEnabled() && params.enable)
   {
     // trigger replanning
-    bool result = true;
-    if (isSimulationMode())
-      result = setNextStartStepIndex(last_performed_step_index_+1);
-    else
-      result = setNextStartStepIndex(first_changeable_step_index_-1);
-
-    if (!result)
-    {
-      ROS_ERROR("[PatternGenerator] setParams: Replanning failed due to unknown start step.");
-      reset();
-    }
+//    if (!setNextStartStepIndex(first_changeable_step_index_))
+//    {
+//      ROS_ERROR("[PatternGenerator] setParams: Replanning failed due to unknown start step.");
+//      reset();
+//    }
   }
   else
   {
@@ -87,28 +80,17 @@ void PatternGenerator::setParams(const msgs::PatternGeneratorParameters& params)
     setEnabled(params.enable);
   }
 
-  this->params_ = params;
+  params_ = params;
 }
 
 void PatternGenerator::setEnabled(bool enable)
 {
   // activation
   if (!isEnabled() && enable)
-  {
     reset();
-  }
   // deactivation
   else if (isEnabled() && !enable)
-  {
-    bool result = true;
-    if (isSimulationMode())
-      result = setNextStartStepIndex(last_performed_step_index_+1);
-    else
-      result = setNextStartStepIndex(first_changeable_step_index_-1);
-
-    if (result)
-      generateSteps(0, true);
-  }
+    generateSteps(0);
 
   params_.enable = enable;
 }
@@ -125,33 +107,23 @@ bool PatternGenerator::isSimulationMode() const
 
 bool PatternGenerator::hasSteps() const
 {
-  return !newest_step_plan_.steps.empty();
+  return !last_step_sequence_.steps.empty();
 }
 
 bool PatternGenerator::hasNewSteps() const
 {
-  return !newest_step_plan_.steps.empty() && has_new_steps_;
+  return !last_step_sequence_.steps.empty() && has_new_steps_;
 }
 
 void PatternGenerator::getCompleteStepPlan(msgs::StepPlan& step_plan) const
 {
-  step_plan = complete_step_plan_;
+  step_plan_.toMsg(step_plan);
 }
 
-void PatternGenerator::getNewestStepPlan(msgs::StepPlan& step_plan) const
+void PatternGenerator::getLastStepSequence(msgs::StepPlan& step_plan) const
 {
   has_new_steps_ = false;
-  step_plan = newest_step_plan_;
-}
-
-bool PatternGenerator::setNextStartStepIndex(int step_index)
-{
-  if (step_index < 0)
-    return false;
-  else if (!updateFeetStartPoseByStepMap(step_map_, step_index-1) || !updateFeetStartPoseByStepMap(step_map_, step_index))
-    return false;
-
-  return true;
+  step_plan = last_step_sequence_;
 }
 
 int PatternGenerator::getNextStartStepIndex() const
@@ -161,17 +133,16 @@ int PatternGenerator::getNextStartStepIndex() const
 
 void PatternGenerator::clearStepPlan()
 {
-  complete_step_plan_ = msgs::StepPlan();
-  newest_step_plan_ = msgs::StepPlan();
-  step_map_.clear();
+  step_plan_.clear();
+  last_step_sequence_ = msgs::StepPlan();
 }
 
-void PatternGenerator::update(const ros::TimerEvent& timer)
+void PatternGenerator::update(const ros::TimerEvent& /*timer*/)
 {
   // (timer.current_real - timer.last_real).toSec()
 
   // handle joystick input
-  if (joystick_handler_ /*&& params_.joystick_mode*/)
+  if (joystick_handler_ && params_.joystick_mode)
   {
     bool enable;
     joystick_handler_->getJoystickCommand(joystick_cmd_, enable);
@@ -184,51 +155,38 @@ void PatternGenerator::update(const ros::TimerEvent& timer)
     return;
 
   // check if more steps are needed
-//  int queued_steps = getNextStartStepIndex() - last_performed_step_index_;
-//  if (queued_steps < static_cast<int>(number_of_steps_needed_))
-//    generateSteps(number_of_steps_needed_-queued_steps);
   generateSteps(number_of_steps_needed_);
 
   if (isSimulationMode())
-    last_performed_step_index_++;
-}
-
-void PatternGenerator::updateLastPerformedStepIndex(int last_performed_step_index)
-{
-  if (!isSimulationMode())
-  {
-    if (last_performed_step_index < 0)
-    {
-      ROS_ERROR("[PatternGenerator] updateLastPerformedStepIndex: Stopping due to invalid step indx %i", last_performed_step_index);
-      reset();
-    }
-
-    last_performed_step_index_ = last_performed_step_index;
-  }
+    updateFirstChangeableStepIndex(first_changeable_step_index_+1);
 }
 
 void PatternGenerator::updateFirstChangeableStepIndex(int first_changeable_step_index)
 {
-  if (!isSimulationMode())
+  if (first_changeable_step_index < 0)
   {
-    if (first_changeable_step_index < 0)
-    {
-      ROS_ERROR("[PatternGenerator] updateFirstChangeableStepIndex: Stopping due to invalid step indx %i", first_changeable_step_index);
-      setEnabled(false);
-    }
-
-    first_changeable_step_index_ = first_changeable_step_index;
+    ROS_ERROR("[PatternGenerator] updateFirstChangeableStepIndex: Stopping due to invalid step index %i", first_changeable_step_index);
+    setEnabled(false);
   }
-}
 
-void PatternGenerator::updateFeetStartPose(uint8_t foot_index, const geometry_msgs::Pose& pose)
-{
-  msgs::Foot foot;
-  foot.header.frame_id = world_frame_id_;
-  foot.header.stamp = ros::Time::now();
-  foot.foot_index = foot_index;
-  foot.pose = pose;
-  updateFeetStartPose(foot);
+  first_changeable_step_index_ = first_changeable_step_index;
+
+  msgs::Step step;
+  if (step_plan_.getStep(step, first_changeable_step_index_))
+    updateFeetStartPose(step);
+  else
+  {
+    ROS_ERROR("[PatternGenerator] updateFirstChangeableStepIndex: Internal error; step %i isn't in step plan.", first_changeable_step_index);
+    setEnabled(false);
+  }
+
+  if (step_plan_.getStep(step, first_changeable_step_index_+1))
+    updateFeetStartPose(step);
+  else
+  {
+    ROS_ERROR("[PatternGenerator] updateFirstChangeableStepIndex: Internal error; step %i isn't in step plan.", first_changeable_step_index);
+    setEnabled(false);
+  }
 }
 
 void PatternGenerator::updateFeetStartPose(const msgs::Foot& foot)
@@ -274,53 +232,7 @@ void PatternGenerator::updateFeetStartPose(const msgs::Step& step)
     foot_start_step_index_right_ = step.step_index;
 }
 
-bool PatternGenerator::updateFeetStartPoseByStepMap(const std::map<unsigned int, msgs::Step>& map, unsigned int step_index)
-{
-  std::map<unsigned int, msgs::Step>::const_iterator itr = map.find(step_index);
-  if (itr != map.end())
-  {
-    updateFeetStartPose(itr->second);
-    return true;
-  }
-  return false;
-}
-
-void PatternGenerator::updateFootstepMap(std::map<unsigned int, msgs::Step>& map, const std::vector<msgs::Step>& vec) const
-{
-  std::vector<msgs::Step>::const_iterator itr = vec.begin();
-
-  if (!map.empty())
-   itr++;
-
-  for (; itr != vec.end(); itr++)
-    map[itr->step_index] = *itr;
-}
-
-void PatternGenerator::mapToVectorIndexed(const std::map<unsigned int, msgs::Step>& map, std::vector<msgs::Step>& vec, unsigned int start_index, unsigned int end_index) const
-{
-  double foot_z = 0.0;
-
-  vec.clear();
-  for (unsigned int step_index = start_index; step_index <= end_index; step_index++)
-  {
-    std::map<unsigned int, msgs::Step>::const_iterator itr = map.find(step_index);
-
-    // break if index is missing
-    if (itr == map.end())
-      break;
-
-    msgs::Step step = itr->second;
-
-    /// TODO: Workaround for avoiding z drift
-    if (step_index == start_index)
-      foot_z = step.foot.pose.position.z;
-    else
-      step.foot.pose.position.z = foot_z;
-    vec.push_back(step);
-  }
-}
-
-void PatternGenerator::generateSteps(unsigned int n, bool close_step)
+void PatternGenerator::generateSteps(unsigned int n)
 {
   msgs::StepPlanRequestService step_plan_request_srv;
   msgs::StepPlanRequest& req = step_plan_request_srv.request.plan_request;
@@ -346,15 +258,14 @@ void PatternGenerator::generateSteps(unsigned int n, bool close_step)
   cmd.linear.y *= max_vel_y_;
   cmd.angular.z *= max_vel_yaw_;
 
-
-  // determine which foot has to move first
+  // determine which foot has to move first (note: For the planner the start foot is fixed, thus, the first moved foot is start+1)
   unsigned int next_moving_foot_index = msgs::Foot::LEFT;
   if (getNextStartStepIndex() == 0)
   {
-    if (cmd.linear.y < 0.0)
-      next_moving_foot_index = msgs::Foot::LEFT;
-    else if (cmd.linear.y == 0.0 && cmd.angular.z < 0.0)
+    if (cmd.linear.y < 0.0 || (cmd.linear.y == 0.0 && cmd.angular.z < 0.0))
       next_moving_foot_index = msgs::Foot::RIGHT;
+    else
+      next_moving_foot_index = msgs::Foot::LEFT;
   }
   else
   {
@@ -363,8 +274,6 @@ void PatternGenerator::generateSteps(unsigned int n, bool close_step)
     else
       next_moving_foot_index = msgs::Foot::LEFT;
   }
-
-  ROS_INFO("CMD: %f/%f/%f", cmd.linear.x, cmd.linear.x, cmd.angular.z);
 
   // generate request message
   req.header = start_feet_pose_->header;
@@ -398,13 +307,15 @@ void PatternGenerator::generateSteps(unsigned int n, bool close_step)
     req.pattern_parameters.step_distance_forward = cmd.linear.x;
     req.pattern_parameters.step_distance_sideward = cmd.linear.y;
     req.pattern_parameters.turn_angle = cmd.angular.z;
-    req.pattern_parameters.close_step = close_step;
+    req.pattern_parameters.close_step = true;
     req.pattern_parameters.extra_seperation = false;
     req.pattern_parameters.override = false; // disable here, it will override too much by now
     req.pattern_parameters.roll = 0.0;
     req.pattern_parameters.pitch = 0.0;
     req.pattern_parameters.mode = msgs::PatternParameters::SAMPLING;
   }
+
+  ROS_INFO_STREAM(req);
 
   req.planning_mode = msgs::StepPlanRequest::PLANNING_MODE_PATTERN;
   req.parameter_set_name = params_.parameter_set_name;
@@ -418,24 +329,21 @@ void PatternGenerator::generateSteps(unsigned int n, bool close_step)
 
   // handle new step plan
   if (!step_plan_request_srv.response.step_plan.steps.size())
+  {
+    ROS_ERROR("[PatternGenerator] Received empty plan!");
     return;
+  }
 
-  updateFootstepMap(step_map_, step_plan_request_srv.response.step_plan.steps);
-
-  if (complete_step_plan_.steps.empty()) // received step plan first time
-    complete_step_plan_ = step_plan_request_srv.response.step_plan;
-  else // just update steps
-    mapToVectorIndexed(step_map_, complete_step_plan_.steps, 0, step_plan_request_srv.response.step_plan.steps.back().step_index);
-
-  newest_step_plan_ = step_plan_request_srv.response.step_plan;
-  newest_step_plan_.header.stamp = ros::Time::now();
-  newest_step_plan_.header.seq++;
+  last_step_sequence_ = step_plan_request_srv.response.step_plan;
   has_new_steps_ = true;
 
-//  if (!setNextStartStepIndex(newest_step_plan_.steps.back().step_index))
-//  {
-//    ROS_ERROR("[PatternGenerator] generateSteps: Last step index of recent pattern was wrong. Resetting now!");
-//    reset();
-//  }
+  if (params_.ignore_invalid_steps)
+  {
+    for (msgs::Step& step : last_step_sequence_.steps)
+      step.valid = true;
+  }
+
+  step_plan_.updateStepPlan(last_step_sequence_);
+  step_plan_.removeSteps(last_step_sequence_.steps.back().step_index+1);
 }
 }

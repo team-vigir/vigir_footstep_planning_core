@@ -44,7 +44,6 @@ bool PatternGeneratorNode::setParamsService(msgs::PatternGeneratorParametersServ
 
 void PatternGeneratorNode::executeStepPlanFeedback(const msgs::ExecuteStepPlanFeedbackConstPtr& feedback)
 {
-  pattern_generator.updateLastPerformedStepIndex(feedback->last_performed_step_index);
   pattern_generator.updateFirstChangeableStepIndex(feedback->first_changeable_step_index);
 }
 
@@ -61,7 +60,7 @@ void PatternGeneratorNode::update(const ros::TimerEvent& timer)
   step_plan_vis_pub.publish(complete_step_plan);
 
   msgs::ExecuteStepPlanGoal goal;
-  pattern_generator.getNewestStepPlan(goal.step_plan); // must be getted to reset hasNew flag
+  pattern_generator.getLastStepSequence(goal.step_plan); // must be get to reset hasNew flag
 
   if (republish_complete_step_plan)
     goal.step_plan = complete_step_plan;

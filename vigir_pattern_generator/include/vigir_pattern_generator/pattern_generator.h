@@ -43,6 +43,7 @@
 
 #include <vigir_footstep_planning_lib/helper.h>
 #include <vigir_footstep_planning_msgs/footstep_planning_msgs.h>
+#include <vigir_footstep_planning_msgs/step_plan.h>
 
 #include <vigir_pattern_generator/joystick_handler.h>
 
@@ -57,7 +58,7 @@ public:
   virtual ~PatternGenerator();
 
   void reset();
-  void setParams(const msgs::PatternGeneratorParameters& params_);
+  void setParams(const msgs::PatternGeneratorParameters& params);
   void setEnabled(bool enabled);
   bool isEnabled() const;
   bool isSimulationMode() const;
@@ -65,14 +66,12 @@ public:
   bool hasSteps() const;
   bool hasNewSteps() const;
   void getCompleteStepPlan(msgs::StepPlan& step_plan) const;
-  void getNewestStepPlan(msgs::StepPlan& step_plan) const;
+  void getLastStepSequence(msgs::StepPlan& step_plan) const;
   void clearStepPlan();
 
-  bool setNextStartStepIndex(int step_index);
   int getNextStartStepIndex() const;
 
   void update(const ros::TimerEvent& timer);
-  void updateLastPerformedStepIndex(int last_performed_step_index_);
   void updateFirstChangeableStepIndex(int first_changeable_step_index_);
 
   // simple pattern generator
@@ -83,16 +82,11 @@ public:
   typedef boost::shared_ptr<PatternGenerator> ConstPtr;
 
 private:
-  void updateFeetStartPose(uint8_t foot_index, const geometry_msgs::Pose& pose);
   void updateFeetStartPose(const msgs::Foot& foot);
   void updateFeetStartPose(const msgs::Feet& feet);
   void updateFeetStartPose(const msgs::Step& step);
-  bool updateFeetStartPoseByStepMap(const std::map<unsigned int, msgs::Step>& map, unsigned int step_index);
 
-  void updateFootstepMap(std::map<unsigned int, msgs::Step>& map, const std::vector<msgs::Step>& vec) const;
-  void mapToVectorIndexed(const std::map<unsigned int, msgs::Step>& map, std::vector<msgs::Step>& vec, unsigned int start_index, unsigned int end_index) const;
-
-  void generateSteps(unsigned int n, bool close_step = false);
+  void generateSteps(unsigned int n);
 
   // handler for joystick input
   JoystickHandler::Ptr joystick_handler_;
@@ -109,7 +103,6 @@ private:
   msgs::PatternGeneratorParameters params_;
 
   // controller feedback
-  int last_performed_step_index_; // last executed step (executing step is current + 1)
   int first_changeable_step_index_;
   int next_step_index_needed_;
 
@@ -120,9 +113,8 @@ private:
   mutable bool has_new_steps_;
 
   // generated step plan
-  msgs::StepPlan complete_step_plan_;
-  msgs::StepPlan newest_step_plan_;
-  std::map<unsigned int, msgs::Step> step_map_;
+  StepPlan step_plan_;
+  msgs::StepPlan last_step_sequence_;
 
   // service clients
   ros::ServiceClient generate_feet_pose_client_;

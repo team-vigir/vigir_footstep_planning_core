@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
 <launch>
-  <arg name="namespace" default="vigir/footstep_planning" />
-  <group ns="$(arg namespace)">
+  <arg name="ns" default="vigir/footstep_planning" />
+  <group ns="$(arg ns)">
     <!-- run map servers -->
     <node name="map_server_1" pkg="map_server" type="map_server" args="$(find vigir_footstep_planner)/maps/RCGO2011_Hector_Mission4_2.yaml">
       <param name="frame_id" value="/world" />

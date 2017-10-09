@@ -166,15 +166,17 @@ protected:
   void updateJoystickCommand(double elapsed_time_sec, double joy_val, double& val, double min_vel, double max_vel, double min_acc, double max_acc, double sensivity) const;
   double convertJoyAxisToAcc(double elapsed_time_sec, double joy_val, double val, double min_vel, double max_vel) const;
 
-  // subscriber
-  ros::Subscriber joy_sub;
-
   // joystick settings
   JoystickInputHandle::Ptr x_axis_;
   JoystickInputHandle::Ptr y_axis_;
   JoystickInputHandle::Ptr yaw_axis_;
 
   JoystickInputHandle::Ptr enable_;
+
+  bool has_joy_msg_;
+
+  // subscriber
+  ros::Subscriber joy_sub_;
 };
 }
 

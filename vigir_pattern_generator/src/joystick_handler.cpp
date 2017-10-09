@@ -5,6 +5,7 @@
 namespace vigir_footstep_planning
 {
 JoystickHandler::JoystickHandler(ros::NodeHandle& nh)
+  : has_joy_msg_(false)
 {
   XmlRpc::XmlRpcValue params;
 
@@ -18,7 +19,7 @@ JoystickHandler::JoystickHandler(ros::NodeHandle& nh)
   else
     ROS_ERROR("[JoystickHandler] Input parameters missing in config!");
 
-  joy_sub = nh.subscribe("/joy", 1,& JoystickHandler::joyCallback, this);
+  joy_sub_ = nh.subscribe("joy", 1,& JoystickHandler::joyCallback, this);
 }
 
 JoystickHandler::~JoystickHandler()
@@ -38,13 +39,19 @@ void JoystickHandler::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 
   if (enable_)
     enable_->joyCallback(joy);
+
+  has_joy_msg_ = true;
 }
 
 void JoystickHandler::getJoystickCommand(geometry_msgs::Twist& twist, bool& enable) const
 {
-  ROS_INFO("%f/%f/%f %f %i", x_axis_->getValue(), y_axis_->getValue(), yaw_axis_->getValue(), enable_->getValue(), enable_->isPressed());
-
   twist = geometry_msgs::Twist();
+
+  if (!has_joy_msg_)
+  {
+    enable = false;
+    return;
+  }
 
   if (x_axis_ && x_axis_->isPressed())
     twist.linear.x = x_axis_->getValue();
