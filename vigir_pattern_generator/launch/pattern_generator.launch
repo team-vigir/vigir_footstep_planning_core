@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 
 <launch>
-  <!-- Start pattern generator node -->
-  <node name="pattern_generator" pkg="vigir_pattern_generator" type="pattern_generator_node" output="screen" />
-  <rosparam file="$(find vigir_pattern_generator)/config/pattern_generator_config.yaml" command="load" />
+  <arg name="ns" default="vigir/footstep_planning" />
+  <group ns="$(arg ns)">
+    <!-- Start pattern generator node -->
+    <node name="pattern_generator" pkg="vigir_pattern_generator" type="pattern_generator_node" output="screen" />
+    <rosparam file="$(find vigir_pattern_generator)/config/pattern_generator_config.yaml" command="load" />
+  </group>
 </launch>

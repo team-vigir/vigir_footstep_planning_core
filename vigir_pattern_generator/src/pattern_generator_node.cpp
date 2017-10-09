@@ -10,7 +10,6 @@ PatternGeneratorNode::PatternGeneratorNode(ros::NodeHandle& nh)
   nh.param("pattern_generator/republish_complete_step_plan", republish_complete_step_plan, false);
 
   // subscribe topics
-  generate_pattern_sub = nh.subscribe("pattern_generator/generate_pattern", 1, &PatternGeneratorNode::generatePattern, this);
   set_params_sub = nh.subscribe("pattern_generator/set_params", 1, &PatternGeneratorNode::setParams, this);
 
   // publish topics
@@ -18,14 +17,10 @@ PatternGeneratorNode::PatternGeneratorNode(ros::NodeHandle& nh)
   step_plan_vis_pub = nh.advertise<msgs::StepPlan>("vis/step_plan", 1);
 
   // start own services
-  generate_pattern_srv = nh.advertiseService("pattern_generator/generate_pattern", &PatternGeneratorNode::generatePatternService, this);
   set_params_srv = nh.advertiseService("pattern_generator/set_params", &PatternGeneratorNode::setParamsService, this);
 
   // init action client
-  execute_step_plan_ac = SimpleActionClient<msgs::ExecuteStepPlanAction>::create(nh, "/execute_step_plan");
-
-  // init action servers
-  generate_pattern_as = SimpleActionServer<msgs::GeneratePatternAction>::create(nh, "pattern_generator/generate_pattern", true, boost::bind(&PatternGeneratorNode::generatePatternAction, this, boost::ref(generate_pattern_as)));
+  execute_step_plan_ac = SimpleActionClient<msgs::ExecuteStepPlanAction>::create(nh, "execute_step_plan");
 
   // init timer to periodically call the pattern generator
   update_intervall = ros::Duration(1.0/update_rate);
@@ -36,57 +31,15 @@ PatternGeneratorNode::~PatternGeneratorNode()
 {
 }
 
-void PatternGeneratorNode::generatePattern(const msgs::StepPlanRequestConstPtr& step_plan_request)
-{
-  msgs::StepPlan step_plan;
-  msgs::ErrorStatus status = pattern_generator.generatePattern(*step_plan_request, step_plan);
-
-  if (status.error == msgs::ErrorStatus::NO_ERROR)
-  {
-    step_plan_pub.publish(step_plan);
-    step_plan_vis_pub.publish(step_plan);
-  }
-}
-
 void PatternGeneratorNode::setParams(const msgs::PatternGeneratorParametersConstPtr& params)
 {
   pattern_generator.setParams(*params);
-}
-
-bool PatternGeneratorNode::generatePatternService(msgs::GeneratePatternService::Request& req, msgs::GeneratePatternService::Response& resp)
-{
-  resp.status = pattern_generator.generatePattern(req.plan_request, resp.step_plan);
-
-  if (resp.status.error == msgs::ErrorStatus::NO_ERROR)
-    step_plan_vis_pub.publish(resp.step_plan);
-
-  return true; // return always true so the message is returned
 }
 
 bool PatternGeneratorNode::setParamsService(msgs::PatternGeneratorParametersService::Request& req, msgs::PatternGeneratorParametersService::Response& /*resp*/)
 {
   pattern_generator.setParams(req.params);
   return true; // return always true so the message is returned
-}
-
-void PatternGeneratorNode::generatePatternAction(SimpleActionServer<msgs::GeneratePatternAction>::Ptr& as)
-{
-  const msgs::GeneratePatternGoalConstPtr& goal(as->acceptNewGoal());
-
-  // check if new goal was preempted in the meantime
-  if (as->isPreemptRequested())
-  {
-    as->setPreempted();
-    return;
-  }
-
-  msgs::GeneratePatternResult result;
-  result.status = pattern_generator.generatePattern(goal->plan_request, result.step_plan);
-
-  if (result.status.error == msgs::ErrorStatus::NO_ERROR)
-    step_plan_vis_pub.publish(result.step_plan);
-
-  as->finish(result);
 }
 
 void PatternGeneratorNode::executeStepPlanFeedback(const msgs::ExecuteStepPlanFeedbackConstPtr& feedback)

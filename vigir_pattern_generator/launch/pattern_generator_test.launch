@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
 <launch>
-  <arg name="namespace" default="vigir/footstep_planning" />
-  <group ns="$(arg namespace)">
+  <arg name="ns" default="vigir/footstep_planning" />
+  <group ns="$(arg ns)">
     <!-- start up footstep planning system -->
     <include file="$(find vigir_footstep_planning)/launch/footstep_planning_basics.launch" />
 

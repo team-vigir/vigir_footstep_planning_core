@@ -48,18 +48,20 @@ public:
   void update(const ros::TimerEvent& timer);
 
 protected:
-  void generatePattern(const msgs::StepPlanRequestConstPtr& step_plan_request);
   void setParams(const msgs::PatternGeneratorParametersConstPtr& params);
 
-  bool generatePatternService(msgs::GeneratePatternService::Request& req, msgs::GeneratePatternService::Response& resp);
   bool setParamsService(msgs::PatternGeneratorParametersService::Request& req, msgs::PatternGeneratorParametersService::Response& resp);
-
-  void generatePatternAction(SimpleActionServer<msgs::GeneratePatternAction>::Ptr& as);
 
   void executeStepPlanFeedback(const msgs::ExecuteStepPlanFeedbackConstPtr& feedback);
 
+  ros::Duration update_intervall;
+  ros::Timer timer;
+
+  PatternGenerator pattern_generator;
+
+  bool republish_complete_step_plan;
+
   // subscriber
-  ros::Subscriber generate_pattern_sub;
   ros::Subscriber set_params_sub;
 
   // publisher
@@ -72,16 +74,6 @@ protected:
 
   // action clients
   SimpleActionClient<msgs::ExecuteStepPlanAction>::Ptr execute_step_plan_ac;
-
-  // action servers
-  SimpleActionServer<msgs::GeneratePatternAction>::Ptr generate_pattern_as;
-
-  ros::Duration update_intervall;
-  ros::Timer timer;
-
-  PatternGenerator pattern_generator;
-
-  bool republish_complete_step_plan;
 };
 }
 
