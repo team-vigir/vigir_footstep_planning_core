@@ -155,7 +155,7 @@ public:
   // joystick input
   void joyCallback(const sensor_msgs::Joy::ConstPtr& last_joy_msg);
 
-  void getJoystickCommand(double elapsed_time_sec, bool& enable, geometry_msgs::Twist& twist) const;
+  void getJoystickCommand(geometry_msgs::Twist& twist, bool& enable) const;
 
   typedef boost::shared_ptr<JoystickHandler> Ptr;
   typedef boost::shared_ptr<JoystickHandler> ConstPtr;
@@ -175,9 +175,6 @@ protected:
   JoystickInputHandle::Ptr yaw_axis_;
 
   JoystickInputHandle::Ptr enable_;
-
-  // joystick input
-  bool enable_generator;
 };
 }
 

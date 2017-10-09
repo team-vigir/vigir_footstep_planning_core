@@ -5,7 +5,6 @@
 namespace vigir_footstep_planning
 {
 JoystickHandler::JoystickHandler(ros::NodeHandle& nh)
-  : enable_generator(false)
 {
   XmlRpc::XmlRpcValue params;
 
@@ -41,30 +40,23 @@ void JoystickHandler::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     enable_->joyCallback(joy);
 }
 
-void JoystickHandler::getJoystickCommand(double elapsed_time_sec, bool& enable, geometry_msgs::Twist& twist) const
+void JoystickHandler::getJoystickCommand(geometry_msgs::Twist& twist, bool& enable) const
 {
-  enable = enable_generator;
-
   ROS_INFO("%f/%f/%f %f %i", x_axis_->getValue(), y_axis_->getValue(), yaw_axis_->getValue(), enable_->getValue(), enable_->isPressed());
 
-//  // check x axis
-//  double joy_x = last_joy_msg->axes[4];
-//  joy_x = std::abs(joy_x) > thresh_lin.x ? joy_x : 0.0;
-//  updateJoystickCommand(elapsed_time_sec, joy_x, d_x, limits_min_lin_vel.x, limits_max_lin_vel.x, limits_min_lin_acc.x, limits_max_lin_acc.x, sensivity_lin.x);
+  twist = geometry_msgs::Twist();
 
-//  // check y axis
-//  double joy_y = last_joy_msg->axes[0];
-//  joy_y =  std::abs(joy_y) > thresh_lin.y ? joy_y : 0.0;
-//  updateJoystickCommand(elapsed_time_sec, joy_y, d_y, limits_min_lin_vel.y, limits_max_lin_vel.y, limits_min_lin_acc.y, limits_max_lin_acc.y, sensivity_lin.y);
+  if (x_axis_ && x_axis_->isPressed())
+    twist.linear.x = x_axis_->getValue();
 
-//  // check yaw axis
-//  double joy_yaw = last_joy_msg->axes[3];
-//  joy_yaw = std::abs(joy_yaw) > thresh_rot.z ? joy_yaw : 0.0;
-//  if (joy_x < 0.0)
-//    joy_yaw = -joy_yaw;
-//  updateJoystickCommand(elapsed_time_sec, joy_yaw, d_yaw, limits_min_rot_vel.z, limits_max_rot_vel.z, limits_min_rot_acc.z, limits_max_rot_acc.z, sensivity_rot.z);
+  if (y_axis_ && y_axis_->isPressed())
+    twist.linear.y = y_axis_->getValue();
 
-  //ROS_INFO("%f (%f) / %f (%f) / %f (%f)", d_x, last_joy_msg->axes[4], d_y, last_joy_msg->axes[0], d_yaw, last_joy_msg->axes[3]);
+  if (yaw_axis_ && yaw_axis_->isPressed())
+    twist.angular.z = yaw_axis_->getValue();
+
+  if (enable_)
+    enable = enable_->isPressed();
 }
 
 void JoystickHandler::initJoystickInput(XmlRpc::XmlRpcValue& params, std::string name, JoystickInputHandle::Ptr& handle) const
