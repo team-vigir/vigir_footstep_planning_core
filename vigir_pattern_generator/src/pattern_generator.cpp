@@ -9,7 +9,12 @@ PatternGenerator::PatternGenerator(ros::NodeHandle& nh)
   nh.param("world_frame_id", world_frame_id_, std::string("/world"));
   nh.param("pattern_generator/number_of_steps", (int&)number_of_steps_needed_, 5);
 
-  //ros::service::waitForService("step_plan_request");
+  min_vel_x_ = nh.param("pattern_generator/limits/x/min", -0.1);
+  max_vel_x_ = nh.param("pattern_generator/limits/x/max",  0.1);
+  max_vel_y_ = nh.param("pattern_generator/limits/y",  0.1);
+  max_vel_yaw_ = nh.param("pattern_generator/limits/yaw",  0.1);
+
+  ros::service::waitForService("step_plan_request");
 
   // start service clients: TODO use global footstep planner
   generate_feet_pose_client_ = nh.serviceClient<msgs::GenerateFeetPoseService>("generate_feet_pose");
@@ -163,11 +168,13 @@ void PatternGenerator::clearStepPlan()
 
 void PatternGenerator::update(const ros::TimerEvent& timer)
 {
+  // (timer.current_real - timer.last_real).toSec()
+
   // handle joystick input
   if (joystick_handler_ /*&& params_.joystick_mode*/)
   {
     bool enable;
-    joystick_handler_->getJoystickCommand((timer.current_real - timer.last_real).toSec(), enable, joystick_cmd_);
+    joystick_handler_->getJoystickCommand(joystick_cmd_, enable);
 
     setEnabled(enable);
   }
@@ -177,9 +184,10 @@ void PatternGenerator::update(const ros::TimerEvent& timer)
     return;
 
   // check if more steps are needed
-  int queued_steps = getNextStartStepIndex() - last_performed_step_index_;
-  if (queued_steps < static_cast<int>(number_of_steps_needed_))
-    generateSteps(number_of_steps_needed_-queued_steps);
+//  int queued_steps = getNextStartStepIndex() - last_performed_step_index_;
+//  if (queued_steps < static_cast<int>(number_of_steps_needed_))
+//    generateSteps(number_of_steps_needed_-queued_steps);
+  generateSteps(number_of_steps_needed_);
 
   if (isSimulationMode())
     last_performed_step_index_++;
@@ -195,7 +203,7 @@ void PatternGenerator::updateLastPerformedStepIndex(int last_performed_step_inde
       reset();
     }
 
-    this->last_performed_step_index_ = last_performed_step_index;
+    last_performed_step_index_ = last_performed_step_index;
   }
 }
 
@@ -209,7 +217,7 @@ void PatternGenerator::updateFirstChangeableStepIndex(int first_changeable_step_
       setEnabled(false);
     }
 
-    this->first_changeable_step_index_ = first_changeable_step_index;
+    first_changeable_step_index_ = first_changeable_step_index;
   }
 }
 
@@ -328,7 +336,16 @@ void PatternGenerator::generateSteps(unsigned int n, bool close_step)
   }
 
   // check command input
-  const geometry_msgs::Twist& cmd = params_.joystick_mode ? joystick_cmd_ : params_.cmd;
+  geometry_msgs::Twist cmd = joystick_cmd_;// params_.joystick_mode ? joystick_cmd_ : params_.cmd;
+
+  if (cmd.linear.x > 0.0)
+    cmd.linear.x *= max_vel_x_;
+  else
+    cmd.linear.x *= -min_vel_x_;
+
+  cmd.linear.y *= max_vel_y_;
+  cmd.angular.z *= max_vel_yaw_;
+
 
   // determine which foot has to move first
   unsigned int next_moving_foot_index = msgs::Foot::LEFT;
@@ -346,6 +363,8 @@ void PatternGenerator::generateSteps(unsigned int n, bool close_step)
     else
       next_moving_foot_index = msgs::Foot::LEFT;
   }
+
+  ROS_INFO("CMD: %f/%f/%f", cmd.linear.x, cmd.linear.x, cmd.angular.z);
 
   // generate request message
   req.header = start_feet_pose_->header;
@@ -413,10 +432,10 @@ void PatternGenerator::generateSteps(unsigned int n, bool close_step)
   newest_step_plan_.header.seq++;
   has_new_steps_ = true;
 
-  if (!setNextStartStepIndex(newest_step_plan_.steps.back().step_index))
-  {
-    ROS_ERROR("[PatternGenerator] generateSteps: Last step index of recent pattern was wrong. Resetting now!");
-    reset();
-  }
+//  if (!setNextStartStepIndex(newest_step_plan_.steps.back().step_index))
+//  {
+//    ROS_ERROR("[PatternGenerator] generateSteps: Last step index of recent pattern was wrong. Resetting now!");
+//    reset();
+//  }
 }
 }

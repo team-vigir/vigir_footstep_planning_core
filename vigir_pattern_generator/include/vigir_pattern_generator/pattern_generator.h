@@ -98,6 +98,11 @@ private:
   JoystickHandler::Ptr joystick_handler_;
   geometry_msgs::Twist joystick_cmd_;
 
+  // limits
+  double min_vel_x_, max_vel_x_;
+  double max_vel_y_;
+  double max_vel_yaw_;
+
   // generator params
   std::string world_frame_id_;
   unsigned int number_of_steps_needed_;
