@@ -266,7 +266,7 @@ void PatternGenerator::generateSteps(unsigned int n)
 
   // determine which foot has to move first (note: For the planner the start foot is fixed, thus, the first moved foot is start+1)
   unsigned int next_moving_foot_index = msgs::Foot::LEFT;
-  if (getNextStartStepIndex() == 0)
+  if (getNextStartStepIndex() == 0 || ((cmd.linear.y != 0.0 || cmd.angular.z != 0.0) && number_of_steps_needed_ > 2))
   {
     if (cmd.linear.y < 0.0 || (cmd.linear.y == 0.0 && cmd.angular.z < 0.0))
       next_moving_foot_index = msgs::Foot::RIGHT;
@@ -275,7 +275,7 @@ void PatternGenerator::generateSteps(unsigned int n)
   }
   else
   {
-    if (foot_start_step_index_left_ > foot_start_step_index_right_)
+    if (foot_start_step_index_left_ < foot_start_step_index_right_) // the higher index is pointing on first changeable index
       next_moving_foot_index = msgs::Foot::RIGHT;
     else
       next_moving_foot_index = msgs::Foot::LEFT;
@@ -321,7 +321,7 @@ void PatternGenerator::generateSteps(unsigned int n)
     req.pattern_parameters.mode = msgs::PatternParameters::SAMPLING;
   }
 
-  ROS_INFO_STREAM(req);
+  //ROS_INFO_STREAM(req);
 
   req.planning_mode = msgs::StepPlanRequest::PLANNING_MODE_PATTERN;
   req.parameter_set_name = params_.parameter_set_name;
