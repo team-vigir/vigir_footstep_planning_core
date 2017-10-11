@@ -163,6 +163,9 @@ void PatternGenerator::update(const ros::TimerEvent& /*timer*/)
 
 void PatternGenerator::updateFirstChangeableStepIndex(int first_changeable_step_index)
 {
+  if (!isEnabled())
+    return;
+
   if (first_changeable_step_index < 0)
   {
     ROS_ERROR("[PatternGenerator] updateFirstChangeableStepIndex: Stopping due to invalid step index %i", first_changeable_step_index);
@@ -172,15 +175,18 @@ void PatternGenerator::updateFirstChangeableStepIndex(int first_changeable_step_
   first_changeable_step_index_ = first_changeable_step_index;
 
   msgs::Step step;
-  if (step_plan_.getStep(step, first_changeable_step_index_))
-    updateFeetStartPose(step);
-  else
+  if (first_changeable_step_index_ > 0)
   {
-    ROS_ERROR("[PatternGenerator] updateFirstChangeableStepIndex: Internal error; step %i isn't in step plan.", first_changeable_step_index);
-    setEnabled(false);
+    if (step_plan_.getStep(step, first_changeable_step_index_-1))
+      updateFeetStartPose(step);
+    else
+    {
+      ROS_ERROR("[PatternGenerator] updateFirstChangeableStepIndex: Internal error; step %i isn't in step plan.", first_changeable_step_index);
+      setEnabled(false);
+    }
   }
 
-  if (step_plan_.getStep(step, first_changeable_step_index_+1))
+  if (step_plan_.getStep(step, first_changeable_step_index_))
     updateFeetStartPose(step);
   else
   {
@@ -248,7 +254,7 @@ void PatternGenerator::generateSteps(unsigned int n)
   }
 
   // check command input
-  geometry_msgs::Twist cmd = joystick_cmd_;// params_.joystick_mode ? joystick_cmd_ : params_.cmd;
+  geometry_msgs::Twist cmd = params_.joystick_mode ? joystick_cmd_ : params_.cmd;
 
   if (cmd.linear.x > 0.0)
     cmd.linear.x *= max_vel_x_;
