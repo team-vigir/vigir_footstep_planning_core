@@ -23,6 +23,12 @@ FootstepPlanner::FootstepPlanner(ros::NodeHandle &nh)
     setParams(ParameterManager::getActive());
   else
     ROS_ERROR("[FootstepPlanner] Can't initialize environment due to missing parameters!");
+  // Initialize OMPL
+  namespace ompl_base = ompl::base;
+  namespace ompl_geometric = ompl::geometric;
+  ompl_geometric::SimpleSetup ompl(const ompl_base::SpaceInformationPtr &si);
+  ompl_geometric::SimpleSetup ompl2(const ompl_base::StateSpacePtr &space);
+
 }
 
 FootstepPlanner::~FootstepPlanner()
@@ -35,9 +41,15 @@ FootstepPlanner::~FootstepPlanner()
 
 void FootstepPlanner::setPlanner()
 {
+  //SBPL Planners
   if (env_params->ivPlannerType == "ARAPlanner" ||
       env_params->ivPlannerType == "ADPlanner"  ||
       env_params->ivPlannerType == "RSTARPlanner" )
+  {
+    ROS_INFO_STREAM("Planning with " << env_params->ivPlannerType);
+  }
+  //OMPL Planners
+  else if (env_params->ivPlannerType == "DefaultOMPLPlanner") //@TODO: Add OMPL Planner Options
   {
     ROS_INFO_STREAM("Planning with " << env_params->ivPlannerType);
   }
@@ -80,6 +92,10 @@ void FootstepPlanner::setPlanner()
   //        else if (env_params->ivPlannerType == "ANAPlanner")
   //        	ivPlannerPtr.reset(new anaPlanner(ivPlannerEnvironmentPtr.get(),
   //        	                                  ivForwardSearch));
+  else if (env_params->ivPlannerType == "DefaultOMPLPlanner")
+  {
+    //nothing to do here
+  }
 }
 
 bool FootstepPlanner::isPlanning() const
@@ -493,249 +509,249 @@ msgs::ErrorStatus FootstepPlanner::planPattern(msgs::StepPlanRequestService::Req
 
   switch (req.plan_request.pattern_parameters.mode)
   {
-    case msgs::PatternParameters::STEP_UP:
-    case msgs::PatternParameters::STEP_DOWN:
-    case msgs::PatternParameters::STEP_OVER:
-      change_z = false; // as dz is used for step up/down motion
-    case msgs::PatternParameters::FORWARD:
-    {
-      footstep = boost::shared_ptr<Footstep>(
-                   new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation, 0.0,
-                                0.0,
-                                cell_size,
-                                num_angle_bins,
-                                env_params->hash_table_size));
-      previous_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootRight : ivStartFootLeft;
-      current_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootLeft : ivStartFootRight;
-      break;
-    }
-    case msgs::PatternParameters::BACKWARD:
-    {
-      footstep = boost::shared_ptr<Footstep>(
-                   new Footstep(-req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation, 0.0,
-                                0.0,
-                                cell_size,
-                                num_angle_bins,
-                                env_params->hash_table_size));
-      previous_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootRight : ivStartFootLeft;
-      current_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootLeft : ivStartFootRight;
-      break;
-    }
-    case msgs::PatternParameters::STRAFE_LEFT:
-    {
-      footstep = boost::shared_ptr<Footstep>(
-                   new Footstep(0.0, env_params->foot_seperation+req.plan_request.pattern_parameters.step_distance_sideward, 0.0,
-                                0.0,
-                                cell_size,
-                                num_angle_bins,
-                                env_params->hash_table_size));
-      previous_state = ivStartFootLeft;
-      current_state = ivStartFootRight;
-      single_step_mode = true;
-      break;
-    }
-    case msgs::PatternParameters::STRAFE_RIGHT:
-    {
-      footstep = boost::shared_ptr<Footstep>(
-                   new Footstep(0.0, env_params->foot_seperation+req.plan_request.pattern_parameters.step_distance_sideward, 0.0,
-                                0.0,
-                                cell_size,
-                                num_angle_bins,
-                                env_params->hash_table_size));
-      previous_state = ivStartFootRight;
-      current_state = ivStartFootLeft;
-      single_step_mode = true;
-      break;
-    }
-    case msgs::PatternParameters::ROTATE_LEFT:
-    {
-      footstep = boost::shared_ptr<Footstep>(
-                   new Footstep(-sin(req.plan_request.pattern_parameters.turn_angle)*(env_params->foot_seperation*extra_seperation_factor)/2,
-                                cos(req.plan_request.pattern_parameters.turn_angle)*(env_params->foot_seperation*extra_seperation_factor)/2+(env_params->foot_seperation*extra_seperation_factor)/2,
-                                req.plan_request.pattern_parameters.turn_angle,
-                                0.0,
-                                cell_size,
-                                num_angle_bins,
-                                env_params->hash_table_size));
-      previous_state = ivStartFootLeft;
-      current_state = ivStartFootRight;
-      single_step_mode = true;
-      break;
-    }
-    case msgs::PatternParameters::ROTATE_RIGHT:
-    {
-      footstep = boost::shared_ptr<Footstep>(
-                   new Footstep(-sin(req.plan_request.pattern_parameters.turn_angle)*(env_params->foot_seperation*extra_seperation_factor)/2,
-                                cos(req.plan_request.pattern_parameters.turn_angle)*(env_params->foot_seperation*extra_seperation_factor)/2+(env_params->foot_seperation*extra_seperation_factor)/2,
-                                req.plan_request.pattern_parameters.turn_angle,
-                                0.0,
-                                cell_size,
-                                num_angle_bins,
-                                env_params->hash_table_size));
-      previous_state = ivStartFootRight;
-      current_state = ivStartFootLeft;
-      single_step_mode = true;
-      break;
-    }
-    case msgs::PatternParameters::SAMPLING:
-    {
-      // determine start foot
-      unsigned int start_foot;
+  case msgs::PatternParameters::STEP_UP:
+  case msgs::PatternParameters::STEP_DOWN:
+  case msgs::PatternParameters::STEP_OVER:
+    change_z = false; // as dz is used for step up/down motion
+  case msgs::PatternParameters::FORWARD:
+  {
+    footstep = boost::shared_ptr<Footstep>(
+          new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation, 0.0,
+                       0.0,
+                       cell_size,
+                       num_angle_bins,
+                       env_params->hash_table_size));
+    previous_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootRight : ivStartFootLeft;
+    current_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootLeft : ivStartFootRight;
+    break;
+  }
+  case msgs::PatternParameters::BACKWARD:
+  {
+    footstep = boost::shared_ptr<Footstep>(
+          new Footstep(-req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation, 0.0,
+                       0.0,
+                       cell_size,
+                       num_angle_bins,
+                       env_params->hash_table_size));
+    previous_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootRight : ivStartFootLeft;
+    current_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootLeft : ivStartFootRight;
+    break;
+  }
+  case msgs::PatternParameters::STRAFE_LEFT:
+  {
+    footstep = boost::shared_ptr<Footstep>(
+          new Footstep(0.0, env_params->foot_seperation+req.plan_request.pattern_parameters.step_distance_sideward, 0.0,
+                       0.0,
+                       cell_size,
+                       num_angle_bins,
+                       env_params->hash_table_size));
+    previous_state = ivStartFootLeft;
+    current_state = ivStartFootRight;
+    single_step_mode = true;
+    break;
+  }
+  case msgs::PatternParameters::STRAFE_RIGHT:
+  {
+    footstep = boost::shared_ptr<Footstep>(
+          new Footstep(0.0, env_params->foot_seperation+req.plan_request.pattern_parameters.step_distance_sideward, 0.0,
+                       0.0,
+                       cell_size,
+                       num_angle_bins,
+                       env_params->hash_table_size));
+    previous_state = ivStartFootRight;
+    current_state = ivStartFootLeft;
+    single_step_mode = true;
+    break;
+  }
+  case msgs::PatternParameters::ROTATE_LEFT:
+  {
+    footstep = boost::shared_ptr<Footstep>(
+          new Footstep(-sin(req.plan_request.pattern_parameters.turn_angle)*(env_params->foot_seperation*extra_seperation_factor)/2,
+                       cos(req.plan_request.pattern_parameters.turn_angle)*(env_params->foot_seperation*extra_seperation_factor)/2+(env_params->foot_seperation*extra_seperation_factor)/2,
+                       req.plan_request.pattern_parameters.turn_angle,
+                       0.0,
+                       cell_size,
+                       num_angle_bins,
+                       env_params->hash_table_size));
+    previous_state = ivStartFootLeft;
+    current_state = ivStartFootRight;
+    single_step_mode = true;
+    break;
+  }
+  case msgs::PatternParameters::ROTATE_RIGHT:
+  {
+    footstep = boost::shared_ptr<Footstep>(
+          new Footstep(-sin(req.plan_request.pattern_parameters.turn_angle)*(env_params->foot_seperation*extra_seperation_factor)/2,
+                       cos(req.plan_request.pattern_parameters.turn_angle)*(env_params->foot_seperation*extra_seperation_factor)/2+(env_params->foot_seperation*extra_seperation_factor)/2,
+                       req.plan_request.pattern_parameters.turn_angle,
+                       0.0,
+                       cell_size,
+                       num_angle_bins,
+                       env_params->hash_table_size));
+    previous_state = ivStartFootRight;
+    current_state = ivStartFootLeft;
+    single_step_mode = true;
+    break;
+  }
+  case msgs::PatternParameters::SAMPLING:
+  {
+    // determine start foot
+    unsigned int start_foot;
 
-      if (req.plan_request.start_foot_selection != msgs::StepPlanRequest::AUTO)
-        start_foot = req.plan_request.start_foot_selection;
+    if (req.plan_request.start_foot_selection != msgs::StepPlanRequest::AUTO)
+      start_foot = req.plan_request.start_foot_selection;
+    else
+    {
+      if (req.plan_request.pattern_parameters.step_distance_sideward < 0.0 || (req.plan_request.pattern_parameters.step_distance_sideward == 0.0 && req.plan_request.pattern_parameters.turn_angle < 0.0))
+        start_foot = msgs::StepPlanRequest::RIGHT;
       else
-      {
-        if (req.plan_request.pattern_parameters.step_distance_sideward < 0.0 || (req.plan_request.pattern_parameters.step_distance_sideward == 0.0 && req.plan_request.pattern_parameters.turn_angle < 0.0))
-          start_foot = msgs::StepPlanRequest::RIGHT;
-        else
-          start_foot = msgs::StepPlanRequest::LEFT;
-      }
-
-      // generate footstep
-      if (req.plan_request.pattern_parameters.step_distance_sideward == 0.0 && req.plan_request.pattern_parameters.turn_angle == 0.0)
-      {
-        footstep_left = boost::shared_ptr<Footstep>(
-                          new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation+req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle,
-                                       0.0,
-                                       cell_size,
-                                       num_angle_bins,
-                                       env_params->hash_table_size));
-        footstep_right = boost::shared_ptr<Footstep>(
-                           new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation-req.plan_request.pattern_parameters.step_distance_sideward, -req.plan_request.pattern_parameters.turn_angle,
-                                        0.0,
-                                        cell_size,
-                                        num_angle_bins,
-                                        env_params->hash_table_size));
-      }
-      else if (start_foot == msgs::StepPlanRequest::LEFT)
-      {
-        footstep_left = boost::shared_ptr<Footstep>(
-                          new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation+req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle,
-                                       0.0,
-                                       cell_size,
-                                       num_angle_bins,
-                                       env_params->hash_table_size));
-        footstep_right = boost::shared_ptr<Footstep>(
-                           new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation, 0.0,
-                                        0.0,
-                                        cell_size,
-                                        num_angle_bins,
-                                        env_params->hash_table_size));
-      }
-      else
-      {
-        footstep_left = boost::shared_ptr<Footstep>(
-                          new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation, 0.0,
-                                       0.0,
-                                       cell_size,
-                                       num_angle_bins,
-                                       env_params->hash_table_size));
-        footstep_right = boost::shared_ptr<Footstep>(
-                           new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation-req.plan_request.pattern_parameters.step_distance_sideward, -req.plan_request.pattern_parameters.turn_angle,
-                                        0.0,
-                                        cell_size,
-                                        num_angle_bins,
-                                        env_params->hash_table_size));
-      }
-
-      // setup pattern generation
-      previous_state = start_foot == msgs::StepPlanRequest::RIGHT ? ivStartFootRight : ivStartFootLeft;
-      current_state = start_foot == msgs::StepPlanRequest::RIGHT ? ivStartFootLeft : ivStartFootRight;
-      break;
+        start_foot = msgs::StepPlanRequest::LEFT;
     }
-    case msgs::PatternParameters::FEET_REALIGN_ON_CENTER:
+
+    // generate footstep
+    if (req.plan_request.pattern_parameters.step_distance_sideward == 0.0 && req.plan_request.pattern_parameters.turn_angle == 0.0)
     {
-      State feet_center(0.5*(ivStartFootLeft.getX()+ivStartFootRight.getX()),
-                        0.5*(ivStartFootLeft.getY()+ivStartFootRight.getY()),
-                        0.5*(ivStartFootLeft.getZ()+ivStartFootRight.getZ()),
-                        0.5*(ivStartFootLeft.getRoll()+ivStartFootRight.getRoll()),
-                        0.5*(ivStartFootLeft.getPitch()+ivStartFootRight.getPitch()),
-                        0.5*(ivStartFootLeft.getYaw()+ivStartFootRight.getYaw()),
-                        NOLEG);
+      footstep_left = boost::shared_ptr<Footstep>(
+            new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation+req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle,
+                         0.0,
+                         cell_size,
+                         num_angle_bins,
+                         env_params->hash_table_size));
+      footstep_right = boost::shared_ptr<Footstep>(
+            new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation-req.plan_request.pattern_parameters.step_distance_sideward, -req.plan_request.pattern_parameters.turn_angle,
+                         0.0,
+                         cell_size,
+                         num_angle_bins,
+                         env_params->hash_table_size));
+    }
+    else if (start_foot == msgs::StepPlanRequest::LEFT)
+    {
+      footstep_left = boost::shared_ptr<Footstep>(
+            new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation+req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle,
+                         0.0,
+                         cell_size,
+                         num_angle_bins,
+                         env_params->hash_table_size));
+      footstep_right = boost::shared_ptr<Footstep>(
+            new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation, 0.0,
+                         0.0,
+                         cell_size,
+                         num_angle_bins,
+                         env_params->hash_table_size));
+    }
+    else
+    {
+      footstep_left = boost::shared_ptr<Footstep>(
+            new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation, 0.0,
+                         0.0,
+                         cell_size,
+                         num_angle_bins,
+                         env_params->hash_table_size));
+      footstep_right = boost::shared_ptr<Footstep>(
+            new Footstep(req.plan_request.pattern_parameters.step_distance_forward, env_params->foot_seperation-req.plan_request.pattern_parameters.step_distance_sideward, -req.plan_request.pattern_parameters.turn_angle,
+                         0.0,
+                         cell_size,
+                         num_angle_bins,
+                         env_params->hash_table_size));
+    }
 
-      // first add start foot
-      previous_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootRight : ivStartFootLeft;
-      current_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootLeft : ivStartFootRight;
-      status += finalizeAndAddStepToPlan(current_state, req.plan_request.pattern_parameters, false);
-      if (hasError(status))
-        return status;
+    // setup pattern generation
+    previous_state = start_foot == msgs::StepPlanRequest::RIGHT ? ivStartFootRight : ivStartFootLeft;
+    current_state = start_foot == msgs::StepPlanRequest::RIGHT ? ivStartFootLeft : ivStartFootRight;
+    break;
+  }
+  case msgs::PatternParameters::FEET_REALIGN_ON_CENTER:
+  {
+    State feet_center(0.5*(ivStartFootLeft.getX()+ivStartFootRight.getX()),
+                      0.5*(ivStartFootLeft.getY()+ivStartFootRight.getY()),
+                      0.5*(ivStartFootLeft.getZ()+ivStartFootRight.getZ()),
+                      0.5*(ivStartFootLeft.getRoll()+ivStartFootRight.getRoll()),
+                      0.5*(ivStartFootLeft.getPitch()+ivStartFootRight.getPitch()),
+                      0.5*(ivStartFootLeft.getYaw()+ivStartFootRight.getYaw()),
+                      NOLEG);
 
-      // add pattern directly
-      if (req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT)
-      {
-        State temp = getFootPose(feet_center, RIGHT);
-        finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
-
-        temp = getFootPose(feet_center, LEFT);
-        finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
-      }
-      else
-      {
-        State temp = getFootPose(feet_center, LEFT);
-        finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
-
-        temp = getFootPose(feet_center, RIGHT);
-        finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
-      }
-
+    // first add start foot
+    previous_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootRight : ivStartFootLeft;
+    current_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootLeft : ivStartFootRight;
+    status += finalizeAndAddStepToPlan(current_state, req.plan_request.pattern_parameters, false);
+    if (hasError(status))
       return status;
-    }
-    case msgs::PatternParameters::FEET_REALIGN_ON_LEFT:
+
+    // add pattern directly
+    if (req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT)
     {
-      previous_state = ivStartFootRight;
-      current_state = ivStartFootLeft;
-      num_steps = 0;
-      close_step = true;
-      break;
+      State temp = getFootPose(feet_center, RIGHT);
+      finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
+
+      temp = getFootPose(feet_center, LEFT);
+      finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
     }
-    case msgs::PatternParameters::FEET_REALIGN_ON_RIGHT:
+    else
     {
-      previous_state = ivStartFootLeft;
-      current_state = ivStartFootRight;
-      num_steps = 0;
-      close_step = true;
-      break;
+      State temp = getFootPose(feet_center, LEFT);
+      finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
+
+      temp = getFootPose(feet_center, RIGHT);
+      finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
     }
-    case msgs::PatternParameters::WIDE_STANCE:
-    {
-      State feet_center(0.5*(ivStartFootLeft.getX()+ivStartFootRight.getX()),
-                        0.5*(ivStartFootLeft.getY()+ivStartFootRight.getY()),
-                        0.5*(ivStartFootLeft.getZ()+ivStartFootRight.getZ()),
-                        0.5*(ivStartFootLeft.getRoll()+ivStartFootRight.getRoll()),
-                        0.5*(ivStartFootLeft.getPitch()+ivStartFootRight.getPitch()),
-                        0.5*(ivStartFootLeft.getYaw()+ivStartFootRight.getYaw()),
-                        NOLEG);
 
-      // first add start foot
-      previous_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootRight : ivStartFootLeft;
-      current_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootLeft : ivStartFootRight;
-      status += finalizeAndAddStepToPlan(current_state, req.plan_request.pattern_parameters, false);
-      if (hasError(status))
-        return status;
+    return status;
+  }
+  case msgs::PatternParameters::FEET_REALIGN_ON_LEFT:
+  {
+    previous_state = ivStartFootRight;
+    current_state = ivStartFootLeft;
+    num_steps = 0;
+    close_step = true;
+    break;
+  }
+  case msgs::PatternParameters::FEET_REALIGN_ON_RIGHT:
+  {
+    previous_state = ivStartFootLeft;
+    current_state = ivStartFootRight;
+    num_steps = 0;
+    close_step = true;
+    break;
+  }
+  case msgs::PatternParameters::WIDE_STANCE:
+  {
+    State feet_center(0.5*(ivStartFootLeft.getX()+ivStartFootRight.getX()),
+                      0.5*(ivStartFootLeft.getY()+ivStartFootRight.getY()),
+                      0.5*(ivStartFootLeft.getZ()+ivStartFootRight.getZ()),
+                      0.5*(ivStartFootLeft.getRoll()+ivStartFootRight.getRoll()),
+                      0.5*(ivStartFootLeft.getPitch()+ivStartFootRight.getPitch()),
+                      0.5*(ivStartFootLeft.getYaw()+ivStartFootRight.getYaw()),
+                      NOLEG);
 
-      // add pattern directly
-      if (req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT)
-      {
-        State temp = getFootPose(feet_center, RIGHT, req.plan_request.pattern_parameters.step_distance_forward, req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle);
-        finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
-
-        temp = getFootPose(feet_center, LEFT, req.plan_request.pattern_parameters.step_distance_forward, req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle);
-        finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
-      }
-      else
-      {
-        State temp = getFootPose(feet_center, LEFT, req.plan_request.pattern_parameters.step_distance_forward, req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle);
-        finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
-
-        temp = getFootPose(feet_center, RIGHT, req.plan_request.pattern_parameters.step_distance_forward, req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle);
-        finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
-      }
-
+    // first add start foot
+    previous_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootRight : ivStartFootLeft;
+    current_state = req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT ? ivStartFootLeft : ivStartFootRight;
+    status += finalizeAndAddStepToPlan(current_state, req.plan_request.pattern_parameters, false);
+    if (hasError(status))
       return status;
+
+    // add pattern directly
+    if (req.plan_request.start_foot_selection == msgs::StepPlanRequest::RIGHT)
+    {
+      State temp = getFootPose(feet_center, RIGHT, req.plan_request.pattern_parameters.step_distance_forward, req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle);
+      finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
+
+      temp = getFootPose(feet_center, LEFT, req.plan_request.pattern_parameters.step_distance_forward, req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle);
+      finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
     }
-    default:
-      return ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlanner", "planPattern: Unknown walk mode (" + boost::lexical_cast<std::string>(req.plan_request.pattern_parameters.mode) + ") set!");
+    else
+    {
+      State temp = getFootPose(feet_center, LEFT, req.plan_request.pattern_parameters.step_distance_forward, req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle);
+      finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
+
+      temp = getFootPose(feet_center, RIGHT, req.plan_request.pattern_parameters.step_distance_forward, req.plan_request.pattern_parameters.step_distance_sideward, req.plan_request.pattern_parameters.turn_angle);
+      finalizeAndAddStepToPlan(temp, req.plan_request.pattern_parameters, false);
+    }
+
+    return status;
+  }
+  default:
+    return ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlanner", "planPattern: Unknown walk mode (" + boost::lexical_cast<std::string>(req.plan_request.pattern_parameters.mode) + ") set!");
   }
 
   // generate common used step placements
@@ -917,13 +933,13 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
     }
     step.step_index = step_index++;
 
-//    const geometry_msgs::Vector3& v0 = stand_foot.getBodyVelocity();
-//    double body_vel0 = sqrt(v0.x*v0.x+v0.y*v0.y+v0.z*v0.z);
-//    const geometry_msgs::Vector3& v1 = swing_foot.getBodyVelocity();
-//    double body_vel1 = sqrt(v1.x*v1.x+v1.y*v1.y+v1.z*v1.z);
-//    ROS_INFO("[%i] Sway dist: %.3f, Swing dist: %.3f", step.step_index, swing_foot.getSwayDistance(), swing_foot.getSwingDistance());
-//    ROS_INFO("[%i] Body vel: %.3f %.3f %.3f (%.3f), acc: %.3f", step.step_index, v1.x, v1.y, v1.z, body_vel1, (body_vel1-body_vel0)/step.step_duration);
-//    ROS_INFO("-------------------------------------");
+    //    const geometry_msgs::Vector3& v0 = stand_foot.getBodyVelocity();
+    //    double body_vel0 = sqrt(v0.x*v0.x+v0.y*v0.y+v0.z*v0.z);
+    //    const geometry_msgs::Vector3& v1 = swing_foot.getBodyVelocity();
+    //    double body_vel1 = sqrt(v1.x*v1.x+v1.y*v1.y+v1.z*v1.z);
+    //    ROS_INFO("[%i] Sway dist: %.3f, Swing dist: %.3f", step.step_index, swing_foot.getSwayDistance(), swing_foot.getSwingDistance());
+    //    ROS_INFO("[%i] Body vel: %.3f %.3f %.3f (%.3f), acc: %.3f", step.step_index, v1.x, v1.y, v1.z, body_vel1, (body_vel1-body_vel0)/step.step_duration);
+    //    ROS_INFO("-------------------------------------");
 
     if (std::abs(stand_foot.getZ() - swing_foot.getZ()) > 0.18)
       resp.status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlanner", "finalizeStepPlan: Plan contains large lift heights");
@@ -1111,16 +1127,16 @@ void FootstepPlanner::doPlanning(msgs::StepPlanRequestService::Request& req)
   // dispatch planning mode and plan
   switch (req.plan_request.planning_mode)
   {
-    case msgs::StepPlanRequest::PLANNING_MODE_2D:
-    case msgs::StepPlanRequest::PLANNING_MODE_3D:
-      resp.status = planSteps(req);
-      break;
-    case msgs::StepPlanRequest::PLANNING_MODE_PATTERN:
-      resp.status = planPattern(req);
-      break;
-    default:
-      resp.status = ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlanner", "stepPlanRequest: A not supported planning mode '" + boost::lexical_cast<std::string>(req.plan_request.planning_mode) + "' was given!");
-      break;
+  case msgs::StepPlanRequest::PLANNING_MODE_2D:
+  case msgs::StepPlanRequest::PLANNING_MODE_3D:
+    resp.status = planSteps(req);
+    break;
+  case msgs::StepPlanRequest::PLANNING_MODE_PATTERN:
+    resp.status = planPattern(req);
+    break;
+  default:
+    resp.status = ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlanner", "stepPlanRequest: A not supported planning mode '" + boost::lexical_cast<std::string>(req.plan_request.planning_mode) + "' was given!");
+    break;
   }
 
   // result callbacks

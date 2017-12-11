@@ -79,6 +79,9 @@
 #include <vigir_footstep_planner/environment_parameters.h>
 #include <vigir_footstep_planner/footstep_planner_environment.h>
 
+#include <ompl/geometric/SimpleSetup.h>
+#include <ompl/base/SpaceInformation.h>
+
 
 
 namespace vigir_footstep_planning
@@ -226,7 +229,7 @@ protected:
   State getFootPose(const State& robot, Leg leg, double dx, double dy, double dyaw);
   State getFootPose(const State& robot, Leg leg);
 
-  /// @brief Sets the planning algorithm used by SBPL.
+  /// @brief Sets the planning algorithm used by SBPL or OMPL.
   void setPlanner();
 
   // publisher
