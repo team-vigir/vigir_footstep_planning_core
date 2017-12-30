@@ -274,6 +274,9 @@ protected:
 
   // counter to be used as sequence number
   unsigned int step_plan_uid;
+
+  //OMPL
+  bool usingOMPL;
 };
 }
 

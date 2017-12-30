@@ -47,11 +47,13 @@ void FootstepPlanner::setPlanner()
       env_params->ivPlannerType == "RSTARPlanner" )
   {
     ROS_INFO_STREAM("Planning with " << env_params->ivPlannerType);
+    usingOMPL = false;
   }
   //OMPL Planners
   else if (env_params->ivPlannerType == "DefaultOMPLPlanner") //@TODO: Add OMPL Planner Options
   {
     ROS_INFO_STREAM("Planning with " << env_params->ivPlannerType);
+    usingOMPL = true;
   }
   else
   {
@@ -105,95 +107,102 @@ bool FootstepPlanner::isPlanning() const
 
 bool FootstepPlanner::plan(ReplanParams& params)
 {
-  bool path_existed = (bool)ivPath.size();
-  int ret = 0;
-  MDPConfig mdp_config;
-  std::vector<int> solution_state_ids;
-
-  // commit start/goal poses to the environment
-  /// @TODO: updateGoal adds goal states to list so planner may use it independend from costs...
-  ivPlannerEnvironmentPtr->getStateSpace()->updateStart(ivStartFootLeft, ivStartFootRight);
-  ivPlannerEnvironmentPtr->getStateSpace()->updateGoal(ivGoalFootLeft, ivGoalFootRight);
-  ivPlannerEnvironmentPtr->getStateSpace()->setPlannerStartAndGoal(start_foot_selection);
-  ivPlannerEnvironmentPtr->updateHeuristicValues();
-  ivPlannerEnvironmentPtr->InitializeEnv(NULL);
-  ivPlannerEnvironmentPtr->InitializeMDPCfg(&mdp_config);
-
-  // inform AD planner about changed (start) states for replanning
-  if (path_existed &&
-      !env_params->forward_search &&
-      env_params->ivPlannerType == "ADPlanner")
+  if (usingOMPL)
   {
-    std::vector<int> changed_edges;
-    changed_edges.push_back(mdp_config.startstateid);
-    // update the AD planner
-    boost::shared_ptr<ADPlanner> ad_planner =
-        boost::dynamic_pointer_cast<ADPlanner>(ivPlannerPtr);
-    ad_planner->update_preds_of_changededges(&changed_edges);
+
   }
+  else //using SBPL
+  {
+    bool path_existed = (bool)ivPath.size();
+    int ret = 0;
+    MDPConfig mdp_config;
+    std::vector<int> solution_state_ids;
 
-  // set up SBPL
-  if (ivPlannerPtr->set_start(mdp_config.startstateid) == 0)
-  {
-    ROS_ERROR("Failed to set start state.");
-    return false;
-  }
-  if (ivPlannerPtr->set_goal(mdp_config.goalstateid) == 0)
-  {
-    ROS_ERROR("Failed to set goal state\n");
-    return false;
-  }
+    // commit start/goal poses to the environment
+    /// @TODO: updateGoal adds goal states to list so planner may use it independend from costs...
+    ivPlannerEnvironmentPtr->getStateSpace()->updateStart(ivStartFootLeft, ivStartFootRight);
+    ivPlannerEnvironmentPtr->getStateSpace()->updateGoal(ivGoalFootLeft, ivGoalFootRight);
+    ivPlannerEnvironmentPtr->getStateSpace()->setPlannerStartAndGoal(start_foot_selection);
+    ivPlannerEnvironmentPtr->updateHeuristicValues();
+    ivPlannerEnvironmentPtr->InitializeEnv(NULL);
+    ivPlannerEnvironmentPtr->InitializeMDPCfg(&mdp_config);
 
-  int path_cost;
-  ros::WallTime startTime = ros::WallTime::now();
-  try
-  {
-    ROS_INFO("Start planning (max time: %f, eps_0: %.2f, d_eps: %.2f, h(start, goal): %.3f (l) - %.3f (r))",
-             params.max_time, params.initial_eps, params.dec_eps,
-             (double)ivPlannerEnvironmentPtr->GetGoalHeuristic(ivPlannerEnvironmentPtr->getStateSpace()->ivIdStartFootLeft)/(double)cvMmScale,
-             (double)ivPlannerEnvironmentPtr->GetGoalHeuristic(ivPlannerEnvironmentPtr->getStateSpace()->ivIdStartFootRight)/(double)cvMmScale);
-    ret = ivPlannerPtr->replan(&solution_state_ids, params, &path_cost);
-  }
-  catch (const SBPL_Exception* e)
-  {
-    ROS_ERROR("SBPL planning failed (%s)", e->what());
-    return false;
-  }
-  ivPathCost = double(path_cost) / cvMmScale;
-
-  bool path_is_new = pathIsNew(solution_state_ids);
-  if (ret && solution_state_ids.size() > 0 && path_is_new)
-  {
-    ROS_INFO("Solution of size %zu found after %f s",
-             solution_state_ids.size(),
-             (ros::WallTime::now()-startTime).toSec());
-
-    if (extractPath(solution_state_ids))
+    // inform AD planner about changed (start) states for replanning
+    if (path_existed &&
+        !env_params->forward_search &&
+        env_params->ivPlannerType == "ADPlanner")
     {
-      ROS_INFO("Expanded states: %i total / %i new",
-               ivPlannerEnvironmentPtr->getNumExpandedStates(),
-               ivPlannerPtr->get_n_expands());
-      ROS_INFO("Final eps: %f", ivPlannerPtr->get_final_epsilon());
-      ROS_INFO("Path cost: %f (%i)\n", ivPathCost, path_cost);
+      std::vector<int> changed_edges;
+      changed_edges.push_back(mdp_config.startstateid);
+      // update the AD planner
+      boost::shared_ptr<ADPlanner> ad_planner =
+          boost::dynamic_pointer_cast<ADPlanner>(ivPlannerPtr);
+      ad_planner->update_preds_of_changededges(&changed_edges);
+    }
 
-      ivPlanningStatesIds = solution_state_ids;
-      return true;
+    // set up SBPL
+    if (ivPlannerPtr->set_start(mdp_config.startstateid) == 0)
+    {
+      ROS_ERROR("Failed to set start state.");
+      return false;
+    }
+    if (ivPlannerPtr->set_goal(mdp_config.goalstateid) == 0)
+    {
+      ROS_ERROR("Failed to set goal state\n");
+      return false;
+    }
+
+    int path_cost;
+    ros::WallTime startTime = ros::WallTime::now();
+    try
+    {
+      ROS_INFO("Start planning (max time: %f, eps_0: %.2f, d_eps: %.2f, h(start, goal): %.3f (l) - %.3f (r))",
+               params.max_time, params.initial_eps, params.dec_eps,
+               (double)ivPlannerEnvironmentPtr->GetGoalHeuristic(ivPlannerEnvironmentPtr->getStateSpace()->ivIdStartFootLeft)/(double)cvMmScale,
+               (double)ivPlannerEnvironmentPtr->GetGoalHeuristic(ivPlannerEnvironmentPtr->getStateSpace()->ivIdStartFootRight)/(double)cvMmScale);
+      ret = ivPlannerPtr->replan(&solution_state_ids, params, &path_cost);
+    }
+    catch (const SBPL_Exception* e)
+    {
+      ROS_ERROR("SBPL planning failed (%s)", e->what());
+      return false;
+    }
+    ivPathCost = double(path_cost) / cvMmScale;
+
+    bool path_is_new = pathIsNew(solution_state_ids);
+    if (ret && solution_state_ids.size() > 0 && path_is_new)
+    {
+      ROS_INFO("Solution of size %zu found after %f s",
+               solution_state_ids.size(),
+               (ros::WallTime::now()-startTime).toSec());
+
+      if (extractPath(solution_state_ids))
+      {
+        ROS_INFO("Expanded states: %i total / %i new",
+                 ivPlannerEnvironmentPtr->getNumExpandedStates(),
+                 ivPlannerPtr->get_n_expands());
+        ROS_INFO("Final eps: %f", ivPlannerPtr->get_final_epsilon());
+        ROS_INFO("Path cost: %f (%i)\n", ivPathCost, path_cost);
+
+        ivPlanningStatesIds = solution_state_ids;
+        return true;
+      }
+      else
+      {
+        ROS_ERROR("extracting path failed\n\n");
+        return false;
+      }
+    }
+    else if (!path_is_new)
+    {
+      ROS_ERROR("Solution found by SBPL is the same as the old solution. Replanning failed.");
+      return false;
     }
     else
     {
-      ROS_ERROR("extracting path failed\n\n");
+      ROS_ERROR("No solution found");
       return false;
     }
-  }
-  else if (!path_is_new)
-  {
-    ROS_ERROR("Solution found by SBPL is the same as the old solution. Replanning failed.");
-    return false;
-  }
-  else
-  {
-    ROS_ERROR("No solution found");
-    return false;
   }
 }
 
