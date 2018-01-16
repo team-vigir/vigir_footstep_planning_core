@@ -5,7 +5,7 @@ if(CMAKE_VERSION VERSION_GREATER "2.8.12")
   cmake_policy(SET CMP0022 OLD)
 endif()
 
-#set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 add_compile_options(-std=c++11)
@@ -27,6 +27,8 @@ pkg_check_modules(SBPL REQUIRED sbpl)
 link_directories(${SBPL_LIBRARY_DIRS})
 
 find_package(OpenCV REQUIRED)
+
+find_package(ompl REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -140,6 +142,7 @@ add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME} PUBLIC ${catkin_LIBRARIES} ${boost_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${SBPL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OMPL_LIBRARIES})
 target_link_libraries(footstep_planner_node ${PROJECT_NAME})
 
 #############

@@ -24,8 +24,6 @@ FootstepPlanner::FootstepPlanner(ros::NodeHandle &nh)
   else
     ROS_ERROR("[FootstepPlanner] Can't initialize environment due to missing parameters!");
   // Initialize OMPL
-  namespace ompl_base = ompl::base;
-  namespace ompl_geometric = ompl::geometric;
   ompl_geometric::SimpleSetup ompl(const ompl_base::SpaceInformationPtr &si);
   ompl_geometric::SimpleSetup ompl2(const ompl_base::StateSpacePtr &space);
 
@@ -109,7 +107,37 @@ bool FootstepPlanner::plan(ReplanParams& params)
 {
   if (usingOMPL)
   {
+    auto space(std::make_shared<ompl_base::SE3StateSpace>());
 
+    ompl_base::RealVectorBounds bounds(3);
+    bounds.setLow(-1);
+    bounds.setHigh(1);
+
+    space->setBounds(bounds);
+
+    ompl_geometric::SimpleSetup ompl_ss(space);
+
+    //ompl_ss.setStateValidityChecker([](const ompl_base::State *state) { return vigir_footstep_planning::FootstepPlanner::isStateValid(state); });
+
+    //ompl_ss.setStateValidityChecker((const ompl_base::StateValidityCheckerFn) &vigir_footstep_planning::FootstepPlanner::isStateValid);
+
+    ompl_base::ScopedState<> start(space);
+    start.random();
+
+    ompl_base::ScopedState<> goal(space);
+    goal.random();
+
+    ompl_ss.setStartAndGoalStates(start, goal);
+
+    ompl_base::PlannerStatus solved = ompl_ss.solve(1.0);
+
+    if (solved)
+    {
+      ompl_ss.simplifySolution();
+      ROS_INFO("Found solution:");
+      // print the path to screen
+      ompl_ss.getSolutionPath().print(std::cout);
+    }
   }
   else //using SBPL
   {
@@ -1229,6 +1257,11 @@ bool FootstepPlanner::findNearestValidState(State& s) const
     s = best_state;
 
   return solution_found;
+}
+
+bool isStateValid(const ompl_base::State *state)
+{
+  return true;//TODO: add state validation here if needed
 }
 
 bool FootstepPlanner::checkRobotCollision(const State& left_foot, const State& right_foot, bool& left, bool& right) const

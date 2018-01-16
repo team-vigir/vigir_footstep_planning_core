@@ -26,11 +26,12 @@ max_risk: 1.0
 
 plugin_set: default
 
-# define the planner of choice provided by the SBPL package
+# define the planner of choice provided by the SBPL package or OMPL Pakage
 # - ARAPlanner
 # - ADPlanner
 # - RSTARPlanner
-planner_type: ARAPlanner
+# - DefaultOMPLPlanner
+planner_type: DefaultOMPLPlanner
 
 # search until a specific time limit is reached or first solution is found
 search_until_first_solution: False

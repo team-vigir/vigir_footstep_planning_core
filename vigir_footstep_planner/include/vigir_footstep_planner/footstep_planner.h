@@ -79,9 +79,19 @@
 #include <vigir_footstep_planner/environment_parameters.h>
 #include <vigir_footstep_planner/footstep_planner_environment.h>
 
-#include <ompl/geometric/SimpleSetup.h>
 #include <ompl/base/SpaceInformation.h>
+#include <ompl/base/spaces/SE3StateSpace.h>
+#include <ompl/base/spaces/RealVectorStateSpace.h>
+#include <ompl/base/spaces/RealVectorBounds.h>
+#include <ompl/geometric/SimpleSetup.h>
+#include <ompl/base/ScopedState.h>
+#include <ompl/base/PlannerStatus.h>
+#include <ompl/config.h>
 
+
+
+namespace ompl_base = ompl::base;
+namespace ompl_geometric = ompl::geometric;
 
 
 namespace vigir_footstep_planning
@@ -144,6 +154,8 @@ protected:
   void doPlanning(msgs::StepPlanRequestService::Request& req);
 
   bool findNearestValidState(State& s) const;
+
+  bool isStateValid(const ompl_base::State *state); //OMPL
 
   bool checkRobotCollision(const State& left_foot, const State& right_foot, bool& left, bool& right) const;
 
