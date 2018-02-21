@@ -9,8 +9,4 @@
 
   <!-- run vis node -->
   <include file="$(find vigir_footstep_planning_lib)/launch/footstep_planning_vis.launch" />
-
-  <!-- Load plugin descriptions from YAML file to parameter server -->
-  <rosparam file="$(find vigir_footstep_planning_plugins)/config/plugin_descriptions.yaml" command="load" />
-  <rosparam file="$(find vigir_footstep_planning_default_plugins)/config/plugin_descriptions.yaml" command="load" />
 </launch>
