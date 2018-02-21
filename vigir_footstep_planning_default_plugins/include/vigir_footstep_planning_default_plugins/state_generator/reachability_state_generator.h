@@ -54,8 +54,8 @@ public:
 
   bool loadParams(const vigir_generic_params::ParameterSet& params = vigir_generic_params::ParameterSet()) override;
 
-  std::list<PlanningState::Ptr> generatePredecessor(const PlanningState& state) const override;
-  std::list<PlanningState::Ptr> generateSuccessor(const PlanningState& state) const override;
+  std::list<PlanningState::Ptr> generatePredecessors(const PlanningState& state) const override;
+  std::list<PlanningState::Ptr> generateSuccessors(const PlanningState& state) const override;
 
 protected:
   // The set of footsteps used.
