@@ -29,7 +29,7 @@ bool TerrainModel::initialize(const vigir_generic_params::ParameterSet& params)
 
   // subscribe
   std::string topic;
-  getParam("terrain_model_topic", topic, std::string("/terrain_model"));
+  getParam("terrain_model_topic", topic, std::string("terrain_model"), true);
   terrain_model_sub = nh_.subscribe(topic, 1, &TerrainModel::setTerrainModel, this);
 
   return true;
