@@ -1,5 +1,5 @@
 //=================================================================================================
-// Copyright (c) 2017, Alexander Stumpf, TU Darmstadt
+// Copyright (c) 2018, Alexander Stumpf, TU Darmstadt
 // Based on http://wiki.ros.org/footstep_planner by Johannes Garimort and Armin Hornung
 // All rights reserved.
 
