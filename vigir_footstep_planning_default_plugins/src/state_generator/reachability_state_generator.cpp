@@ -109,7 +109,7 @@ bool ReachabilityStateGenerator::loadParams(const vigir_generic_params::Paramete
   return result;
 }
 
-std::list<PlanningState::Ptr> ReachabilityStateGenerator::generatePredecessor(const PlanningState& state) const
+std::list<PlanningState::Ptr> ReachabilityStateGenerator::generatePredecessors(const PlanningState& state) const
 {
   std::list<PlanningState::Ptr> result;
 
@@ -118,7 +118,7 @@ std::list<PlanningState::Ptr> ReachabilityStateGenerator::generatePredecessor(co
   return result;
 }
 
-std::list<PlanningState::Ptr> ReachabilityStateGenerator::generateSuccessor(const PlanningState& state) const
+std::list<PlanningState::Ptr> ReachabilityStateGenerator::generateSuccessors(const PlanningState& state) const
 {
   std::list<PlanningState::Ptr> result;
 

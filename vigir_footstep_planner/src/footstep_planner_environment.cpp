@@ -247,7 +247,7 @@ void FootstepPlannerEnvironment::GetPreds(int TargetStateID, std::vector<int> *P
   }
 
   // explorate all states
-  std::list<PlanningState::Ptr> visited_states = StateGenerator::instance().generatePredecessor(*current);
+  std::list<PlanningState::Ptr> visited_states = StateGenerator::instance().generatePredecessors(*current);
 
   PredIDV->reserve(visited_states.size());
   CostV->reserve(visited_states.size());
@@ -348,7 +348,7 @@ void FootstepPlannerEnvironment::GetSuccs(int SourceStateID, std::vector<int> *S
   }
 
   // explorate all states
-  std::list<PlanningState::Ptr> visited_states = StateGenerator::instance().generateSuccessor(*current);
+  std::list<PlanningState::Ptr> visited_states = StateGenerator::instance().generateSuccessors(*current);
 
   SuccIDV->reserve(visited_states.size());
   CostV->reserve(visited_states.size());
