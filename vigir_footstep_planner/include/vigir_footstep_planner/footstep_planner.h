@@ -84,7 +84,7 @@
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/base/spaces/RealVectorBounds.h>
-//#include <ompl/geometric/SimpleSetup.h>
+#include <ompl/geometric/SimpleSetup.h>
 #include <ompl/base/ScopedState.h>
 #include <ompl/base/PlannerStatus.h>
 #include <ompl/config.h>

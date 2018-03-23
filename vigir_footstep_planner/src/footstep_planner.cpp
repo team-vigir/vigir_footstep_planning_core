@@ -125,16 +125,17 @@ bool FootstepPlanner::plan(ReplanParams& params)
 
 //    ompl_base::SpaceInformation spaceinfo(space);
 //    ompl_base::SpaceInformationPtr si(space);
-    auto si(std::make_shared<ompl_base::SpaceInformation>(space));
+//    auto si(std::make_shared<ompl_base::SpaceInformation>(space));
 
+//    si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
+//    si->setup();
+
+
+    ompl_geometric::SimpleSetup ompl_ss(space);
+//    ompl_ss.setStateValidityChecker(vigir_footstep_planning::FootstepPlanner::isStateValid);
+    ompl_base::SpaceInformationPtr si = ompl_ss.getSpaceInformation();
     si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
-    si->setup();
 
-//    auto space(std::make_shared<ompl_base::SE3StateSpace>());
-
-
-//    ompl_geometric::SimpleSetup ompl_ss(space);
-//    ompl_ss->setStateValidityChecker(vigir_footstep_planning::FootstepPlanner::isStateValid);
 
 //    ompl_ss.setStateValidityChecker([](const ompl_base::State *state) { return vigir_footstep_planning::FootstepPlanner::isStateValid(state); });
 
@@ -186,34 +187,35 @@ bool FootstepPlanner::plan(ReplanParams& params)
     std::cout << start;
     std::cout << goal;
 
-    auto pdef(std::make_shared<ompl_base::ProblemDefinition>(si));
-    pdef->setStartAndGoalStates(start, goal);
+//    auto pdef(std::make_shared<ompl_base::ProblemDefinition>(si));
+    ompl_ss.setStartAndGoalStates(start,goal);
+//    pdef->setStartAndGoalStates(start, goal);
 
-    auto planner(std::make_shared<ompl_geometric::RRTConnect>(si));
-    planner->setProblemDefinition(pdef);
-    planner->setup();
-    ompl_base::PlannerStatus solved = planner->ompl_base::Planner::solve(1.0);
-
+//    auto planner(std::make_shared<ompl_geometric::RRTConnect>(si));
+//    planner->setProblemDefinition(pdef);
+//    planner->setup();
+//    ompl_base::PlannerStatus solved = planner->ompl_base::Planner::solve(1.0);
+    ompl_base::PlannerStatus solved = ompl_ss.solve(1.0);
     if (solved)
     {
-      ompl_base::PathPtr pathPtr = pdef->getSolutionPath();
-      ompl::geometric::PathGeometric* solution = pathPtr->as<ompl::geometric::PathGeometric>();
-//      ompl_ss.simplifySolution();
+//      ompl_base::PathPtr pathPtr = pdef->getSolutionPath();
+//      ompl::geometric::PathGeometric* solution = pathPtr->as<ompl::geometric::PathGeometric>();
+      ompl_ss.simplifySolution();
       ROS_INFO("Found solution:");
       // print the path to screen
-//      ompl::geometric::PathGeometric& solution = ompl_ss.getSolutionPath();
-      solution->print(std::cout);
-      std::cout << solution->getStateCount();
+      ompl::geometric::PathGeometric& solution = ompl_ss.getSolutionPath();
+      solution.print(std::cout);
+      std::cout << solution.getStateCount();
 
       ivPath.clear();
 
-      for(int solution_state_iter = 0; solution_state_iter < solution->getStateCount(); ++solution_state_iter)
+      for(int solution_state_iter = 0; solution_state_iter < solution.getStateCount(); ++solution_state_iter)
       {
 
 //        ROS_INFO("State %i:", solution_state_iter);
 
         ompl_base::ScopedState<> current(space);
-        current = solution->getState(solution_state_iter);
+        current = solution.getState(solution_state_iter);
 //        current.print(std::cout);
         ompl_base::ScopedState<ompl_base::SE3StateSpace> currentFootLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
         ompl_base::ScopedState<ompl_base::SE3StateSpace> currentFootRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
