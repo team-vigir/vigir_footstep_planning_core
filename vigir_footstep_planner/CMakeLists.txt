@@ -28,7 +28,7 @@ link_directories(${SBPL_LIBRARY_DIRS})
 
 find_package(OpenCV REQUIRED)
 
-find_package(ompl REQUIRED)
+find_package(OMPL REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -110,7 +110,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS} ${SBPL_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS} ${SBPL_INCLUDE_DIRS} ${OMPL_INCLUDE_DIRS})
 
 ## Specify additional locations of header files
 set(HEADERS
@@ -119,6 +119,7 @@ set(HEADERS
   include/${PROJECT_NAME}/footstep_planner_environment.h
   include/${PROJECT_NAME}/footstep_planner_node.h
   include/${PROJECT_NAME}/footstep_planner.h
+  include/${PROJECT_NAME}/custom_ompl_motion_validator.h
 )
 
 set(SOURCES
@@ -127,6 +128,7 @@ set(SOURCES
   src/footstep_planner_environment.cpp
   src/footstep_planner_node.cpp
   src/footstep_planner.cpp
+  src/custom_ompl_motion_validator.cpp
 )
 
 ## Declare a cpp library
