@@ -24,7 +24,7 @@ FootstepPlanner::FootstepPlanner(ros::NodeHandle &nh)
   else
     ROS_ERROR("[FootstepPlanner] Can't initialize environment due to missing parameters!");
   // Initialize OMPL
-//  ompl_geometric::SimpleSetup ompl(const ompl_base::SpaceInformationPtr &si);  ompl_geometric::SimpleSetup ompl2(const ompl_base::StateSpacePtr &space);
+  //  ompl_geometric::SimpleSetup ompl(const ompl_base::SpaceInformationPtr &si);  ompl_geometric::SimpleSetup ompl2(const ompl_base::StateSpacePtr &space);
 
 }
 
@@ -102,44 +102,46 @@ bool FootstepPlanner::isPlanning() const
   return planning_thread.joinable();
 }
 
+ompl::base::ValidStateSamplerPtr allocValidStateSampler(const ompl::base::SpaceInformation *si) // const ompl::base::SpaceInformation *si,
+{
+//  return ompl::base::ValidStateSamplerPtr(new ompl::base::ValidStateSampler(si));
+  return std::make_shared<customValidStateSampler>(si);
+}
+
 bool FootstepPlanner::plan(ReplanParams& params)
 {
   if (usingOMPL)
   {
-//    ompl_base::CompoundStateSpace *cs = new ompl_base::CompoundStateSpace();
+
     auto footLeftSpace(std::make_shared<ompl_base::SE3StateSpace>());
     auto footRightSpace(std::make_shared<ompl_base::SE3StateSpace>());
-//    cs -> addSubspace(ompl_base::StateSpacePtr(new ompl_base::SE3StateSpace()), 1.0);//left foot position
-//    cs -> addSubspace(ompl_base::StateSpacePtr(new ompl_base::SE3StateSpace()), 1.0);//right foot position
 
     ompl_base::RealVectorBounds bounds(3);
-    bounds.setLow(-100);
-    bounds.setHigh(100);
+    bounds.setLow(-10);
+    bounds.setHigh(10);
     bounds.check();
     footLeftSpace->setBounds(bounds);
     footRightSpace->setBounds(bounds);
 
     ompl_base::StateSpacePtr space = footLeftSpace + footRightSpace;
-//    auto space(std::make_shared<ompl_base::StateSpacePtr>());
-//    space = (footLeftSpace + footRightSpace);
+    //    ompl::base::DiscreteStateSampler stateSampler(space.get());
+    //    space->setStateSamplerAllocator(stateSampler);
+    //    auto space(std::make_shared<ompl_base::StateSpacePtr>());
+    //    space = (footLeftSpace + footRightSpace);
 
-//    ompl_base::SpaceInformation spaceinfo(space);
-//    ompl_base::SpaceInformationPtr si(space);
-//    auto si(std::make_shared<ompl_base::SpaceInformation>(space));
+    //    ompl_base::SpaceInformation spaceinfo(space);
+    //    ompl_base::SpaceInformationPtr si(space);
+    //    auto si(std::make_shared<ompl_base::SpaceInformation>(space));
 
-//    si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
-//    si->setup();
+    //    si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
+    //    si->setup();
 
 
     ompl_geometric::SimpleSetup ompl_ss(space);
-//    ompl_ss.setStateValidityChecker(vigir_footstep_planning::FootstepPlanner::isStateValid);
-    ompl_base::SpaceInformationPtr si = ompl_ss.getSpaceInformation();
-    si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
+//    ompl::base::ProblemDefinitionPtr pdef = ompl_ss.getProblemDefinition();
 
+//    si->setValidStateSamplerAllocator(std::bind(&allocValidStateSampler, std::placeholders::_1));
 
-//    ompl_ss.setStateValidityChecker([](const ompl_base::State *state) { return vigir_footstep_planning::FootstepPlanner::isStateValid(state); });
-
-//    ompl_ss.setStateValidityChecker((const ompl_base::StateValidityCheckerFn) &vigir_footstep_planning::FootstepPlanner::isStateValid);
 
     ompl_base::ScopedState<> start(space);
     ompl_base::ScopedState<> goal(space);
@@ -187,20 +189,35 @@ bool FootstepPlanner::plan(ReplanParams& params)
     std::cout << start;
     std::cout << goal;
 
-//    auto pdef(std::make_shared<ompl_base::ProblemDefinition>(si));
+    //    auto pdef(std::make_shared<ompl_base::ProblemDefinition>(si));
     ompl_ss.setStartAndGoalStates(start,goal);
-//    pdef->setStartAndGoalStates(start, goal);
+    ompl_base::SpaceInformationPtr si = ompl_ss.getSpaceInformation();
+    si->setValidStateSamplerAllocator(allocValidStateSampler);
+    si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
 
-//    auto planner(std::make_shared<ompl_geometric::RRTConnect>(si));
-//    planner->setProblemDefinition(pdef);
-//    planner->setup();
-//    ompl_base::PlannerStatus solved = planner->ompl_base::Planner::solve(1.0);
+//    ompl::base::PlannerPtr planner(new ompl::geometric::RRTConnect(si));
+    auto planner(std::make_shared<ompl::geometric::PRM>(ompl_ss.getSpaceInformation()));
+    ompl_ss.setPlanner(planner);
+
+
+
+
+
+
+
+
+    //    pdef->setStartAndGoalStates(start, goal);
+
+    //    auto planner(std::make_shared<ompl_geometric::RRTConnect>(si));
+    //    planner->setProblemDefinition(pdef);
+    //    planner->setup();
+    //    ompl_base::PlannerStatus solved = planner->ompl_base::Planner::solve(1.0);
     ompl_base::PlannerStatus solved = ompl_ss.solve(1.0);
     if (solved)
     {
-//      ompl_base::PathPtr pathPtr = pdef->getSolutionPath();
-//      ompl::geometric::PathGeometric* solution = pathPtr->as<ompl::geometric::PathGeometric>();
-      ompl_ss.simplifySolution();
+      //      ompl_base::PathPtr pathPtr = pdef->getSolutionPath();
+      //      ompl::geometric::PathGeometric* solution = pathPtr->as<ompl::geometric::PathGeometric>();
+      //      ompl_ss.simplifySolution();
       ROS_INFO("Found solution:");
       // print the path to screen
       ompl::geometric::PathGeometric& solution = ompl_ss.getSolutionPath();
@@ -212,11 +229,11 @@ bool FootstepPlanner::plan(ReplanParams& params)
       for(int solution_state_iter = 0; solution_state_iter < solution.getStateCount(); ++solution_state_iter)
       {
 
-//        ROS_INFO("State %i:", solution_state_iter);
+        //        ROS_INFO("State %i:", solution_state_iter);
 
         ompl_base::ScopedState<> current(space);
         current = solution.getState(solution_state_iter);
-//        current.print(std::cout);
+        //        current.print(std::cout);
         ompl_base::ScopedState<ompl_base::SE3StateSpace> currentFootLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
         ompl_base::ScopedState<ompl_base::SE3StateSpace> currentFootRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
         current >> currentFootLeft;
@@ -231,11 +248,11 @@ bool FootstepPlanner::plan(ReplanParams& params)
         ivPath.push_back(s);
       }
 
-//      // add last neutral step
-//      if (ivPath.back().getLeg() == RIGHT)
-//        ivPath.push_back(ivGoalFootLeft);
-//      else // last_leg == LEFT
-//        ivPath.push_back(ivGoalFootRight);
+      //      // add last neutral step
+      //      if (ivPath.back().getLeg() == RIGHT)
+      //        ivPath.push_back(ivGoalFootLeft);
+      //      else // last_leg == LEFT
+      //        ivPath.push_back(ivGoalFootRight);
 
 
       return true;
@@ -298,7 +315,7 @@ bool FootstepPlanner::plan(ReplanParams& params)
       ROS_ERROR("SBPL planning failed (%s)", e->what());
       return false;
     }
-  //}
+    //}
     ivPathCost = double(path_cost) / cvMmScale;
 
     bool path_is_new = pathIsNew(solution_state_ids);
@@ -1549,21 +1566,21 @@ void FootstepPlanner::radianToQuat(double roll, double pitch, double yaw, double
 
 void FootstepPlanner::quatToRadian(ompl_base::SO3StateSpace::StateType* rotation, double* roll, double* pitch, double* yaw)
 {
-    //roll
-    double sinr = +2.0 * (rotation->w * rotation->x + rotation->y * rotation->z);
-    double cosr = +1.0 - 2.0 * (rotation->x * rotation->x + rotation->y * rotation->y);
-    *roll = atan2(sinr, cosr);
+  //roll
+  double sinr = +2.0 * (rotation->w * rotation->x + rotation->y * rotation->z);
+  double cosr = +1.0 - 2.0 * (rotation->x * rotation->x + rotation->y * rotation->y);
+  *roll = atan2(sinr, cosr);
 
-    //pitch
-    double sinp = +2.0 * (rotation->w * rotation->y - rotation->z * rotation->x);
-    if (fabs(sinp) >= 1)
-      *pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
-    else
-      *pitch = asin(sinp);
+  //pitch
+  double sinp = +2.0 * (rotation->w * rotation->y - rotation->z * rotation->x);
+  if (fabs(sinp) >= 1)
+    *pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+  else
+    *pitch = asin(sinp);
 
-    //yaw
-    double siny = +2.0 * (rotation->w * rotation->z + rotation->x * rotation->y);
-    double cosy = +1.0 - 2.0 * (rotation->y * rotation->y + rotation->z * rotation->z);
-    *yaw = atan2(siny, cosy);
+  //yaw
+  double siny = +2.0 * (rotation->w * rotation->z + rotation->x * rotation->y);
+  double cosy = +1.0 - 2.0 * (rotation->y * rotation->y + rotation->z * rotation->z);
+  *yaw = atan2(siny, cosy);
 }
 }

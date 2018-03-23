@@ -120,6 +120,7 @@ set(HEADERS
   include/${PROJECT_NAME}/footstep_planner_node.h
   include/${PROJECT_NAME}/footstep_planner.h
   include/${PROJECT_NAME}/custom_ompl_motion_validator.h
+  include/${PROJECT_NAME}/customvalidstatesampler.h
 )
 
 set(SOURCES
@@ -129,6 +130,7 @@ set(SOURCES
   src/footstep_planner_node.cpp
   src/footstep_planner.cpp
   src/custom_ompl_motion_validator.cpp
+  src/customvalidstatesampler.cpp
 )
 
 ## Declare a cpp library

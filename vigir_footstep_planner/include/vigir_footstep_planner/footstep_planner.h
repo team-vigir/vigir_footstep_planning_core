@@ -91,12 +91,17 @@
 #include <ompl/base/StateValidityChecker.h>
 #include <ompl/base/MotionValidator.h>
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
+#include <ompl/geometric/planners/prm/PRM.h>
 #include <ompl/base/ProblemDefinition.h>
 #include <ompl/base/Path.h>
+#include <ompl/base/spaces/DiscreteStateSpace.h>
+#include <ompl/base/samplers/ObstacleBasedValidStateSampler.h>
+#include <ompl/base/samplers/informed/PathLengthDirectInfSampler.h>
 #include <memory.h>
 #include <fstream>
 
 #include <vigir_footstep_planner/custom_ompl_motion_validator.h>
+#include <vigir_footstep_planner/customvalidstatesampler.h>
 
 
 

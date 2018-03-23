@@ -1,6 +1,8 @@
 #ifndef CUSTOM_OMPL_MOTION_VALIDATOR
 #define CUSTOM_OMPL_MOTION_VALIDATOR
 
+#include <ros/ros.h>
+
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/StateSpace.h>
 #include <ompl/base/spaces/SE3StateSpace.h>
@@ -35,27 +37,14 @@ namespace vigir_footstep_planning
 class customOmplMotionValidator : public ompl::base::MotionValidator
 {
 public:
-  customOmplMotionValidator(ompl::base::SpaceInformation* si) : ompl::base::MotionValidator(si)
-  {
-  }
-
-  customOmplMotionValidator(const ompl::base::SpaceInformationPtr &si) : ompl::base::MotionValidator(si)
-  {
-  }
+  /// \brief Constructor
+  customOmplMotionValidator(ompl::base::SpaceInformation* si);
+  /// \brief Constructor
+  customOmplMotionValidator(const ompl::base::SpaceInformationPtr &si);
   /// \brief Destructor
   ~customOmplMotionValidator() override = default;
-  bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2) const override
-  {
-
-    return true;
-
-  }
-  bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2, std::pair<ompl::base::State*, double> &lastValid) const override
-  {
-
-    return true;
-
-  }
+  bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2) const override;
+  bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2, std::pair<ompl::base::State*, double> &lastValid) const override;
 };
 }
 
