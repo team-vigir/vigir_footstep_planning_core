@@ -91,12 +91,13 @@
 #include <ompl/base/StateValidityChecker.h>
 #include <ompl/base/MotionValidator.h>
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
-#include <ompl/geometric/planners/prm/PRM.h>
+#include <ompl/geometric/planners/prm/PRMstar.h>
 #include <ompl/base/ProblemDefinition.h>
 #include <ompl/base/Path.h>
 #include <ompl/base/spaces/DiscreteStateSpace.h>
 #include <ompl/base/samplers/ObstacleBasedValidStateSampler.h>
 #include <ompl/base/samplers/informed/PathLengthDirectInfSampler.h>
+#include <ompl/base/samplers/InformedStateSampler.h>
 #include <memory.h>
 #include <fstream>
 
@@ -265,6 +266,8 @@ protected:
 
   /// @brief turns given quaternions into roll, pitch and yaw.
   void quatToRadian(ompl_base::SO3StateSpace::StateType* rotation, double* roll, double* pitch, double* yaw);
+
+  void setOrientation(ompl_base::State* state, double x, double y, double z, double w);
 
   // publisher
   ros::Publisher ivCheckedFootContactSupportPub;

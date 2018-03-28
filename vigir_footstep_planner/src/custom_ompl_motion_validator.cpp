@@ -35,12 +35,12 @@ bool customOmplMotionValidator::checkMotion(const ompl::base::State *s1, const o
   ompl::base::ScopedState<ompl::base::SE3StateSpace> nextFootRight(space->as<ompl::base::SE3StateSpace>()->getSubspace(1));
   next >> nextFootLeft;
   next >> nextFootRight;
-  double max_distance = 10.0;
+  double max_distance = 5.0;
   double left_distance = currentFootLeft.distance(nextFootLeft);
   double right_distance = currentFootRight.distance(nextFootRight);
   ROS_INFO("left_distance = %f", left_distance);
   ROS_INFO("right_distance = %f", right_distance);
-  if((left_distance <= max_distance && right_distance <= max_distance) || (right_distance <= max_distance && left_distance <= max_distance))
+  if((left_distance <= 0.3 && right_distance <= max_distance) || (right_distance <= 0.3 && left_distance <= max_distance))
   {
     return true;
   }
@@ -48,6 +48,7 @@ bool customOmplMotionValidator::checkMotion(const ompl::base::State *s1, const o
   {
     return false;
   }
+
 
 }
 bool customOmplMotionValidator::checkMotion(const ompl::base::State *s1, const ompl::base::State *s2, std::pair<ompl::base::State*, double> &lastValid) const

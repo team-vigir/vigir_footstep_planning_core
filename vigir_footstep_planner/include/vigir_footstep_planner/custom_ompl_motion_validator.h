@@ -18,6 +18,7 @@
 #include <ompl/base/ProblemDefinition.h>
 
 
+
 //class customOmplMotionValidator : public ompl::base::MotionValidator
 //{
 //public:
