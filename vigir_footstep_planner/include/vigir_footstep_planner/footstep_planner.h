@@ -82,6 +82,7 @@
 #include <vigir_footstep_planner/ompl_helper.h>
 #include <vigir_footstep_planner/custom_ompl_motion_validator.h>
 #include <vigir_footstep_planner/customvalidstatesampler.h>
+#include <vigir_footstep_planner/customstatevaliditychecker.h>
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/StateSpace.h>

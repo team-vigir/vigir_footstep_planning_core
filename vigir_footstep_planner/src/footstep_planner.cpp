@@ -125,17 +125,6 @@ bool FootstepPlanner::plan(ReplanParams& params)
     footRightSpace->setBounds(bounds);
 
     ompl_base::StateSpacePtr space = footLeftSpace + footRightSpace;
-    //    ompl::base::DiscreteStateSampler stateSampler(space.get());
-    //    space->setStateSamplerAllocator(stateSampler);
-    //    auto space(std::make_shared<ompl_base::StateSpacePtr>());
-    //    space = (footLeftSpace + footRightSpace);
-
-    //    ompl_base::SpaceInformation spaceinfo(space);
-    //    ompl_base::SpaceInformationPtr si(space);
-    //    auto si(std::make_shared<ompl_base::SpaceInformation>(space));
-
-    //    si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
-    //    si->setup();
 
 
     ompl_geometric::SimpleSetup ompl_ss(space);
@@ -172,13 +161,14 @@ bool FootstepPlanner::plan(ReplanParams& params)
     ompl_base::SpaceInformationPtr si = ompl_ss.getSpaceInformation();
 //    si->setValidStateSamplerAllocator(allocValidStateSampler);
 //    si->setValidStateSamplerAllocator(std::bind(&allocValidStateSampler, std::placeholders::_1));
-    si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
-    si->setStateValidityCheckingResolution(0.25);
+//    si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
+//    si->setStateValidityCheckingResolution(0.25);
+//    si->setStateValidityChecker(std::make_shared<CustomStateValidityChecker>(si));
     si->setValidStateSamplerAllocator(allocMyValidStateSampler);
 
-    ompl::base::PlannerPtr planner(new ompl::geometric::RRTConnect(si));
-    planner->as<ompl::geometric::RRTConnect>()->setRange(1.0);
-//    auto planner(std::make_shared<ompl::geometric::PRMstar>(ompl_ss.getSpaceInformation()));
+//    ompl::base::PlannerPtr planner(new ompl::geometric::RRTConnect(si));
+//    planner->as<ompl::geometric::RRTConnect>()->setRange(1.0);
+    auto planner(std::make_shared<ompl::geometric::PRMstar>(ompl_ss.getSpaceInformation()));
     ompl_ss.setPlanner(planner);
 //    ompl_ss.setup();
 

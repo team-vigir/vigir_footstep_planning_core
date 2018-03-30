@@ -1,6 +1,8 @@
 #ifndef VALIDSTATESAMPLER_H
 #define VALIDSTATESAMPLER_H
 
+#include <math.h>
+
 #include <vigir_footstep_planner/footstep_planner.h>
 #include <vigir_footstep_planner/ompl_helper.h>
 

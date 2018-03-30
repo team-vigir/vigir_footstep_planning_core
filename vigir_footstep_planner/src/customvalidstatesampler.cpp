@@ -174,9 +174,13 @@ customValidStateSampler::customValidStateSampler(const ompl::base::SpaceInformat
   space = footLeftSpace + footRightSpace;
   auto sampleSpace(std::make_shared<ompl::base::SE2StateSpace>());
 //  ompl::base::StateSpace *sampleSpace(ompl::base::SE2StateSpace);
-  sampleSpace->setBounds(bounds);
+
+  ompl::base::RealVectorBounds boundsSample(2);
+  boundsSample.setLow(-100);
+  boundsSample.setHigh(100);
+  sampleSpace->setBounds(boundsSample);
   ompl::geometric::SimpleSetup ss(sampleSpace);
-//  sampleSpacePtr = sampleSpace;
+  sampleSpacePtr = sampleSpace;
 //  auto si2D(std::make_shared<ompl::base::SpaceInformation>(samplespace.get()));
 
 
@@ -185,47 +189,50 @@ customValidStateSampler::customValidStateSampler(const ompl::base::SpaceInformat
 
 //  auto uniformSampler(std::make_shared<ompl::base::UniformValidStateSampler>(ss.getSpaceInformation()));
 //  ompl::base::UniformValidStateSampler uniformSampler(ss.getSpaceInformation().get());
-  uniform2DSampler = std::make_shared<ompl::base::UniformValidStateSampler>(ss.getSpaceInformation().get());
+//  uniform2DSampler = std::make_shared<ompl::base::UniformValidStateSampler>(ss.getSpaceInformation().get());
 //  uniform2DSampler = &uniformSampler;
   lastZVal = 0.0;
 }
 
 bool customValidStateSampler::sample(ob::State *state)
 {
-  ROS_INFO("Using Sampler");
-
-  ompl::base::State *sample2DRight, *sample2DLeft;
-  uniform2DSampler->sample(sample2DRight);
-  uniform2DSampler->sample(sample2DLeft);
+  ompl_base::ScopedState<ompl_base::SE2StateSpace> sample2DRight(sampleSpacePtr);
+  ompl_base::ScopedState<ompl_base::SE2StateSpace> sample2DLeft(sampleSpacePtr);
+//  uniform2DSampler->sample(sample2DRight);
+//  uniform2DSampler->sample(sample2DLeft);
+  sample2DLeft->setXY(rng_.uniformReal(-10.0,10.0),rng_.uniformReal(-10.0,10.0));
+  sample2DLeft->setYaw(rng_.uniformReal(-M_PI,M_PI));
+  sample2DRight->setXY(rng_.uniformReal(-10.0,10.0),rng_.uniformReal(-10.0,10.0));
+  sample2DRight->setYaw(rng_.uniformReal(-M_PI,M_PI));
   ompl_base::ScopedState<ompl_base::SE3StateSpace> sampleLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
   ompl_base::ScopedState<ompl_base::SE3StateSpace> sampleRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
+  sampleSpacePtr->printState(sample2DRight.get(), std::cout);
 
-  if(vigir_footstep_planning::WorldModel::instance().isTerrainModelAvailable())
+//  if(vigir_footstep_planning::WorldModel::instance().isTerrainModelAvailable())
+  if(false)
   {
     State s(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, LEFT);
     double x, y, z, w;
 
-    sampleLeft->setXYZ(sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getX(),sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getY(),lastZVal);
-    ompl_helper::radianToQuat(0.0, 0.0, sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getYaw(), &x, &y, &z, &w);
+    sampleLeft->setXYZ(sample2DLeft->getX(),sample2DLeft->getY(),lastZVal);
+    ompl_helper::radianToQuat(0.0, 0.0, sample2DLeft->getYaw(), &x, &y, &z, &w);
     ompl_helper::setOrientation(sampleLeft->as<ompl_base::SO3StateSpace::StateType>(1), x, y, z, w);
     ompl_helper::getOmplState(&sampleLeft, &s, LEFT);
     vigir_footstep_planning::WorldModel::instance().update3DData(s);
     lastZVal = s.getZ();
     ompl_helper::setOmplState(&sampleLeft, &s);
 
-    sampleRight->setXYZ(sample2DRight->as<ompl_base::SE2StateSpace::StateType>()->getX(),sample2DRight->as<ompl_base::SE2StateSpace::StateType>()->getY(),lastZVal);
-    ompl_helper::radianToQuat(0.0, 0.0, sample2DRight->as<ompl_base::SE2StateSpace::StateType>()->getYaw(), &x, &y, &z, &w);
+    sampleRight->setXYZ(sample2DRight->getX(),sample2DRight->getY(),lastZVal);
+    ompl_helper::radianToQuat(0.0, 0.0, sample2DRight->getYaw(), &x, &y, &z, &w);
     ompl_helper::setOrientation(sampleRight->as<ompl_base::SO3StateSpace::StateType>(1), x, y, z, w);
     ompl_helper::getOmplState(&sampleRight, &s, RIGHT);
     vigir_footstep_planning::WorldModel::instance().update3DData(s);
     lastZVal = s.getZ();
     ompl_helper::setOmplState(&sampleRight, &s);
-
-//    state << converterState;
   }
   else {
-    sampleLeft->setXYZ(sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getX(),sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getY(),0.0);
-    sampleRight->setXYZ(sample2DRight->as<ompl_base::SE2StateSpace::StateType>()->getX(),sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getY(),0.0);
+    sampleLeft->setXYZ(sample2DLeft->getX(),sample2DLeft->getY(),0.0);
+    sampleRight->setXYZ(sample2DRight->getX(),sample2DLeft->getY(),0.0);
   }
 
   ompl_base::ScopedState<> converterState(space);
@@ -237,6 +244,58 @@ bool customValidStateSampler::sample(ob::State *state)
 
 bool customValidStateSampler::sampleNear(ob::State* state, const ob::State* near, const double distance)
 {
+  ompl::base::ScopedState<> scopedState(space);
+  space->copyState(scopedState->as<ompl::base::State>(), near);
+  ompl::base::ScopedState<ompl::base::SE3StateSpace> footLeft(space->as<ompl::base::SE3StateSpace>()->getSubspace(0));
+  ompl::base::ScopedState<ompl::base::SE3StateSpace> footRight(space->as<ompl::base::SE3StateSpace>()->getSubspace(1));
+  footLeft << scopedState;
+  footRight << scopedState;
+  ompl_base::ScopedState<ompl_base::SE2StateSpace> sample2DRight(sampleSpacePtr);
+  ompl_base::ScopedState<ompl_base::SE2StateSpace> sample2DLeft(sampleSpacePtr);
+//  uniform2DSampler->sample(sample2DRight);
+//  uniform2DSampler->sample(sample2DLeft);
+  double distancePerDim = distance / 2;
+  lastZVal = footLeft.get()->getZ();
+  sample2DLeft->setXY(rng_.uniformReal(footLeft.get()->getX() - distancePerDim, footLeft.get()->getX() + distancePerDim),rng_.uniformReal(footLeft.get()->getY() - distancePerDim, footLeft.get()->getY() + distancePerDim));
+  sample2DLeft->setYaw(rng_.uniformReal(-M_PI,M_PI));
+  sample2DRight->setXY(rng_.uniformReal(footRight.get()->getX() - distancePerDim, footRight.get()->getX() + distancePerDim),rng_.uniformReal(footRight.get()->getY() - distancePerDim, footRight.get()->getY() + distancePerDim));
+  sample2DRight->setYaw(rng_.uniformReal(-M_PI,M_PI));
+  ompl_base::ScopedState<ompl_base::SE3StateSpace> sampleLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
+  ompl_base::ScopedState<ompl_base::SE3StateSpace> sampleRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
+  sampleSpacePtr->printState(sample2DRight.get(), std::cout);
+
+//  if(vigir_footstep_planning::WorldModel::instance().isTerrainModelAvailable())
+  if(false)
+  {
+    State s(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, LEFT);
+    double x, y, z, w;
+
+    sampleLeft->setXYZ(sample2DLeft->getX(),sample2DLeft->getY(),lastZVal);
+    ompl_helper::radianToQuat(0.0, 0.0, sample2DLeft->getYaw(), &x, &y, &z, &w);
+    ompl_helper::setOrientation(sampleLeft->as<ompl_base::SO3StateSpace::StateType>(1), x, y, z, w);
+    ompl_helper::getOmplState(&sampleLeft, &s, LEFT);
+    vigir_footstep_planning::WorldModel::instance().update3DData(s);
+    lastZVal = s.getZ();
+    ompl_helper::setOmplState(&sampleLeft, &s);
+
+    sampleRight->setXYZ(sample2DRight->getX(),sample2DRight->getY(),lastZVal);
+    ompl_helper::radianToQuat(0.0, 0.0, sample2DRight->getYaw(), &x, &y, &z, &w);
+    ompl_helper::setOrientation(sampleRight->as<ompl_base::SO3StateSpace::StateType>(1), x, y, z, w);
+    ompl_helper::getOmplState(&sampleRight, &s, RIGHT);
+    vigir_footstep_planning::WorldModel::instance().update3DData(s);
+    lastZVal = s.getZ();
+    ompl_helper::setOmplState(&sampleRight, &s);
+  }
+  else {
+    sampleLeft->setXYZ(sample2DLeft->getX(),sample2DLeft->getY(),0.0);
+    sampleRight->setXYZ(sample2DRight->getX(),sample2DLeft->getY(),0.0);
+  }
+
+  ompl_base::ScopedState<> converterState(space);
+  sampleLeft >> converterState;
+  sampleRight >> converterState;
+  space->copyState(state, converterState.get());
+  return true;
 
 }
 }

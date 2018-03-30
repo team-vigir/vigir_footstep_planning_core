@@ -122,6 +122,7 @@ set(HEADERS
   include/${PROJECT_NAME}/custom_ompl_motion_validator.h
   include/${PROJECT_NAME}/customvalidstatesampler.h
   include/${PROJECT_NAME}/ompl_helper.h
+  include/${PROJECT_NAME}/customstatevaliditychecker.h
 )
 
 set(SOURCES
@@ -133,6 +134,7 @@ set(SOURCES
   src/custom_ompl_motion_validator.cpp
   src/customvalidstatesampler.cpp
   src/ompl_helper.cpp
+  src/customstatevaliditychecker.cpp
 )
 
 ## Declare a cpp library
