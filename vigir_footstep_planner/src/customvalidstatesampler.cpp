@@ -1,6 +1,7 @@
 #include <vigir_footstep_planner/customvalidstatesampler.h>
 
-
+namespace vigir_footstep_planning
+{
 ompl::RNG rng_;
 
 //customValidStateSampler::customValidStateSampler(const ompl::base::ProblemDefinitionPtr &probDefn, const GetCurrentCostFunc &costFunc, const ompl::base::InformedSamplerPtr &infSampler) : ompl::base::InformedStateSampler(&probDefn, &costFunc, &infSampler)
@@ -161,6 +162,7 @@ ompl::RNG rng_;
 
 customValidStateSampler::customValidStateSampler(const ompl::base::SpaceInformation *si) : ompl::base::ValidStateSampler(si)
 {
+  ROS_INFO("Initiating Sampler");
   auto footLeftSpace(std::make_shared<ompl::base::SE3StateSpace>());
   auto footRightSpace(std::make_shared<ompl::base::SE3StateSpace>());
 
@@ -170,42 +172,71 @@ customValidStateSampler::customValidStateSampler(const ompl::base::SpaceInformat
   footLeftSpace->setBounds(bounds);
   footRightSpace->setBounds(bounds);
   space = footLeftSpace + footRightSpace;
-  auto sample(std::make_shared<ompl::base::SE2StateSpace>());
-  sample->setBounds(bounds);
-  samplespace = sample;
-//  auto si2D(std::make_shared<ompl::base::SpaceInformation>(&samplespace));
+  auto sampleSpace(std::make_shared<ompl::base::SE2StateSpace>());
+//  ompl::base::StateSpace *sampleSpace(ompl::base::SE2StateSpace);
+  sampleSpace->setBounds(bounds);
+  ompl::geometric::SimpleSetup ss(sampleSpace);
+//  sampleSpacePtr = sampleSpace;
+//  auto si2D(std::make_shared<ompl::base::SpaceInformation>(samplespace.get()));
 
 
-//  ompl_base::SpaceInformationPtr si2D(sample);
+//  ompl_base::SpaceInformation si2D(sampleSpacePtr);
 
 
-//  auto uniformSampler(std::make_shared<ompl::base::UniformValidStateSampler>(si2D.get()));
-//  uniform2DSampler = uniformSampler;
-//  lastZVal = 0.0;
+//  auto uniformSampler(std::make_shared<ompl::base::UniformValidStateSampler>(ss.getSpaceInformation()));
+//  ompl::base::UniformValidStateSampler uniformSampler(ss.getSpaceInformation().get());
+  uniform2DSampler = std::make_shared<ompl::base::UniformValidStateSampler>(ss.getSpaceInformation().get());
+//  uniform2DSampler = &uniformSampler;
+  lastZVal = 0.0;
 }
 
 bool customValidStateSampler::sample(ob::State *state)
 {
-//  ompl::base::State *sample2D;
-//  uniform2DSampler->sample(sample2D);
+  ROS_INFO("Using Sampler");
 
-//  if(vigir_footstep_planning::WorldModel::instance().isTerrainModelAvailable())
-//  {
-//    vigir_footstep_planning::State *s;
-//    ompl_base::ScopedState<ompl_base::SE3StateSpace> sample3D(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
-//    sample3D->setXYZ(sample2D->as<ompl_base::SE2StateSpace::StateType>()->getX(),sample2D->as<ompl_base::SE2StateSpace::StateType>()->getY(),lastZVal);
-////    convertState(*sample3D, *s);
-//    vigir_footstep_planning::WorldModel::instance().update3DData(*s);
-//    lastZVal = s->getZ();
+  ompl::base::State *sample2DRight, *sample2DLeft;
+  uniform2DSampler->sample(sample2DRight);
+  uniform2DSampler->sample(sample2DLeft);
+  ompl_base::ScopedState<ompl_base::SE3StateSpace> sampleLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
+  ompl_base::ScopedState<ompl_base::SE3StateSpace> sampleRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
 
-//  }
-//  else {
+  if(vigir_footstep_planning::WorldModel::instance().isTerrainModelAvailable())
+  {
+    State s(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, LEFT);
+    double x, y, z, w;
 
-//  }
+    sampleLeft->setXYZ(sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getX(),sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getY(),lastZVal);
+    ompl_helper::radianToQuat(0.0, 0.0, sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getYaw(), &x, &y, &z, &w);
+    ompl_helper::setOrientation(sampleLeft->as<ompl_base::SO3StateSpace::StateType>(1), x, y, z, w);
+    ompl_helper::getOmplState(&sampleLeft, &s, LEFT);
+    vigir_footstep_planning::WorldModel::instance().update3DData(s);
+    lastZVal = s.getZ();
+    ompl_helper::setOmplState(&sampleLeft, &s);
+
+    sampleRight->setXYZ(sample2DRight->as<ompl_base::SE2StateSpace::StateType>()->getX(),sample2DRight->as<ompl_base::SE2StateSpace::StateType>()->getY(),lastZVal);
+    ompl_helper::radianToQuat(0.0, 0.0, sample2DRight->as<ompl_base::SE2StateSpace::StateType>()->getYaw(), &x, &y, &z, &w);
+    ompl_helper::setOrientation(sampleRight->as<ompl_base::SO3StateSpace::StateType>(1), x, y, z, w);
+    ompl_helper::getOmplState(&sampleRight, &s, RIGHT);
+    vigir_footstep_planning::WorldModel::instance().update3DData(s);
+    lastZVal = s.getZ();
+    ompl_helper::setOmplState(&sampleRight, &s);
+
+//    state << converterState;
+  }
+  else {
+    sampleLeft->setXYZ(sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getX(),sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getY(),0.0);
+    sampleRight->setXYZ(sample2DRight->as<ompl_base::SE2StateSpace::StateType>()->getX(),sample2DLeft->as<ompl_base::SE2StateSpace::StateType>()->getY(),0.0);
+  }
+
+  ompl_base::ScopedState<> converterState(space);
+  sampleLeft >> converterState;
+  sampleRight >> converterState;
+  space->copyState(state, converterState.get());
+  return true;
 }
 
 bool customValidStateSampler::sampleNear(ob::State* state, const ob::State* near, const double distance)
 {
 
 }
-
+}

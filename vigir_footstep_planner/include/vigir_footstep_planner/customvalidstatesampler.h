@@ -1,7 +1,8 @@
 #ifndef VALIDSTATESAMPLER_H
 #define VALIDSTATESAMPLER_H
 
-#include<vigir_footstep_planner/footstep_planner.h>
+#include <vigir_footstep_planner/footstep_planner.h>
+#include <vigir_footstep_planner/ompl_helper.h>
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/StateSpace.h>
@@ -27,12 +28,14 @@
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
-/// @cond IGNORE
 
+
+namespace vigir_footstep_planning
+{
 class customValidStateSampler : public ompl::base::ValidStateSampler
 {
 private:
-  ompl::base::StateSpacePtr space, samplespace;
+  ompl::base::StateSpacePtr space, sampleSpacePtr;
   std::shared_ptr<ompl::base::UniformValidStateSampler> uniform2DSampler;
   double lastZVal;
 public:
@@ -63,6 +66,7 @@ public:
 protected:
   ompl::RNG rng_;
 };
+}
 
 
 #endif // VALIDSTATESAMPLER_H

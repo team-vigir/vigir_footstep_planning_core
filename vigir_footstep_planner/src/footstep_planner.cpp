@@ -102,9 +102,10 @@ bool FootstepPlanner::isPlanning() const
   return planning_thread.joinable();
 }
 //ompl::base::InformedStateSampler (const ompl::base::ProblemDefinitionPtr &probDefn, const ompl::base::GetCurrentCostFunc &costFunc, const ompl::base::InformedSamplerPtr &infSampler)
-ompl::base::ValidStateSamplerPtr allocValidStateSampler(const ompl::base::SpaceInformation *si) // const ompl::base::SpaceInformation *si,
+ompl::base::ValidStateSamplerPtr allocMyValidStateSampler(const ompl::base::SpaceInformation *si) // const ompl::base::SpaceInformation *si,
 {
 //  return ompl::base::ValidStateSamplerPtr(new ompl::base::ValidStateSampler(si));
+  ROS_INFO("allocating Sampler");
   return std::make_shared<customValidStateSampler>(si);
 }
 
@@ -150,36 +151,13 @@ bool FootstepPlanner::plan(ReplanParams& params)
     ompl_base::ScopedState<ompl_base::SE3StateSpace> goalFootLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
     ompl_base::ScopedState<ompl_base::SE3StateSpace> goalFootRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
 
-    startFootLeft->setXYZ(ivStartFootLeft.getX(),ivStartFootLeft.getY(),ivStartFootLeft.getZ());
-    ompl_base::SO3StateSpace::StateType *startFootLeftRotation = startFootLeft->as<ompl_base::SO3StateSpace::StateType>(1);
-    double x,y,z,w;
-    FootstepPlanner::radianToQuat(ivStartFootLeft.getRoll(), ivStartFootLeft.getPitch(), ivStartFootLeft.getYaw(), &x, &y, &z, &w);
-    FootstepPlanner::setOrientation(&startFootLeft, x, y, z, w);
-//    startFootLeftRotation->x = x;
-//    startFootLeftRotation->y = y;
-//    startFootLeftRotation->z = z;
-//    startFootLeftRotation->w = w;
-    startFootRight->setXYZ(ivStartFootRight.getX(),ivStartFootRight.getY(),ivStartFootRight.getZ());
-    ompl_base::SO3StateSpace::StateType *startFootRightRotation = startFootRight->as<ompl_base::SO3StateSpace::StateType>(1);
-    FootstepPlanner::radianToQuat(ivStartFootRight.getRoll(), ivStartFootRight.getPitch(), ivStartFootRight.getYaw(), &x, &y, &z, &w);
-    startFootRightRotation->x = x;
-    startFootRightRotation->y = y;
-    startFootRightRotation->z = z;
-    startFootRightRotation->w = w;
-    goalFootLeft->setXYZ(ivGoalFootLeft.getX(),ivGoalFootLeft.getY(),ivGoalFootLeft.getZ());
-    ompl_base::SO3StateSpace::StateType *goalFootLeftRotation = goalFootLeft->as<ompl_base::SO3StateSpace::StateType>(1);
-    FootstepPlanner::radianToQuat(ivGoalFootLeft.getRoll(), ivGoalFootLeft.getPitch(), ivGoalFootLeft.getYaw(), &x, &y, &z, &w);
-    goalFootLeftRotation->x = x;
-    goalFootLeftRotation->y = y;
-    goalFootLeftRotation->z = z;
-    goalFootLeftRotation->w = w;
-    goalFootRight->setXYZ(ivGoalFootRight.getX(),ivGoalFootRight.getY(),ivGoalFootRight.getZ());
-    ompl_base::SO3StateSpace::StateType *goalFootRightRotation = goalFootRight->as<ompl_base::SO3StateSpace::StateType>(1);
-    FootstepPlanner::radianToQuat(ivGoalFootRight.getRoll(), ivGoalFootRight.getPitch(), ivGoalFootRight.getYaw(), &x, &y, &z, &w);
-    goalFootRightRotation->x = x;
-    goalFootRightRotation->y = y;
-    goalFootRightRotation->z = z;
-    goalFootRightRotation->w = w;
+    ompl_helper::setOmplState(&startFootLeft, &ivStartFootLeft);
+
+    ompl_helper::setOmplState(&startFootRight, &ivStartFootRight);
+
+    ompl_helper::setOmplState(&goalFootLeft, &ivGoalFootLeft);
+
+    ompl_helper::setOmplState(&goalFootRight, &ivGoalFootRight);
 
     startFootLeft >> start; //TODO find solution with pointers instead of coping states
     startFootRight >> start;
@@ -193,21 +171,16 @@ bool FootstepPlanner::plan(ReplanParams& params)
     ompl_ss.setStartAndGoalStates(start,goal);
     ompl_base::SpaceInformationPtr si = ompl_ss.getSpaceInformation();
 //    si->setValidStateSamplerAllocator(allocValidStateSampler);
-    si->setValidStateSamplerAllocator(std::bind(&allocValidStateSampler, std::placeholders::_1));
+//    si->setValidStateSamplerAllocator(std::bind(&allocValidStateSampler, std::placeholders::_1));
     si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
     si->setStateValidityCheckingResolution(0.25);
+    si->setValidStateSamplerAllocator(allocMyValidStateSampler);
 
     ompl::base::PlannerPtr planner(new ompl::geometric::RRTConnect(si));
     planner->as<ompl::geometric::RRTConnect>()->setRange(1.0);
 //    auto planner(std::make_shared<ompl::geometric::PRMstar>(ompl_ss.getSpaceInformation()));
     ompl_ss.setPlanner(planner);
-
-
-
-
-
-
-
+//    ompl_ss.setup();
 
     //    pdef->setStartAndGoalStates(start, goal);
 
@@ -216,16 +189,17 @@ bool FootstepPlanner::plan(ReplanParams& params)
     //    planner->setup();
     //    ompl_base::PlannerStatus solved = planner->ompl_base::Planner::solve(1.0);
     ompl_base::PlannerStatus solved = ompl_ss.solve(1.0);
+    ompl_ss.print(std::cout);
     if (solved)
     {
       //      ompl_base::PathPtr pathPtr = pdef->getSolutionPath();
       //      ompl::geometric::PathGeometric* solution = pathPtr->as<ompl::geometric::PathGeometric>();
       //      ompl_ss.simplifySolution();
-      ROS_INFO("Found solution:");
+//      ROS_INFO("Found solution:");
       // print the path to screen
       ompl::geometric::PathGeometric& solution = ompl_ss.getSolutionPath();
-      solution.print(std::cout);
-      std::cout << solution.getStateCount();
+//      solution.print(std::cout);
+//      std::cout << solution.getStateCount();
 
       ivPath.clear();
 
@@ -240,22 +214,11 @@ bool FootstepPlanner::plan(ReplanParams& params)
         ompl_base::ScopedState<ompl_base::SE3StateSpace> currentFootRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
         current >> currentFootLeft;
         current >> currentFootRight;
-        x = currentFootLeft->getX();
-        y = currentFootLeft->getY();
-        z = currentFootLeft->getZ();
-        ompl_base::SO3StateSpace::StateType *rot = currentFootLeft->as<ompl::base::SO3StateSpace::StateType>(1);//->rotation();//TODO not working yet (syntax?)
-        double roll, pitch, yaw;
-        FootstepPlanner::quatToRadian(rot, &roll, &pitch, &yaw);
-        State s(x, y, z, roll, pitch, yaw, LEFT); //TODO specify leg
+        State s(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, LEFT);
+        ompl_helper::getOmplState(&currentFootLeft, &s, LEFT);
         ivPath.push_back(s);
-        x = currentFootRight->getX();
-        y = currentFootRight->getY();
-        z = currentFootRight->getZ();
-        ompl_base::SO3StateSpace::StateType *rot2 = currentFootRight->as<ompl::base::SO3StateSpace::StateType>(1);//->rotation();//TODO not working yet (syntax?)
-        roll, pitch, yaw;
-        FootstepPlanner::quatToRadian(rot2, &roll, &pitch, &yaw);
-        State s2(x, y, z, roll, pitch, yaw, RIGHT); //TODO specify leg
-        ivPath.push_back(s2);
+        ompl_helper::getOmplState(&currentFootRight, &s, RIGHT);
+        ivPath.push_back(s);
       }
 
       //      // add last neutral step
@@ -1555,51 +1518,5 @@ bool FootstepPlanner::pathIsNew(const std::vector<int>& new_path)
   return unequal;
 }
 
-void FootstepPlanner::radianToQuat(double roll, double pitch, double yaw, double* x, double* y, double* z, double* w)
-{
-  double pitchHalf = pitch / 2.0;
-  double yawHalf = yaw / 2.0;
-  double rollHalf = roll / 2.0;
 
-  double sinp = sin(pitchHalf);
-  double siny = sin(yawHalf);
-  double sinr = sin(rollHalf);
-  double cosp = cos(pitchHalf);
-  double cosy = cos(yawHalf);
-  double cosr = cos(rollHalf);
-
-  *x = sinr * cosp * cosy - cosr * sinp * siny;
-  *y = ( cosr * sinp * cosy + sinr * cosp * siny );
-  *z = ( cosr * cosp * siny - sinr * sinp * cosy );
-  *w = ( cosr * cosp * cosy + sinr * sinp * siny );
-}
-
-void FootstepPlanner::quatToRadian(ompl_base::SO3StateSpace::StateType* rotation, double* roll, double* pitch, double* yaw)
-{
-  //roll
-  double sinr = +2.0 * (rotation->w * rotation->x + rotation->y * rotation->z);
-  double cosr = +1.0 - 2.0 * (rotation->x * rotation->x + rotation->y * rotation->y);
-  *roll = atan2(sinr, cosr);
-
-  //pitch
-  double sinp = +2.0 * (rotation->w * rotation->y - rotation->z * rotation->x);
-  if (fabs(sinp) >= 1)
-    *pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
-  else
-    *pitch = asin(sinp);
-
-  //yaw
-  double siny = +2.0 * (rotation->w * rotation->z + rotation->x * rotation->y);
-  double cosy = +1.0 - 2.0 * (rotation->y * rotation->y + rotation->z * rotation->z);
-  *yaw = atan2(siny, cosy);
-}
-void FootstepPlanner::setOrientation(ompl_base::State* state, double x, double y, double z, double w)
-{
-//  ompl_base::SO3StateSpace::StateType *rotationState = state->as<ompl_base::SO3StateSpace::StateType>(1);
-  ompl_base::SO3StateSpace::StateType *rotationState = &(state->rotation());
-  rotationState->x = x;
-  rotationState->y = y;
-  rotationState->z = z;
-  rotationState->w = w;
-}
 }

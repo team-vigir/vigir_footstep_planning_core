@@ -79,6 +79,10 @@
 #include <vigir_footstep_planner/environment_parameters.h>
 #include <vigir_footstep_planner/footstep_planner_environment.h>
 
+#include <vigir_footstep_planner/ompl_helper.h>
+#include <vigir_footstep_planner/custom_ompl_motion_validator.h>
+#include <vigir_footstep_planner/customvalidstatesampler.h>
+
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/StateSpace.h>
 #include <ompl/base/spaces/SE3StateSpace.h>
@@ -101,8 +105,6 @@
 #include <memory.h>
 #include <fstream>
 
-#include <vigir_footstep_planner/custom_ompl_motion_validator.h>
-#include <vigir_footstep_planner/customvalidstatesampler.h>
 
 
 
@@ -259,15 +261,6 @@ protected:
 
   /// @brief Sets the planning algorithm used by SBPL or OMPL.
   void setPlanner();
-
-  /// @brief turns given roll, pitch and yaw into quaternions.
-  void radianToQuat(double roll, double pitch, double yaw, double* x, double* y, double* z, double* w);
-
-
-  /// @brief turns given quaternions into roll, pitch and yaw.
-  void quatToRadian(ompl_base::SO3StateSpace::StateType* rotation, double* roll, double* pitch, double* yaw);
-
-  void setOrientation(ompl_base::State* state, double x, double y, double z, double w);
 
   // publisher
   ros::Publisher ivCheckedFootContactSupportPub;
