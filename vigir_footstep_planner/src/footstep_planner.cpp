@@ -104,8 +104,8 @@ bool FootstepPlanner::isPlanning() const
 //ompl::base::InformedStateSampler (const ompl::base::ProblemDefinitionPtr &probDefn, const ompl::base::GetCurrentCostFunc &costFunc, const ompl::base::InformedSamplerPtr &infSampler)
 ompl::base::ValidStateSamplerPtr allocMyValidStateSampler(const ompl::base::SpaceInformation *si) // const ompl::base::SpaceInformation *si,
 {
-//  return ompl::base::ValidStateSamplerPtr(new ompl::base::ValidStateSampler(si));
-  ROS_INFO("allocating Sampler");
+  //  return ompl::base::ValidStateSamplerPtr(new ompl::base::ValidStateSampler(si));
+//  ROS_INFO("allocating Sampler");
   return std::make_shared<customValidStateSampler>(si);
 }
 
@@ -113,112 +113,195 @@ bool FootstepPlanner::plan(ReplanParams& params)
 {
   if (usingOMPL)
   {
-
-    auto footLeftSpace(std::make_shared<ompl_base::SE3StateSpace>());
-    auto footRightSpace(std::make_shared<ompl_base::SE3StateSpace>());
-
-    ompl_base::RealVectorBounds bounds(3);
-    bounds.setLow(-10);
-    bounds.setHigh(10);
-    bounds.check();
-    footLeftSpace->setBounds(bounds);
-    footRightSpace->setBounds(bounds);
-
-    ompl_base::StateSpacePtr space = footLeftSpace + footRightSpace;
-
-
-    ompl_geometric::SimpleSetup ompl_ss(space);
-//    ompl::base::ProblemDefinitionPtr pdef = ompl_ss.getProblemDefinition();
-
-
-
-    ompl_base::ScopedState<> start(space);
-    ompl_base::ScopedState<> goal(space);
-
-    ompl_base::ScopedState<ompl_base::SE3StateSpace> startFootLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
-    ompl_base::ScopedState<ompl_base::SE3StateSpace> startFootRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
-    ompl_base::ScopedState<ompl_base::SE3StateSpace> goalFootLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
-    ompl_base::ScopedState<ompl_base::SE3StateSpace> goalFootRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
-
-    ompl_helper::setOmplState(&startFootLeft, &ivStartFootLeft);
-
-    ompl_helper::setOmplState(&startFootRight, &ivStartFootRight);
-
-    ompl_helper::setOmplState(&goalFootLeft, &ivGoalFootLeft);
-
-    ompl_helper::setOmplState(&goalFootRight, &ivGoalFootRight);
-
-    startFootLeft >> start; //TODO find solution with pointers instead of coping states
-    startFootRight >> start;
-    goalFootLeft >> goal;
-    goalFootRight >> goal;
-
-    std::cout << start;
-    std::cout << goal;
-
-    //    auto pdef(std::make_shared<ompl_base::ProblemDefinition>(si));
-    ompl_ss.setStartAndGoalStates(start,goal);
-    ompl_base::SpaceInformationPtr si = ompl_ss.getSpaceInformation();
-//    si->setValidStateSamplerAllocator(allocValidStateSampler);
-//    si->setValidStateSamplerAllocator(std::bind(&allocValidStateSampler, std::placeholders::_1));
-//    si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
-//    si->setStateValidityCheckingResolution(0.25);
-//    si->setStateValidityChecker(std::make_shared<CustomStateValidityChecker>(si));
-    si->setValidStateSamplerAllocator(allocMyValidStateSampler);
-
-//    ompl::base::PlannerPtr planner(new ompl::geometric::RRTConnect(si));
-//    planner->as<ompl::geometric::RRTConnect>()->setRange(1.0);
-    auto planner(std::make_shared<ompl::geometric::PRMstar>(ompl_ss.getSpaceInformation()));
-    ompl_ss.setPlanner(planner);
-//    ompl_ss.setup();
-
-    //    pdef->setStartAndGoalStates(start, goal);
-
-    //    auto planner(std::make_shared<ompl_geometric::RRTConnect>(si));
-    //    planner->setProblemDefinition(pdef);
-    //    planner->setup();
-    //    ompl_base::PlannerStatus solved = planner->ompl_base::Planner::solve(1.0);
-    ompl_base::PlannerStatus solved = ompl_ss.solve(1.0);
-    ompl_ss.print(std::cout);
-    if (solved)
+    if(useNewState)
     {
-      //      ompl_base::PathPtr pathPtr = pdef->getSolutionPath();
-      //      ompl::geometric::PathGeometric* solution = pathPtr->as<ompl::geometric::PathGeometric>();
-      //      ompl_ss.simplifySolution();
-//      ROS_INFO("Found solution:");
-      // print the path to screen
-      ompl::geometric::PathGeometric& solution = ompl_ss.getSolutionPath();
-//      solution.print(std::cout);
-//      std::cout << solution.getStateCount();
-
-      ivPath.clear();
-
-      for(int solution_state_iter = 0; solution_state_iter < solution.getStateCount(); ++solution_state_iter)
+      auto footSpace(std::make_shared<ompl_base::SE3StateSpace>());
+      auto selectedFoot(std::make_shared<ompl::base::DiscreteStateSpace>(0,1));
+      ompl_base::RealVectorBounds footSpaceBounds(3);
+      footSpaceBounds.setLow(-10);
+      footSpaceBounds.setHigh(10);
+      footSpaceBounds.check();
+      footSpace->setBounds(footSpaceBounds);
+      ompl_base::StateSpacePtr newSpace = footSpace + selectedFoot;
+      ompl_geometric::SimpleSetup newOmpl_ss(newSpace);
+      ompl_base::ScopedState<> newStart1(newSpace), newStart2(newSpace);
+      ompl_base::ScopedState<> newGoal1(newSpace), newGoal2(newSpace);
+      ompl_base::ScopedState<> left(selectedFoot), right(selectedFoot);
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> newStartFootLeft(footSpace);
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> newStartFootRight(footSpace);
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> newGoalFootLeft(footSpace);
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> newGoalFootRight(footSpace);
+      ompl_helper::setOmplState(&newStartFootLeft, &ivStartFootLeft);
+      left->as<ompl::base::DiscreteStateSpace::StateType>()->value = 1;
+      ompl_helper::setOmplState(&newStartFootRight, &ivStartFootRight);
+      right->as<ompl::base::DiscreteStateSpace::StateType>()->value = 0;
+      ompl_helper::setOmplState(&newGoalFootLeft, &ivGoalFootLeft);
+      ompl_helper::setOmplState(&newGoalFootRight, &ivGoalFootRight);
+      newStartFootLeft >> newStart1; //TODO find solution with pointers instead of coping states
+      newStartFootLeft >> left;
+      newStartFootRight >> newStart2;
+      newStartFootRight >> right;
+      newGoalFootLeft >> newGoal1;
+      newGoalFootLeft >> left;
+      newGoalFootRight >> newGoal2;
+      newGoalFootRight >> right;
+      newOmpl_ss.setStartAndGoalStates(newStart1,newGoal1);
+      newOmpl_ss.addStartState(newStart2);
+      newOmpl_ss.setGoalState(newGoal2);
+      ompl_base::SpaceInformationPtr newSi = newOmpl_ss.getSpaceInformation();
+      newSi->setMotionValidator(std::make_shared<customOmplMotionValidator>(newSi));
+      newSi->setStateValidityCheckingResolution(0.25);
+      newSi->setStateValidityChecker(std::make_shared<CustomStateValidityChecker>(newSi));
+      newSi->setValidStateSamplerAllocator(allocMyValidStateSampler);
+      //    ompl::base::PlannerPtr newP*lanner(new ompl::geometric::RRTConnect(newSi));
+      //    newPlanner->as<ompl::geometric::RRTConnect>()->setRange(1.0);
+      auto newPlanner(std::make_shared<ompl::geometric::PRMstar>(newSi));
+      newOmpl_ss.setPlanner(newPlanner);
+      ompl_base::PlannerStatus newSolved = newOmpl_ss.solve(1.0);
+      newOmpl_ss.print(std::cout);
+      if (newSolved)
       {
+        //      newOmpl_ss.simplifySolution();
+        ompl::geometric::PathGeometric& newSolution = newOmpl_ss.getSolutionPath();
 
-        //        ROS_INFO("State %i:", solution_state_iter);
+        ivPath.clear();
 
-        ompl_base::ScopedState<> current(space);
-        current = solution.getState(solution_state_iter);
-        ompl_base::ScopedState<ompl_base::SE3StateSpace> currentFootLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
-        ompl_base::ScopedState<ompl_base::SE3StateSpace> currentFootRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
-        current >> currentFootLeft;
-        current >> currentFootRight;
-        State s(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, LEFT);
-        ompl_helper::getOmplState(&currentFootLeft, &s, LEFT);
-        ivPath.push_back(s);
-        ompl_helper::getOmplState(&currentFootRight, &s, RIGHT);
-        ivPath.push_back(s);
+        for(int solution_state_iter = 0; solution_state_iter < newSolution.getStateCount(); ++solution_state_iter)
+        {
+
+          //        ROS_INFO("State %i:", solution_state_iter);
+
+          ompl_base::ScopedState<> newCurrent(newSpace);
+          newCurrent = newSolution.getState(solution_state_iter);
+          ompl_base::ScopedState<ompl_base::SE3StateSpace> newCurrentFoot(footSpace);
+          ompl_base::ScopedState<> currentSelectedFoot(selectedFoot);
+          newCurrent >> newCurrentFoot;
+          newCurrent >> currentSelectedFoot;
+          State s(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, LEFT);
+          Leg currentLeg = currentSelectedFoot->as<ompl::base::DiscreteStateSpace::StateType>()->value == 0 ? RIGHT : LEFT;
+          ompl_helper::getOmplState(&newCurrentFoot, &s, currentLeg);
+          ivPath.push_back(s);
+        }
+
+        //      // add last neutral step
+        //      if (ivPath.back().getLeg() == RIGHT)
+        //        ivPath.push_back(ivGoalFootLeft);
+        //      else // last_leg == LEFT
+        //        ivPath.push_back(ivGoalFootRight);
+
+
+        return true;
+
       }
+    }
+    else //using old states
+    {
+      auto footLeftSpace(std::make_shared<ompl_base::SE3StateSpace>());
+      auto footRightSpace(std::make_shared<ompl_base::SE3StateSpace>());
 
-      //      // add last neutral step
-      //      if (ivPath.back().getLeg() == RIGHT)
-      //        ivPath.push_back(ivGoalFootLeft);
-      //      else // last_leg == LEFT
-      //        ivPath.push_back(ivGoalFootRight);
+      auto footSpace(std::make_shared<ompl_base::SE3StateSpace>());
+      ompl_base::RealVectorBounds footSpaceBounds(3);
+      footSpaceBounds.setLow(-10);
+      footSpaceBounds.setHigh(10);
+      footSpaceBounds.check();
+      footSpace->setBounds(footSpaceBounds);
+      footLeftSpace->setBounds(footSpaceBounds);
+      footRightSpace->setBounds(footSpaceBounds);
+
+      ompl_base::StateSpacePtr space = footLeftSpace + footRightSpace;
 
 
-      return true;
+      ompl_geometric::SimpleSetup ompl_ss(space);
+
+
+      ompl_base::ScopedState<> start(space);
+      ompl_base::ScopedState<> goal(space);
+
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> startFootLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> startFootRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> goalFootLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> goalFootRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
+
+      ompl_helper::setOmplState(&startFootLeft, &ivStartFootLeft);
+
+      ompl_helper::setOmplState(&startFootRight, &ivStartFootRight);
+
+      ompl_helper::setOmplState(&goalFootLeft, &ivGoalFootLeft);
+
+      ompl_helper::setOmplState(&goalFootRight, &ivGoalFootRight);
+
+      startFootLeft >> start; //TODO find solution with pointers instead of coping states
+      startFootRight >> start;
+      goalFootLeft >> goal;
+      goalFootRight >> goal;
+
+      std::cout << start;
+      std::cout << goal;
+
+      //    auto pdef(std::make_shared<ompl_base::ProblemDefinition>(si));
+      ompl_ss.setStartAndGoalStates(start,goal);
+      ompl_base::SpaceInformationPtr si = ompl_ss.getSpaceInformation();
+      //    si->setValidStateSamplerAllocator(allocValidStateSampler);
+      //    si->setValidStateSamplerAllocator(std::bind(&allocValidStateSampler, std::placeholders::_1));
+      //    si->setMotionValidator(std::make_shared<customOmplMotionValidator>(si));
+      //    si->setStateValidityCheckingResolution(0.25);
+      //    si->setStateValidityChecker(std::make_shared<CustomStateValidityChecker>(si));
+      si->setValidStateSamplerAllocator(allocMyValidStateSampler);
+
+      //    ompl::base::PlannerPtr planner(new ompl::geometric::RRTConnect(si));
+      //    planner->as<ompl::geometric::RRTConnect>()->setRange(1.0);
+      auto planner(std::make_shared<ompl::geometric::PRMstar>(ompl_ss.getSpaceInformation()));
+      ompl_ss.setPlanner(planner);
+      //    ompl_ss.setup();
+
+      //    pdef->setStartAndGoalStates(start, goal);
+
+      //    auto planner(std::make_shared<ompl_geometric::RRTConnect>(si));
+      //    planner->setProblemDefinition(pdef);
+      //    planner->setup();
+      //    ompl_base::PlannerStatus solved = planner->ompl_base::Planner::solve(1.0);
+      ompl_base::PlannerStatus solved = ompl_ss.solve(1.0);
+      ompl_ss.print(std::cout);
+      if (solved)
+      {
+        //      ompl_base::PathPtr pathPtr = pdef->getSolutionPath();
+        //      ompl::geometric::PathGeometric* solution = pathPtr->as<ompl::geometric::PathGeometric>();
+        //      ompl_ss.simplifySolution();
+        //      ROS_INFO("Found solution:");
+        // print the path to screen
+        ompl::geometric::PathGeometric& solution = ompl_ss.getSolutionPath();
+        //      solution.print(std::cout);
+        //      std::cout << solution.getStateCount();
+
+        ivPath.clear();
+
+        for(int solution_state_iter = 0; solution_state_iter < solution.getStateCount(); ++solution_state_iter)
+        {
+
+          //        ROS_INFO("State %i:", solution_state_iter);
+
+          ompl_base::ScopedState<> current(space);
+          current = solution.getState(solution_state_iter);
+          ompl_base::ScopedState<ompl_base::SE3StateSpace> currentFootLeft(space->as<ompl_base::SE3StateSpace>()->getSubspace(0));
+          ompl_base::ScopedState<ompl_base::SE3StateSpace> currentFootRight(space->as<ompl_base::SE3StateSpace>()->getSubspace(1));
+          current >> currentFootLeft;
+          current >> currentFootRight;
+          State s(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, LEFT);
+          ompl_helper::getOmplState(&currentFootLeft, &s, LEFT);
+          ivPath.push_back(s);
+          ompl_helper::getOmplState(&currentFootRight, &s, RIGHT);
+          ivPath.push_back(s);
+        }
+
+        //      // add last neutral step
+        //      if (ivPath.back().getLeg() == RIGHT)
+        //        ivPath.push_back(ivGoalFootLeft);
+        //      else // last_leg == LEFT
+        //        ivPath.push_back(ivGoalFootRight);
+
+
+        return true;
+      }
 
     }
   }

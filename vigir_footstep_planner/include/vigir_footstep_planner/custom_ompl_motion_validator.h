@@ -1,7 +1,7 @@
 #ifndef CUSTOM_OMPL_MOTION_VALIDATOR
 #define CUSTOM_OMPL_MOTION_VALIDATOR
 
-#include <ros/ros.h>
+#include <vigir_footstep_planner/footstep_planner.h>
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/StateSpace.h>
@@ -36,6 +36,8 @@ namespace vigir_footstep_planning
 {
 class customOmplMotionValidator : public ompl::base::MotionValidator
 {
+private:
+//  ompl::base::StateSpacePtr space;
 public:
   /// \brief Constructor
   customOmplMotionValidator(ompl::base::SpaceInformation* si);

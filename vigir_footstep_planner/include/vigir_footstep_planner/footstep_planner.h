@@ -150,6 +150,9 @@ public:
   typedef boost::shared_ptr<FootstepPlanner> Ptr;
   typedef boost::shared_ptr<const FootstepPlanner> ConstPtr;
 
+  //ompl
+  static const bool useNewState = true;
+
 protected:
   /**
    * @brief Start a planning task from scratch (will delete information

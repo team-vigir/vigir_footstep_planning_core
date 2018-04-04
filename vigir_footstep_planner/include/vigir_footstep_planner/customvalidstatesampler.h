@@ -37,7 +37,7 @@ namespace vigir_footstep_planning
 class customValidStateSampler : public ompl::base::ValidStateSampler
 {
 private:
-  ompl::base::StateSpacePtr space, sampleSpacePtr;
+  ompl::base::StateSpacePtr space, sampleSpacePtr, footSpace, selectedFoot;
   std::shared_ptr<ompl::base::UniformValidStateSampler> uniform2DSampler;
   double lastZVal;
 public:
