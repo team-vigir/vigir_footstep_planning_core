@@ -106,7 +106,10 @@ ompl::base::ValidStateSamplerPtr allocMyValidStateSampler(const ompl::base::Spac
 {
   //  return ompl::base::ValidStateSamplerPtr(new ompl::base::ValidStateSampler(si));
 //  ROS_INFO("allocating Sampler");
-  return std::make_shared<customValidStateSampler>(si);
+  auto sampler (std::make_shared<customValidStateSampler>(si));
+  sampler->setNrAttempts(1000);
+  return sampler;
+//  return std::make_shared<customValidStateSampler>(si);
 }
 
 bool FootstepPlanner::plan(ReplanParams& params)
@@ -122,15 +125,19 @@ bool FootstepPlanner::plan(ReplanParams& params)
       footSpaceBounds.setHigh(10);
       footSpaceBounds.check();
       footSpace->setBounds(footSpaceBounds);
-      ompl_base::StateSpacePtr newSpace = footSpace + selectedFoot;
+      auto newSpace(std::make_shared<ompl::base::CompoundStateSpace>());
+      newSpace->addSubspace(footSpace, 1.0);
+      newSpace->addSubspace(selectedFoot, 0.1);
+//      ompl_base::StateSpacePtr newSpace = compundSpace;
+//      newSpace->registerDefaultProjection(ompl::base::ProjectionEvaluatorPtr(new ProjectionForSpace(newSpace)));
       ompl_geometric::SimpleSetup newOmpl_ss(newSpace);
       ompl_base::ScopedState<> newStart1(newSpace), newStart2(newSpace);
       ompl_base::ScopedState<> newGoal1(newSpace), newGoal2(newSpace);
-      ompl_base::ScopedState<> left(selectedFoot), right(selectedFoot);
-      ompl_base::ScopedState<ompl_base::SE3StateSpace> newStartFootLeft(footSpace);
-      ompl_base::ScopedState<ompl_base::SE3StateSpace> newStartFootRight(footSpace);
-      ompl_base::ScopedState<ompl_base::SE3StateSpace> newGoalFootLeft(footSpace);
-      ompl_base::ScopedState<ompl_base::SE3StateSpace> newGoalFootRight(footSpace);
+      ompl_base::ScopedState<> left(newSpace->getSubspace(1)), right(newSpace->getSubspace(1));
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> newStartFootLeft(newSpace->getSubspace(0));
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> newStartFootRight(newSpace->getSubspace(0));
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> newGoalFootLeft(newSpace->getSubspace(0));
+      ompl_base::ScopedState<ompl_base::SE3StateSpace> newGoalFootRight(newSpace->getSubspace(0));
       ompl_helper::setOmplState(&newStartFootLeft, &ivStartFootLeft);
       left->as<ompl::base::DiscreteStateSpace::StateType>()->value = 1;
       ompl_helper::setOmplState(&newStartFootRight, &ivStartFootRight);
@@ -138,13 +145,14 @@ bool FootstepPlanner::plan(ReplanParams& params)
       ompl_helper::setOmplState(&newGoalFootLeft, &ivGoalFootLeft);
       ompl_helper::setOmplState(&newGoalFootRight, &ivGoalFootRight);
       newStartFootLeft >> newStart1; //TODO find solution with pointers instead of coping states
-      newStartFootLeft >> left;
+      left >> newStart1;
       newStartFootRight >> newStart2;
-      newStartFootRight >> right;
+      right >> newStart2;
+      newSpace->getSubspace(1)->printState(left.get(), std::cout);
       newGoalFootLeft >> newGoal1;
-      newGoalFootLeft >> left;
+      left >> newGoal1;
       newGoalFootRight >> newGoal2;
-      newGoalFootRight >> right;
+      right >> newGoal2;
       newOmpl_ss.setStartAndGoalStates(newStart1,newGoal1);
       newOmpl_ss.addStartState(newStart2);
       newOmpl_ss.setGoalState(newGoal2);
@@ -153,9 +161,12 @@ bool FootstepPlanner::plan(ReplanParams& params)
       newSi->setStateValidityCheckingResolution(0.25);
       newSi->setStateValidityChecker(std::make_shared<CustomStateValidityChecker>(newSi));
       newSi->setValidStateSamplerAllocator(allocMyValidStateSampler);
-      //    ompl::base::PlannerPtr newP*lanner(new ompl::geometric::RRTConnect(newSi));
-      //    newPlanner->as<ompl::geometric::RRTConnect>()->setRange(1.0);
-      auto newPlanner(std::make_shared<ompl::geometric::PRMstar>(newSi));
+//      ompl::base::PlannerPtr newPlanner(new ompl::geometric::RRTConnect(newSi));
+//      newPlanner->as<ompl::geometric::RRTConnect>()->setRange(0.1);
+//      auto newPlanner(std::make_shared<ompl::geometric::PRMstar>(newSi));
+      auto newPlanner(std::make_shared<ompl::geometric::RRTstar>(newSi));
+//      auto newPlanner(std::make_shared<ompl::geometric::EST>(newSi));
+      newPlanner->as<ompl::geometric::RRTstar>()->setRange(0.1);
       newOmpl_ss.setPlanner(newPlanner);
       ompl_base::PlannerStatus newSolved = newOmpl_ss.solve(1.0);
       newOmpl_ss.print(std::cout);
@@ -248,9 +259,9 @@ bool FootstepPlanner::plan(ReplanParams& params)
       //    si->setStateValidityChecker(std::make_shared<CustomStateValidityChecker>(si));
       si->setValidStateSamplerAllocator(allocMyValidStateSampler);
 
-      //    ompl::base::PlannerPtr planner(new ompl::geometric::RRTConnect(si));
-      //    planner->as<ompl::geometric::RRTConnect>()->setRange(1.0);
-      auto planner(std::make_shared<ompl::geometric::PRMstar>(ompl_ss.getSpaceInformation()));
+      ompl::base::PlannerPtr planner(new ompl::geometric::RRTConnect(si));
+      planner->as<ompl::geometric::RRTConnect>()->setRange(1.0);
+//      auto planner(std::make_shared<ompl::geometric::PRMstar>(ompl_ss.getSpaceInformation()));
       ompl_ss.setPlanner(planner);
       //    ompl_ss.setup();
 
@@ -260,7 +271,7 @@ bool FootstepPlanner::plan(ReplanParams& params)
       //    planner->setProblemDefinition(pdef);
       //    planner->setup();
       //    ompl_base::PlannerStatus solved = planner->ompl_base::Planner::solve(1.0);
-      ompl_base::PlannerStatus solved = ompl_ss.solve(1.0);
+      ompl_base::PlannerStatus solved = ompl_ss.solve(ivPlannerPtr->get_final_eps_planning_time());
       ompl_ss.print(std::cout);
       if (solved)
       {

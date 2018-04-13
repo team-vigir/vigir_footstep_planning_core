@@ -20,7 +20,16 @@ bool CustomStateValidityChecker::isValid(const ompl::base::State *state) const
   }
   else
   {
-    return ((foot.get()->getZ()) == 0);
+    if ((foot.get()->getZ()) == 0.0)
+    {
+      ROS_INFO("state valid:");
+      space->printState(scopedState.get(), std::cout);
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
 }
 

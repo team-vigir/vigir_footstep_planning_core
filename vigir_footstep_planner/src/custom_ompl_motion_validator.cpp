@@ -82,8 +82,10 @@ bool customOmplMotionValidator::checkMotion(const ompl::base::State *s1, const o
 //  space->printState(scopedState1.get(), std::cout);
 //  space->printState(scopedState2.get(), std::cout);
   if (RobotModel::instance().isReachable(state1, state2))
-  {
+  {    
 //    ROS_INFO("motion valid");
+//    space->printState(scopedState1.get(), std::cout);
+//    space->printState(scopedState2.get(), std::cout);
     return true;
   }
   else

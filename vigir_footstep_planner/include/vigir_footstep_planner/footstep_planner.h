@@ -83,6 +83,7 @@
 #include <vigir_footstep_planner/custom_ompl_motion_validator.h>
 #include <vigir_footstep_planner/customvalidstatesampler.h>
 #include <vigir_footstep_planner/customstatevaliditychecker.h>
+#include <vigir_footstep_planner/projection_for_space.h>
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/StateSpace.h>
@@ -96,7 +97,9 @@
 #include <ompl/base/StateValidityChecker.h>
 #include <ompl/base/MotionValidator.h>
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
+#include <ompl/geometric/planners/rrt/RRTstar.h>
 #include <ompl/geometric/planners/prm/PRMstar.h>
+#include <ompl/geometric/planners/est/EST.h>
 #include <ompl/base/ProblemDefinition.h>
 #include <ompl/base/Path.h>
 #include <ompl/base/spaces/DiscreteStateSpace.h>

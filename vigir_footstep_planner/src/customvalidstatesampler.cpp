@@ -228,8 +228,9 @@ bool customValidStateSampler::sample(ob::State *state)
     ompl_base::ScopedState<> converterState(footSpace + selectedFoot);
     zeroFoot >> converterState;
     zeroSelect >> converterState;
-    near = (converterState->as<ompl::base::State>());
-    return sampleNear(state, near, 20.0);
+    near = (converterState->as<ompl::base::State>());    
+//    space->printState(state, std::cout);
+    return sampleNear(state, near, 5.0);
   }
   else
   {
@@ -249,13 +250,13 @@ bool customValidStateSampler::sample(ob::State *state)
     zeroRight >> converterState;
     near = (converterState->as<ompl::base::State>());
 //    space->copyState(near, converterState.get());
-    return sampleNear(state, near, 20.0);
+    return sampleNear(state, near, 10.0);
   }
 }
 
 bool customValidStateSampler::sampleNear(ob::State* state, const ob::State* near, const double distance)
 {
-//  ROS_INFO("Sampling near");
+//  ROS_INFO("Sampling");
   if(useNewSpace)
   {
     ompl::base::ScopedState<> scopedState(space);
@@ -296,6 +297,8 @@ bool customValidStateSampler::sampleNear(ob::State* state, const ob::State* near
     sampleFoot >> converterState;
     sampleSelect >> converterState;
     space->copyState(state, converterState.get());
+//    space->printState(converterState.get(), std::cout);
+    return true;
   }
   else
   {
@@ -350,6 +353,7 @@ bool customValidStateSampler::sampleNear(ob::State* state, const ob::State* near
   sampleLeft >> converterState;
   sampleRight >> converterState;
   space->copyState(state, converterState.get());
+  space->printState(converterState.get(), std::cout);
   return true;
   }
 
