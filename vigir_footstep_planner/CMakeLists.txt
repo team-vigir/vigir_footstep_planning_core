@@ -119,11 +119,11 @@ set(HEADERS
   include/${PROJECT_NAME}/footstep_planner_environment.h
   include/${PROJECT_NAME}/footstep_planner_node.h
   include/${PROJECT_NAME}/footstep_planner.h
-  include/${PROJECT_NAME}/custom_ompl_motion_validator.h
-  include/${PROJECT_NAME}/customvalidstatesampler.h
-  include/${PROJECT_NAME}/ompl_helper.h
-  include/${PROJECT_NAME}/customstatevaliditychecker.h
-  include/${PROJECT_NAME}/projection_for_space.h
+  include/${PROJECT_NAME}/ompl_interface/custom_ompl_motion_validator.h
+  include/${PROJECT_NAME}/ompl_interface/customvalidstatesampler.h
+  include/${PROJECT_NAME}/ompl_interface/ompl_helper.h
+  include/${PROJECT_NAME}/ompl_interface/customstatevaliditychecker.h
+  include/${PROJECT_NAME}/ompl_interface/projection_for_space.h
 )
 
 set(SOURCES
@@ -132,11 +132,10 @@ set(SOURCES
   src/footstep_planner_environment.cpp
   src/footstep_planner_node.cpp
   src/footstep_planner.cpp
-  src/custom_ompl_motion_validator.cpp
-  src/customvalidstatesampler.cpp
-  src/ompl_helper.cpp
-  src/customstatevaliditychecker.cpp
-#  src/projection_for_space.cpp
+  src/ompl_interface/custom_ompl_motion_validator.cpp
+  src/ompl_interface/customvalidstatesampler.cpp
+  src/ompl_interface/ompl_helper.cpp
+  src/ompl_interface/customstatevaliditychecker.cpp
 )
 
 ## Declare a cpp library

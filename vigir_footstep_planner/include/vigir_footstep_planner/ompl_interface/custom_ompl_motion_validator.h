@@ -16,28 +16,10 @@
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
 #include <ompl/base/ProblemDefinition.h>
 
-
-
-//class customOmplMotionValidator : public ompl::base::MotionValidator
-//{
-//public:
-//  /// \brief Constructor
-//  customOmplMotionValidator(ompl::base::SpaceInformation* si);// : ompl::base::MotionValidator(si);
-
-//  /// \brief Constructor
-//  customOmplMotionValidator(const ompl::base::SpaceInformationPtr &si);// : ompl::base::MotionValidator(si);
-
-//  /// \brief Destructor
-//  ~customOmplMotionValidator() override = default;
-//  bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2) const override;
-//  bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2, std::pair<ompl::base::State*, double> &lastValid) const override;
-//};
 namespace vigir_footstep_planning
 {
 class customOmplMotionValidator : public ompl::base::MotionValidator
 {
-private:
-//  ompl::base::StateSpacePtr space;
 public:
   /// \brief Constructor
   customOmplMotionValidator(ompl::base::SpaceInformation* si);
@@ -45,6 +27,7 @@ public:
   customOmplMotionValidator(const ompl::base::SpaceInformationPtr &si);
   /// \brief Destructor
   ~customOmplMotionValidator() override = default;
+  /// \brief Checks Motion from s1 to s2
   bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2) const override;
   bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2, std::pair<ompl::base::State*, double> &lastValid) const override;
 };

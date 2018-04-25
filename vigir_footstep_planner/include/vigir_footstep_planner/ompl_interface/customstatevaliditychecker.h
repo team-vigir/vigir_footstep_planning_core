@@ -25,6 +25,7 @@ private:
 public:
   /// \brief Constructor
   CustomStateValidityChecker(const ompl::base::SpaceInformationPtr &si);
+  /// \brief checks if State is valid
   bool isValid(const ompl::base::State *state) const;
 
 };

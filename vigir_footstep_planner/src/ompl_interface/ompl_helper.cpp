@@ -1,4 +1,4 @@
-#include <vigir_footstep_planner/ompl_helper.h>
+#include <vigir_footstep_planner/ompl_interface/ompl_helper.h>
 namespace vigir_footstep_planning
 {
 ompl_helper::ompl_helper()
@@ -53,7 +53,9 @@ void ompl_helper::setOrientation(ompl_base::SO3StateSpace::StateType* rotation, 
 void ompl_helper::setOmplState(ompl_base::ScopedState<ompl_base::SE3StateSpace>* foot, State* s)
 {
   foot->get()->setXYZ(s->getX(),s->getY(),s->getZ());
+
   double x,y,z,w;
+
   ompl_helper::radianToQuat(s->getRoll(), s->getPitch(), s->getYaw(), &x, &y, &z, &w);
   ompl_helper::setOrientation(foot->get()->as<ompl_base::SO3StateSpace::StateType>(1), x, y, z, w);
 
@@ -61,12 +63,17 @@ void ompl_helper::setOmplState(ompl_base::ScopedState<ompl_base::SE3StateSpace>*
 void ompl_helper::getOmplState(ompl_base::ScopedState<ompl_base::SE3StateSpace>* foot, State* s, Leg leg)
 {
   double x,y,z;
+
   x = foot->get()->getX();
   y = foot->get()->getY();
   z = foot->get()->getZ();
+
   ompl_base::SO3StateSpace::StateType *rot = foot->get()->as<ompl::base::SO3StateSpace::StateType>(1);
+
   double roll, pitch, yaw;
+
   ompl_helper::quatToRadian(rot, &roll, &pitch, &yaw);
+
   s->setRPY(roll,pitch,yaw);
   s->setLeg(leg);
   s->setX(x);

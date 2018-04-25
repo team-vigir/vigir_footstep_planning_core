@@ -79,11 +79,11 @@
 #include <vigir_footstep_planner/environment_parameters.h>
 #include <vigir_footstep_planner/footstep_planner_environment.h>
 
-#include <vigir_footstep_planner/ompl_helper.h>
-#include <vigir_footstep_planner/custom_ompl_motion_validator.h>
-#include <vigir_footstep_planner/customvalidstatesampler.h>
-#include <vigir_footstep_planner/customstatevaliditychecker.h>
-#include <vigir_footstep_planner/projection_for_space.h>
+#include <vigir_footstep_planner/ompl_interface/ompl_helper.h>
+#include <vigir_footstep_planner/ompl_interface/custom_ompl_motion_validator.h>
+#include <vigir_footstep_planner/ompl_interface/customvalidstatesampler.h>
+#include <vigir_footstep_planner/ompl_interface/customstatevaliditychecker.h>
+#include <vigir_footstep_planner/ompl_interface/projection_for_space.h>
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/StateSpace.h>
