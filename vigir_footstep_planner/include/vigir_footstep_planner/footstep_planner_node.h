@@ -53,11 +53,11 @@ namespace vigir_footstep_planning
 class FootstepPlannerNode
 {
 public:
-  FootstepPlannerNode(ros::NodeHandle& nh);
+  FootstepPlannerNode();
   virtual ~FootstepPlannerNode();
 
   virtual void initPlugins(ros::NodeHandle& nh);
-  virtual void init(ros::NodeHandle& nh);
+  virtual void initialize(ros::NodeHandle& nh);
 
 protected:
   // callbacks

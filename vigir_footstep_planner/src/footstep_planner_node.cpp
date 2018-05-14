@@ -13,10 +13,8 @@
 
 namespace vigir_footstep_planning
 {
-FootstepPlannerNode::FootstepPlannerNode(ros::NodeHandle& nh)
+FootstepPlannerNode::FootstepPlannerNode()
 {
-  initPlugins(nh);
-  init(nh);
 }
 
 void FootstepPlannerNode::initPlugins(ros::NodeHandle& nh)
@@ -34,8 +32,10 @@ void FootstepPlannerNode::initPlugins(ros::NodeHandle& nh)
   //vigir_pluginlib::PluginManager::addPlugin(new RobotModelPlugin(nh));
 }
 
-void FootstepPlannerNode::init(ros::NodeHandle& nh)
+void FootstepPlannerNode::initialize(ros::NodeHandle& nh)
 {
+  initPlugins(nh);
+
   getFootSize(nh, foot_size);
 
   // init planner
@@ -418,7 +418,8 @@ int main(int argc, char** argv)
   vigir_pluginlib::PluginManager::initialize(nh);
 
   // init footstep planner
-  vigir_footstep_planning::FootstepPlannerNode footstep_planner_node(nh);
+  vigir_footstep_planning::FootstepPlannerNode footstep_planner_node;
+  footstep_planner_node.initialize(nh);
 
   ros::spin();
 

@@ -2,8 +2,8 @@
 
 namespace vigir_footstep_planning
 {
-GlobalFootstepPlannerNode::GlobalFootstepPlannerNode(ros::NodeHandle& nh)
-  : FootstepPlannerNode(nh)
+GlobalFootstepPlannerNode::GlobalFootstepPlannerNode()
+  : FootstepPlannerNode()
 {
 }
 
@@ -11,10 +11,10 @@ GlobalFootstepPlannerNode::~GlobalFootstepPlannerNode()
 {
 }
 
-void GlobalFootstepPlannerNode::init(ros::NodeHandle& nh)
+void GlobalFootstepPlannerNode::initialize(ros::NodeHandle& nh)
 {
   // init basics
-  FootstepPlannerNode::init(nh);
+  FootstepPlannerNode::initialize(nh);
 
   // init global footstep planner
   global_footstep_planner.reset(new GlobalFootstepPlanner(footstep_planner));
@@ -212,7 +212,8 @@ int main(int argc, char **argv)
   vigir_generic_params::ParameterManager::initialize(nh);
   vigir_pluginlib::PluginManager::initialize(nh);
 
-  vigir_footstep_planning::GlobalFootstepPlannerNode globalPlannerNode(nh);
+  vigir_footstep_planning::GlobalFootstepPlannerNode globalPlannerNode;
+  globalPlannerNode.initialize(nh);
 
   ros::spin();
 

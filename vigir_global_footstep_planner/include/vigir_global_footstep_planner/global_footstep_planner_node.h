@@ -45,10 +45,10 @@ class GlobalFootstepPlannerNode
   : public FootstepPlannerNode
 {
 public:
-  GlobalFootstepPlannerNode(ros::NodeHandle& nh);
+  GlobalFootstepPlannerNode();
   virtual ~GlobalFootstepPlannerNode();
 
-  void init(ros::NodeHandle& nh);
+  void initialize(ros::NodeHandle& nh) override;
 
 protected:
   // subscriber
