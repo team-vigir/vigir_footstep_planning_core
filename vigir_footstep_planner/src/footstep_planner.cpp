@@ -124,7 +124,7 @@ bool FootstepPlanner::plan(ReplanParams& params)
   }
   if (ivPlannerPtr->set_goal(mdp_config.goalstateid) == 0)
   {
-    ROS_ERROR("Failed to set goal state\n");
+    ROS_ERROR("Failed to set goal state");
     return false;
   }
 
