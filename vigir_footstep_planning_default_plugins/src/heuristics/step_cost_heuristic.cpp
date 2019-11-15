@@ -28,12 +28,17 @@ double StepCostHeuristic::getHeuristicValue(const State& from, const State& to, 
   if (from == to)
     return 0.0;
 
-  // expected steps
-  tf::Transform dstep;
-  getDeltaStep(from.getPose(), to.getPose(), dstep);
-  double expected_steps_x = std::abs(dstep.getOrigin().x()) * max_step_dist_x_inv_;
-  double expected_steps_y = std::abs(dstep.getOrigin().y()) * max_step_dist_y_inv_;
-  double expected_steps = std::ceil(std::max(expected_steps_x, expected_steps_y));
+  double expected_steps = 0.0;
+
+  if (step_cost_ > 0.0)
+  {
+    // expected steps
+    tf::Transform dstep;
+    getDeltaStep(from.getPose(), to.getPose(), dstep);
+    double expected_steps_x = std::abs(dstep.getOrigin().x()) * max_step_dist_x_inv_;
+    double expected_steps_y = std::abs(dstep.getOrigin().y()) * max_step_dist_y_inv_;
+    expected_steps = sqrt(expected_steps_x*expected_steps_x + expected_steps_y*expected_steps_y);
+  }
 
   double diff_angle = 0.0;
   if (diff_angle_cost_ > 0.0)
